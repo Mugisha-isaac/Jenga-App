@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "73754095414",
+    "project_id": "jenga-app-d24fb",
+    "storage_bucket": "jenga-app-d24fb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73754095414:android:ed569092f0bbd3382e8d97",
+        "android_client_info": {
+          "package_name": "com.alu.jenga"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSnlYnSUCZRDDhCZKnhDeQu1z8tNhR6KY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73754095414:android:22ee10a33314d3272e8d97",
+        "android_client_info": {
+          "package_name": "com.example.jenga_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSnlYnSUCZRDDhCZKnhDeQu1z8tNhR6KY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
