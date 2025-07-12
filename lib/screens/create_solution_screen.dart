@@ -1,11 +1,11 @@
 // lib/screens/create_solution_screen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/solution_controller.dart';
+import '../modules//solution_controller.dart';
 import '../widgets/image_picker_widget.dart';
 
 class CreateSolutionScreen extends StatelessWidget {
-  const CreateSolutionScreen({Key? key}) : super(key: key);
+  const CreateSolutionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

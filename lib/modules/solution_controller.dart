@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../models/solution.dart';
 import '../services/solution_service.dart';
-
+import '../modules/auth_controller.dart';
 class SolutionController extends GetxController {
   final SolutionService _solutionService = SolutionService();
 
