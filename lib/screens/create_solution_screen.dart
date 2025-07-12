@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../modules//solution_controller.dart';
 import '../widgets/image_picker_widget.dart';
+import '../models/solutionStep.dart';
 
 class CreateSolutionScreen extends StatelessWidget {
   const CreateSolutionScreen({super.key});
@@ -386,7 +387,7 @@ class CreateSolutionScreen extends StatelessWidget {
               ? const Text('No steps added yet')
               : Column(
             children: controller.steps.asMap().entries.map((entry) {
-              return _buildStepCard(entry.value, () {
+              return _buildStepCard(entry.value as SolutionStep, () {
                 controller.removeStep(entry.key);
               });
             }).toList(),
