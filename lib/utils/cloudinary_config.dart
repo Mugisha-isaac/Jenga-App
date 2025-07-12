@@ -1,10 +1,10 @@
 // lib/utils/cloudinary_config.dart
 class CloudinaryConfig {
   // Replace these with your actual Cloudinary credentials
-  static const String cloudName = 'your_cloud_name';
-  static const String apiKey = 'your_api_key';
-  static const String apiSecret = 'your_api_secret';
-  static const String uploadPreset = 'your_upload_preset';
+  static const String cloudName = 'dnfeo5ce9';
+  static const String apiKey = '262367665752528';
+  static const String apiSecret = 'xpnLEFUJHLJjRdDemkn9LG2ViXs';
+ // static const String uploadPreset = 'your_upload_preset';
 
   // Optional: Configure folders for better organization
   static const String solutionsFolder = 'jenga_solutions';
@@ -30,7 +30,7 @@ class CloudinaryEnvironment {
       const String.fromEnvironment('CLOUDINARY_API_SECRET',
           defaultValue: CloudinaryConfig.apiSecret);
 
-  static String get uploadPreset =>
-      const String.fromEnvironment('CLOUDINARY_UPLOAD_PRESET',
-          defaultValue: CloudinaryConfig.uploadPreset);
+  // static String get uploadPreset =>
+  //     const String.fromEnvironment('CLOUDINARY_UPLOAD_PRESET',
+  //         defaultValue: CloudinaryConfig.uploadPreset);
 }

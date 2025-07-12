@@ -5,10 +5,10 @@ import 'package:crypto/crypto.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CloudinaryService {
-  static const String _cloudName = 'your_cloud_name'; // Replace with your Cloudinary cloud name
-  static const String _apiKey = 'your_api_key'; // Replace with your API key
-  static const String _apiSecret = 'your_api_secret'; // Replace with your API secret
-  static const String _uploadPreset = 'your_upload_preset'; // Replace with your upload preset
+  static const String _cloudName = 'dnfeo5ce9'; // Replace with your Cloudinary cloud name
+  static const String _apiKey = '262367665752528'; // Replace with your API key
+  static const String _apiSecret = 'xpnLEFUJHLJjRdDemkn9LG2ViXs'; // Replace with your API secret
+ // static const String _uploadPreset = 'your_upload_preset'; // Replace with your upload preset
 
   // Upload image to Cloudinary
   Future<String?> uploadImage(XFile imageFile) async {
@@ -23,7 +23,7 @@ class CloudinaryService {
       );
 
       // Add upload parameters
-      request.fields['upload_preset'] = _uploadPreset;
+     // request.fields['upload_preset'] = _uploadPreset;
       request.fields['folder'] = 'jenga_solutions'; // Optional: organize in folders
 
       final response = await request.send();
