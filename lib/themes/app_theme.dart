@@ -25,8 +25,6 @@ class AppTheme {
       onError: onError,
       surface: surface,
       onSurface: onSurface,
-      background: background,
-      onBackground: onBackground,
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: primaryColor,
@@ -61,8 +59,6 @@ class AppTheme {
       onError: onError,
       surface: Color(0xFF121212),
       onSurface: Color(0xFFFFFFFF),
-      background: Color(0xFF000000),
-      onBackground: Color(0xFFFFFFFF),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF121212),
