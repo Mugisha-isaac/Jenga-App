@@ -6,9 +6,9 @@ class SolutionBinding extends Bindings {
   @override
   void dependencies() {
     // Register services
-    Get.lazyPut<SignedCloudinaryService>(() => SignedCloudinaryService());
+    Get.put<SignedCloudinaryService>(SignedCloudinaryService());
 
     // Register controllers
-    Get.lazyPut<SolutionController>(() => SolutionController());
+    Get.put<SolutionController>(SolutionController());
   }
 }

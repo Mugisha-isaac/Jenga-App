@@ -3,20 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../modules/solution_controller.dart';
+import '../modules/auth_controller.dart';
 import '../widgets/secure_image_picker_widget.dart';
 import '../models/solution.dart';
+import '../themes/app_theme.dart';
 
 class CreateSolutionScreen extends StatelessWidget {
   const CreateSolutionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Ensure AuthController is available for solution creation
+    Get.put(AuthController());
     final controller = Get.put(SolutionController());
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Solution'),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
