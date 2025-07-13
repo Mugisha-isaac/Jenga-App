@@ -50,6 +50,7 @@ app.*.map.json
 .env.production
 .env.development
 *.env
+#.env.example
 
 # API Keys and Secrets (SECURITY)
 **/cloudinary_credentials.dart

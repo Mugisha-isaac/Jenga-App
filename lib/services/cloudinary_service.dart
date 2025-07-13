@@ -1,19 +1,39 @@
-// lib/services/cloudinary_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CloudinaryService {
-  static const String _cloudName = 'dnfeo5ce9'; // Replace with your Cloudinary cloud name
-  static const String _apiKey = '262367665752528'; // Replace with your API key
-  static const String _apiSecret = 'xpnLEFUJHLJjRdDemkn9LG2ViXs'; // Replace with your API secret
- // static const String _uploadPreset = 'your_upload_preset'; // Replace with your upload preset
+  // ⚠️ SECURITY: Use environment variables - never hardcode credentials
+  static const String _cloudName = String.fromEnvironment(
+    'CLOUDINARY_CLOUD_NAME',
+    defaultValue: 'your_cloud_name', // This will show if env var is missing
+  );
+  static const String _apiKey = String.fromEnvironment(
+    'CLOUDINARY_API_KEY',
+    defaultValue: 'your_api_key', // This will show if env var is missing
+  );
+  static const String _apiSecret = String.fromEnvironment(
+    'CLOUDINARY_API_SECRET',
+    defaultValue: 'your_api_secret', // This will show if env var is missing
+  );
+  // static const String _uploadPreset = 'your_upload_preset'; // Replace with your upload preset
 
   // Upload image to Cloudinary
   Future<String?> uploadImage(XFile imageFile) async {
     try {
-      final url = Uri.parse('https://api.cloudinary.com/v1_1/$_cloudName/image/upload');
+      // Validate environment variables
+      if (_cloudName == 'your_cloud_name' ||
+          _apiKey == 'your_api_key' ||
+          _apiSecret == 'your_api_secret') {
+        throw Exception(
+          '⚠️ SECURITY ERROR: Cloudinary credentials not properly configured. Please set environment variables.',
+        );
+      }
+
+      final url = Uri.parse(
+        'https://api.cloudinary.com/v1_1/$_cloudName/image/upload',
+      );
 
       var request = http.MultipartRequest('POST', url);
 
@@ -23,8 +43,9 @@ class CloudinaryService {
       );
 
       // Add upload parameters
-     // request.fields['upload_preset'] = _uploadPreset;
-      request.fields['folder'] = 'jenga_solutions'; // Optional: organize in folders
+      // request.fields['upload_preset'] = _uploadPreset;
+      request.fields['folder'] =
+          'jenga_solutions'; // Optional: organize in folders
 
       final response = await request.send();
 
@@ -65,7 +86,9 @@ class CloudinaryService {
       final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
       final signature = _generateSignature(publicId, timestamp);
 
-      final url = Uri.parse('https://api.cloudinary.com/v1_1/$_cloudName/image/destroy');
+      final url = Uri.parse(
+        'https://api.cloudinary.com/v1_1/$_cloudName/image/destroy',
+      );
 
       final response = await http.post(
         url,
@@ -98,7 +121,8 @@ class CloudinaryService {
   }
 
   // Get optimized image URL with transformations
-  String getOptimizedImageUrl(String originalUrl, {
+  String getOptimizedImageUrl(
+    String originalUrl, {
     int? width,
     int? height,
     String quality = 'auto',
@@ -137,5 +161,15 @@ class CloudinaryService {
       quality: 'auto',
       format: 'auto',
     );
+  }
+
+  // Check if environment variables are properly configured
+  static Map<String, String> getConfigStatus() {
+    return {
+      'cloudName': _cloudName != 'your_cloud_name' ? 'configured' : 'MISSING',
+      'apiKey': _apiKey != 'your_api_key' ? 'configured' : 'MISSING',
+      'apiSecret': _apiSecret != 'your_api_secret' ? 'configured' : 'MISSING',
+      'recommendation': 'Use SignedCloudinaryService for better security',
+    };
   }
 }

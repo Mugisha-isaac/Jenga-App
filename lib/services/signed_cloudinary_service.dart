@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:crypto/crypto.dart';
 import 'package:path/path.dart' as path;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CloudinaryException implements Exception {
   final String message;
@@ -17,19 +18,33 @@ class CloudinaryException implements Exception {
 }
 
 class SignedCloudinaryService {
-  // Use environment variables - never hardcode credentials
-  static const String _cloudName = String.fromEnvironment(
-    'CLOUDINARY_CLOUD_NAME',
-    defaultValue: 'dnfeo5ce9',
-  );
-  static const String _apiKey = String.fromEnvironment(
-    'CLOUDINARY_API_KEY',
-    defaultValue: '262367665752528',
-  );
-  static const String _apiSecret = String.fromEnvironment(
-    'CLOUDINARY_API_SECRET',
-    defaultValue: 'xpnLEFUJHLJjRdDemkn9LG2ViXs',
-  );
+  // Get credentials from environment variables first, then .env file as fallback
+  static String get _cloudName {
+    // Try environment variable first
+    const envCloudName = String.fromEnvironment('CLOUDINARY_CLOUD_NAME');
+    if (envCloudName.isNotEmpty) return envCloudName;
+
+    // Fallback to .env file
+    return dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '';
+  }
+
+  static String get _apiKey {
+    // Try environment variable first
+    const envApiKey = String.fromEnvironment('CLOUDINARY_API_KEY');
+    if (envApiKey.isNotEmpty) return envApiKey;
+
+    // Fallback to .env file
+    return dotenv.env['CLOUDINARY_API_KEY'] ?? '';
+  }
+
+  static String get _apiSecret {
+    // Try environment variable first
+    const envApiSecret = String.fromEnvironment('CLOUDINARY_API_SECRET');
+    if (envApiSecret.isNotEmpty) return envApiSecret;
+
+    // Fallback to .env file
+    return dotenv.env['CLOUDINARY_API_SECRET'] ?? '';
+  }
 
   // File size limits
   static const int maxFileSize = 10 * 1024 * 1024; // 10MB
@@ -335,6 +350,11 @@ class SignedCloudinaryService {
 
   /// Get upload configuration status
   static Map<String, dynamic> getConfigStatus() {
+    // Check where credentials are coming from
+    const envCloudName = String.fromEnvironment('CLOUDINARY_CLOUD_NAME');
+    const envApiKey = String.fromEnvironment('CLOUDINARY_API_KEY');
+    const envApiSecret = String.fromEnvironment('CLOUDINARY_API_SECRET');
+
     return {
       'cloudName': _cloudName.isNotEmpty ? 'configured' : 'missing',
       'apiKey': _apiKey.isNotEmpty ? 'configured' : 'missing',
@@ -342,6 +362,20 @@ class SignedCloudinaryService {
       'maxFileSize': '${maxFileSize ~/ (1024 * 1024)}MB',
       'allowedTypes': allowedExtensions,
       'uploadMethod': 'signed (no preset required)',
+      'credentialSource': {
+        'cloudName': envCloudName.isNotEmpty ? 'ENVIRONMENT' : '.ENV_FILE',
+        'apiKey': envApiKey.isNotEmpty ? 'ENVIRONMENT' : '.ENV_FILE',
+        'apiSecret': envApiSecret.isNotEmpty ? 'ENVIRONMENT' : '.ENV_FILE',
+      },
+      'security': {
+        'isSecure':
+            envCloudName.isNotEmpty &&
+            envApiKey.isNotEmpty &&
+            envApiSecret.isNotEmpty,
+        'recommendation': envCloudName.isNotEmpty
+            ? 'Using environment variables - SECURE'
+            : 'Using .env file - DEVELOPMENT ONLY',
+      },
     };
   }
 }
