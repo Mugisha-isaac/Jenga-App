@@ -1,9 +1,10 @@
 // lib/screens/create_solution_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import '../modules//solution_controller.dart';
-import '../widgets/image_picker_widget.dart';
-import '../models/solutionStep.dart';
+import '../modules/solution_controller.dart';
+import '../widgets/secure_image_picker_widget.dart';
+import '../models/solution.dart';
 
 class CreateSolutionScreen extends StatelessWidget {
   const CreateSolutionScreen({super.key});
@@ -19,33 +20,35 @@ class CreateSolutionScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Obx(() => controller.isLoading.value
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildBasicInfoSection(controller),
-            const SizedBox(height: 24),
-            _buildLocationSection(controller),
-            const SizedBox(height: 24),
-            _buildCategorySection(controller),
-            const SizedBox(height: 24),
-            _buildImagesSection(controller),
-            const SizedBox(height: 24),
-            _buildMaterialsSection(controller),
-            const SizedBox(height: 24),
-            _buildStepsSection(controller),
-            const SizedBox(height: 24),
-            _buildTagsSection(controller),
-            const SizedBox(height: 24),
-            _buildPremiumSection(controller),
-            const SizedBox(height: 32),
-            _buildSubmitButton(controller),
-          ],
-        ),
-      )),
+      body: Obx(
+        () => controller.isLoading.value
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildBasicInfoSection(controller),
+                    const SizedBox(height: 24),
+                    _buildLocationSection(controller),
+                    const SizedBox(height: 24),
+                    _buildCategorySection(controller),
+                    const SizedBox(height: 24),
+                    _buildImagesSection(controller),
+                    const SizedBox(height: 24),
+                    _buildMaterialsSection(controller),
+                    const SizedBox(height: 24),
+                    _buildStepsSection(controller),
+                    const SizedBox(height: 24),
+                    _buildTagsSection(controller),
+                    const SizedBox(height: 24),
+                    _buildPremiumSection(controller),
+                    const SizedBox(height: 32),
+                    _buildSubmitButton(controller),
+                  ],
+                ),
+              ),
+      ),
     );
   }
 
@@ -103,31 +106,29 @@ class CreateSolutionScreen extends StatelessWidget {
   Widget _buildCategorySection(SolutionController controller) {
     return _buildSection(
       title: 'Category',
-      child: Obx(() => DropdownButtonFormField<String>(
-        value: controller.selectedCategory.value.isEmpty
-            ? null
-            : controller.selectedCategory.value,
-        decoration: InputDecoration(
-          labelText: 'Select Category',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+      child: Obx(
+        () => DropdownButtonFormField<String>(
+          value: controller.selectedCategory.value.isEmpty
+              ? null
+              : controller.selectedCategory.value,
+          decoration: InputDecoration(
+            labelText: 'Select Category',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            filled: true,
+            fillColor: Colors.grey[50],
           ),
-          filled: true,
-          fillColor: Colors.grey[50],
+          items: controller.categories.map((category) {
+            return DropdownMenuItem(value: category, child: Text(category));
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) {
+              controller.setCategory(value);
+            }
+          },
+          validator: (value) =>
+              value == null ? 'Please select a category' : null,
         ),
-        items: controller.categories.map((category) {
-          return DropdownMenuItem(
-            value: category,
-            child: Text(category),
-          );
-        }).toList(),
-        onChanged: (value) {
-          if (value != null) {
-            controller.setCategory(value);
-          }
-        },
-        validator: (value) => value == null ? 'Please select a category' : null,
-      )),
+      ),
     );
   }
 
@@ -142,15 +143,28 @@ class CreateSolutionScreen extends StatelessWidget {
             runSpacing: 16,
             children: [
               // Add new image picker
-              ImagePickerWidget(
+              SecureImagePickerWidget(
                 onImageUploaded: (url) {
+                  if (kDebugMode) {
+                    print('Image uploaded successfully: $url');
+                  }
                   controller.addImageUrlFromUpload(url);
                   controller.endImageUpload();
                 },
                 isUploading: controller.isUploadingImages.value,
                 onStartUpload: () {
+                  if (kDebugMode) {
+                    print('Starting image upload...');
+                  }
                   controller.startImageUpload();
                 },
+                onEndUpload: () {
+                  if (kDebugMode) {
+                    print('Image upload completed');
+                  }
+                  controller.endImageUpload();
+                },
+                folder: 'jenga_solutions',
               ),
               // Display uploaded images
               ...controller.imageUrls.asMap().entries.map((entry) {
@@ -174,9 +188,10 @@ class CreateSolutionScreen extends StatelessWidget {
                             if (loadingProgress == null) return child;
                             return Center(
                               child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
                                     ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
+                                          loadingProgress.expectedTotalBytes!
                                     : null,
                               ),
                             );
@@ -234,7 +249,17 @@ class CreateSolutionScreen extends StatelessWidget {
                     fillColor: Colors.grey[50],
                   ),
                   onSubmitted: (value) {
-                    controller.addImageUrl(value);
+                    if (value.trim().isNotEmpty && _isValidImageUrl(value.trim())) {
+                      controller.addImageUrl(value.trim());
+                    } else if (value.trim().isNotEmpty) {
+                      Get.snackbar(
+                        'Invalid URL',
+                        'Please enter a valid image URL',
+                        snackPosition: SnackPosition.TOP,
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                    }
                   },
                 ),
               ),
@@ -255,10 +280,7 @@ class CreateSolutionScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Total Images: ${controller.imageUrls.length}',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Colors.grey[600], fontSize: 12),
           ),
         ],
       ),
@@ -280,15 +302,21 @@ class CreateSolutionScreen extends StatelessWidget {
           keyboardType: TextInputType.url,
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () {
-              if (urlController.text.trim().isNotEmpty) {
-                controller.addImageUrl(urlController.text.trim());
+              final url = urlController.text.trim();
+              if (url.isNotEmpty && _isValidImageUrl(url)) {
+                controller.addImageUrl(url);
                 Get.back();
+              } else if (url.isNotEmpty) {
+                Get.snackbar(
+                  'Invalid URL',
+                  'Please enter a valid image URL (jpg, png, webp)',
+                  snackPosition: SnackPosition.TOP,
+                  backgroundColor: Colors.red,
+                  colorText: Colors.white,
+                );
               }
             },
             child: const Text('Add'),
@@ -332,17 +360,19 @@ class CreateSolutionScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          Obx(() => controller.materials.isEmpty
-              ? const Text('No materials added yet')
-              : Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: controller.materials.asMap().entries.map((entry) {
-              return _buildChip(entry.value, () {
-                controller.removeMaterial(entry.key);
-              });
-            }).toList(),
-          )),
+          Obx(
+            () => controller.materials.isEmpty
+                ? const Text('No materials added yet')
+                : Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: controller.materials.asMap().entries.map((entry) {
+                      return _buildChip(entry.value, () {
+                        controller.removeMaterial(entry.key);
+                      });
+                    }).toList(),
+                  ),
+          ),
         ],
       ),
     );
@@ -383,15 +413,17 @@ class CreateSolutionScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          Obx(() => controller.steps.isEmpty
-              ? const Text('No steps added yet')
-              : Column(
-            children: controller.steps.asMap().entries.map((entry) {
-              return _buildStepCard(entry.value as SolutionStep, () {
-                controller.removeStep(entry.key);
-              });
-            }).toList(),
-          )),
+          Obx(
+            () => controller.steps.isEmpty
+                ? const Text('No steps added yet')
+                : Column(
+                    children: controller.steps.asMap().entries.map((entry) {
+                      return _buildStepCard(entry.value, () {
+                        controller.removeStep(entry.key);
+                      });
+                    }).toList(),
+                  ),
+          ),
         ],
       ),
     );
@@ -431,17 +463,19 @@ class CreateSolutionScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          Obx(() => controller.tags.isEmpty
-              ? const Text('No tags added yet')
-              : Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: controller.tags.asMap().entries.map((entry) {
-              return _buildChip(entry.value, () {
-                controller.removeTag(entry.key);
-              });
-            }).toList(),
-          )),
+          Obx(
+            () => controller.tags.isEmpty
+                ? const Text('No tags added yet')
+                : Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: controller.tags.asMap().entries.map((entry) {
+                      return _buildChip(entry.value, () {
+                        controller.removeTag(entry.key);
+                      });
+                    }).toList(),
+                  ),
+          ),
         ],
       ),
     );
@@ -452,25 +486,29 @@ class CreateSolutionScreen extends StatelessWidget {
       title: 'Premium Options',
       child: Column(
         children: [
-          Obx(() => SwitchListTile(
-            title: const Text('Premium Solution'),
-            subtitle: const Text('Charge users to access this solution'),
-            value: controller.isPremium.value,
-            onChanged: (_) => controller.togglePremium(),
-            activeColor: const Color(0xFF00BF63),
-          )),
-          Obx(() => controller.isPremium.value
-              ? Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: _buildTextField(
-              controller: controller.premiumPriceController,
-              label: 'Premium Price',
-              hint: 'Enter price in USD',
-              keyboardType: TextInputType.number,
-              required: true,
+          Obx(
+            () => SwitchListTile(
+              title: const Text('Premium Solution'),
+              subtitle: const Text('Charge users to access this solution'),
+              value: controller.isPremium.value,
+              onChanged: (_) => controller.togglePremium(),
+              activeColor: const Color(0xFF00BF63),
             ),
-          )
-              : const SizedBox()),
+          ),
+          Obx(
+            () => controller.isPremium.value
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: _buildTextField(
+                      controller: controller.premiumPriceController,
+                      label: 'Premium Price',
+                      hint: 'Enter price in USD',
+                      keyboardType: TextInputType.number,
+                      required: true,
+                    ),
+                  )
+                : const SizedBox(),
+          ),
         ],
       ),
     );
@@ -544,9 +582,7 @@ class CreateSolutionScreen extends StatelessWidget {
       decoration: InputDecoration(
         labelText: required ? '$label *' : label,
         hintText: hint,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
         fillColor: Colors.grey[50],
       ),
@@ -562,55 +598,6 @@ class CreateSolutionScreen extends StatelessWidget {
       onDeleted: onDelete,
       backgroundColor: const Color(0xFF00BF63).withOpacity(0.1),
       labelStyle: const TextStyle(color: Color(0xFF00BF63)),
-    );
-  }
-
-  Widget _buildImageChip(String url, VoidCallback onDelete) {
-    return Container(
-      height: 80,
-      width: 80,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              url,
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey.shade200,
-                  child: const Icon(Icons.image, color: Colors.grey),
-                );
-              },
-            ),
-          ),
-          Positioned(
-            top: 4,
-            right: 4,
-            child: GestureDetector(
-              onTap: onDelete,
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.close,
-                  color: Colors.white,
-                  size: 16,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -632,5 +619,25 @@ class CreateSolutionScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Validate if a URL is a valid image URL
+  bool _isValidImageUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+      if (!uri.hasScheme || !['http', 'https'].contains(uri.scheme)) {
+        return false;
+      }
+      
+      final path = uri.path.toLowerCase();
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      return allowedExtensions.any((ext) => path.endsWith('.$ext')) ||
+             path.contains(RegExp(r'\.(jpg|jpeg|png|gif|webp)(\?|$)'));
+    } catch (e) {
+      if (kDebugMode) {
+        print('URL validation error: $e');
+      }
+      return false;
+    }
   }
 }

@@ -2,10 +2,11 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../models/solution.dart';
-import '../services/solution_service.dart';
+import '../repositories/solution_repository.dart';
 import '../modules/auth_controller.dart';
+
 class SolutionController extends GetxController {
-  final SolutionService _solutionService = SolutionService();
+  final SolutionRepository _solutionRepository = Get.find<SolutionRepository>();
 
   // Form Controllers
   final titleController = TextEditingController();
@@ -37,7 +38,7 @@ class SolutionController extends GetxController {
     'Environment',
     'Business',
     'Social',
-    'Other'
+    'Other',
   ];
 
   @override
@@ -92,10 +93,12 @@ class SolutionController extends GetxController {
   // Add step to the list
   void addStep() {
     if (stepDescriptionController.text.trim().isNotEmpty) {
-      steps.add(SolutionStep(
-        stepNumber: steps.length + 1,
-        description: stepDescriptionController.text.trim(),
-      ));
+      steps.add(
+        SolutionStep(
+          stepNumber: steps.length + 1,
+          description: stepDescriptionController.text.trim(),
+        ),
+      );
       stepDescriptionController.clear();
     }
   }
@@ -186,7 +189,9 @@ class SolutionController extends GetxController {
         title: titleController.text.trim(),
         description: descriptionController.text.trim(),
         category: selectedCategory.value,
-        userId: Get.find<AuthController>().currentUser.value?.uid ?? 'user123', // Assuming you have AuthController
+        userId:
+            Get.find<AuthController>().currentUser.value?.uid ??
+            'user123', // Assuming you have AuthController
         country: countryController.text.trim(),
         city: cityController.text.trim(),
         images: imageUrls.map((url) => SolutionImage(url: url)).toList(),
@@ -194,14 +199,16 @@ class SolutionController extends GetxController {
         steps: steps.toList(),
         tags: tags.toList(),
         metrics: SolutionMetrics(), // Default metrics (all zeros)
-        premiumPrice: isPremium.value ? double.tryParse(premiumPriceController.text) : null,
+        premiumPrice: isPremium.value
+            ? double.tryParse(premiumPriceController.text)
+            : null,
         isPremium: isPremium.value,
         featured: false, // Default to false, can be changed by admin
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
 
-      await _solutionService.createSolution(solution);
+      await _solutionRepository.createSolution(solution);
 
       Get.snackbar(
         'Success',
@@ -216,7 +223,6 @@ class SolutionController extends GetxController {
 
       // Navigate back or to solutions list
       Get.back();
-
     } catch (e) {
       Get.snackbar(
         'Error',
