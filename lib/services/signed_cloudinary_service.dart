@@ -42,7 +42,7 @@ class SignedCloudinaryService {
   ];
 
   /// Generate signature for signed uploads
-  String _generateSignature(Map<String, dynamic> params, String apiSecret) {
+  String _generateSignature(Map<String, String> params, String apiSecret) {
     // Sort parameters by key
     final sortedKeys = params.keys.toList()..sort();
 
@@ -53,6 +53,17 @@ class SignedCloudinaryService {
 
     // Add API secret to the end
     final stringToSign = '$paramString$apiSecret';
+
+    if (kDebugMode) {
+      print('=== Signature Debug ===');
+      print('Sorted Keys: $sortedKeys');
+      print('Param String: $paramString');
+      print('String to Sign: $stringToSign');
+      print('API Secret Length: ${apiSecret.length}');
+      print('Expected Format: folder=X&format=auto&timestamp=Y');
+      print('Actual Format: $paramString');
+      print('=====================');
+    }
 
     // Generate SHA-1 hash
     final bytes = utf8.encode(stringToSign);
@@ -124,17 +135,24 @@ class SignedCloudinaryService {
       // Generate timestamp for signature
       final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-      // Create parameters for signature
-      final params = {
+      // Create parameters for signature - only include essential parameters
+      // The 'format' parameter should NOT be in the signature
+      final signatureParams = <String, String>{
         'folder': folder,
-        'resource_type': 'image',
-        'quality': 'auto:good',
-        'format': 'auto',
         'timestamp': timestamp.toString(),
       };
 
       // Generate signature
-      final signature = _generateSignature(params, _apiSecret);
+      final signature = _generateSignature(signatureParams, _apiSecret);
+
+      if (kDebugMode) {
+        print('=== Signature Generation Debug ===');
+        print('Timestamp: $timestamp');
+        print('Signature Params: $signatureParams');
+        print('Generated Signature: $signature');
+        print('Note: format parameter excluded from signature');
+        print('================================');
+      }
 
       // Create multipart request
       final uri = Uri.parse(
@@ -152,15 +170,14 @@ class SignedCloudinaryService {
       );
       request.files.add(multipartFile);
 
-      // Add signed upload parameters
+      // Add signed upload parameters (only include params that were signed)
       request.fields.addAll({
         'api_key': _apiKey,
         'timestamp': timestamp.toString(),
         'signature': signature,
         'folder': folder,
-        'resource_type': 'image',
-        'quality': 'auto:good',
-        'format': 'auto',
+        // Only include safe optimization parameters
+        'quality': 'auto',
       });
 
       if (kDebugMode) {

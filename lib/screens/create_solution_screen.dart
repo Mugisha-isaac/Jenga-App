@@ -16,7 +16,7 @@ class CreateSolutionScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Solution'),
-        backgroundColor: const Color(0xFF00BF63),
+        backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -249,7 +249,8 @@ class CreateSolutionScreen extends StatelessWidget {
                     fillColor: Colors.grey[50],
                   ),
                   onSubmitted: (value) {
-                    if (value.trim().isNotEmpty && _isValidImageUrl(value.trim())) {
+                    if (value.trim().isNotEmpty &&
+                        _isValidImageUrl(value.trim())) {
                       controller.addImageUrl(value.trim());
                     } else if (value.trim().isNotEmpty) {
                       Get.snackbar(
@@ -628,11 +629,11 @@ class CreateSolutionScreen extends StatelessWidget {
       if (!uri.hasScheme || !['http', 'https'].contains(uri.scheme)) {
         return false;
       }
-      
+
       final path = uri.path.toLowerCase();
       const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
       return allowedExtensions.any((ext) => path.endsWith('.$ext')) ||
-             path.contains(RegExp(r'\.(jpg|jpeg|png|gif|webp)(\?|$)'));
+          path.contains(RegExp(r'\.(jpg|jpeg|png|gif|webp)(\?|$)'));
     } catch (e) {
       if (kDebugMode) {
         print('URL validation error: $e');
