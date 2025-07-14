@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../models/solution.dart';
 import '../repositories/solution_repository.dart';
 import '../modules/auth_controller.dart';
+import '../themes/app_theme.dart';
 
 class SolutionController extends GetxController {
   final SolutionRepository _solutionRepository = Get.find<SolutionRepository>();
@@ -214,7 +215,7 @@ class SolutionController extends GetxController {
         'Success',
         'Solution created successfully!',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
+        backgroundColor: AppTheme.successColor,
         colorText: Colors.white,
       );
 
@@ -228,7 +229,7 @@ class SolutionController extends GetxController {
         'Error',
         'Failed to create solution: ${e.toString()}',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
+        backgroundColor: AppTheme.error,
         colorText: Colors.white,
       );
     } finally {

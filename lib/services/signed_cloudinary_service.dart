@@ -204,7 +204,7 @@ class SignedCloudinaryService {
           'Fields: ${Map.from(request.fields)..remove('signature')}',
         ); // Don't log signature
         print('File: ${imageFile.path}');
-        print('File Size: ${fileSize} bytes');
+        print('File Size: $fileSize bytes');
         print('Timestamp: $timestamp');
         print('================================');
       }
@@ -347,35 +347,4 @@ class SignedCloudinaryService {
       return false;
     }
   }
-
-  // /// Get upload configuration status
-  // static Map<String, dynamic> getConfigStatus() {
-  //   // Check where credentials are coming from
-  //   const envCloudName = String.fromEnvironment('CLOUDINARY_CLOUD_NAME');
-  //   const envApiKey = String.fromEnvironment('CLOUDINARY_API_KEY');
-  //   const envApiSecret = String.fromEnvironment('CLOUDINARY_API_SECRET');
-
-  //   return {
-  //     'cloudName': _cloudName.isNotEmpty ? 'configured' : 'missing',
-  //     'apiKey': _apiKey.isNotEmpty ? 'configured' : 'missing',
-  //     'apiSecret': _apiSecret.isNotEmpty ? 'configured' : 'missing',
-  //     'maxFileSize': '${maxFileSize ~/ (1024 * 1024)}MB',
-  //     'allowedTypes': allowedExtensions,
-  //     'uploadMethod': 'signed (no preset required)',
-  //     'credentialSource': {
-  //       'cloudName': envCloudName.isNotEmpty ? 'ENVIRONMENT' : '.ENV_FILE',
-  //       'apiKey': envApiKey.isNotEmpty ? 'ENVIRONMENT' : '.ENV_FILE',
-  //       'apiSecret': envApiSecret.isNotEmpty ? 'ENVIRONMENT' : '.ENV_FILE',
-  //     },
-  //     'security': {
-  //       'isSecure':
-  //           envCloudName.isNotEmpty &&
-  //           envApiKey.isNotEmpty &&
-  //           envApiSecret.isNotEmpty,
-  //       'recommendation': envCloudName.isNotEmpty
-  //           ? 'Using environment variables - SECURE'
-  //           : 'Using .env file - DEVELOPMENT ONLY',
-  //     },
-  //   };
-  // }
 }

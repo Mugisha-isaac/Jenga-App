@@ -21,7 +21,9 @@ class CreateSolutionScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Create Solution'),
         backgroundColor: AppTheme.primaryColor,
-        foregroundColor: Colors.white,
+        foregroundColor: AppTheme.onPrimary,
+        centerTitle: true,
+        titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         elevation: 0,
       ),
       body: Obx(
@@ -234,7 +236,7 @@ class CreateSolutionScreen extends StatelessWidget {
                     ),
                   ],
                 );
-              }).toList(),
+              }),
             ],
           ),
           const SizedBox(height: 16),
@@ -525,7 +527,7 @@ class CreateSolutionScreen extends StatelessWidget {
       child: ElevatedButton(
         onPressed: controller.createSolution,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF00BF63),
+          backgroundColor: AppTheme.primaryVariant,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(

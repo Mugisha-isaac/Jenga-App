@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 import '../services/signed_cloudinary_service.dart';
+import '../themes/app_theme.dart';
 
 class SecureImagePickerWidget extends StatefulWidget {
   final Function(String) onImageUploaded;
@@ -192,7 +193,7 @@ class _SecureImagePickerWidgetState extends State<SecureImagePickerWidget> {
       'Success',
       message,
       snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.green,
+      backgroundColor: AppTheme.successColor,
       colorText: Colors.white,
       duration: const Duration(seconds: 3),
     );
@@ -203,7 +204,7 @@ class _SecureImagePickerWidgetState extends State<SecureImagePickerWidget> {
       'Error',
       message,
       snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.red,
+      backgroundColor: AppTheme.error,
       colorText: Colors.white,
       duration: const Duration(seconds: 4),
     );
