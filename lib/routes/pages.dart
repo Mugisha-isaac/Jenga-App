@@ -1,22 +1,21 @@
-import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:get/get.dart';
+import 'package:jenga_app/bindings/auth_binding.dart';
+import 'package:jenga_app/bindings/create_solution_binding.dart';
 import 'package:jenga_app/bindings/home_binding.dart';
-import 'package:jenga_app/bindings/login_binding.dart';
 import 'package:jenga_app/bindings/profile_binding.dart';
-import 'package:jenga_app/bindings/register_binding.dart';
 import 'package:jenga_app/bindings/settings_binding.dart';
+import 'package:jenga_app/bindings/solution_binding.dart';
 import 'package:jenga_app/bindings/splash_binding.dart';
 import 'package:jenga_app/routes/routes.dart';
+import 'package:jenga_app/screens/create_solution_screen.dart';
+import 'package:jenga_app/screens/explore_screen.dart';
 import 'package:jenga_app/screens/home_screen.dart';
 import 'package:jenga_app/screens/login_screen.dart';
 import 'package:jenga_app/screens/profile_screen.dart';
 import 'package:jenga_app/screens/register_screen.dart';
 import 'package:jenga_app/screens/settings_screen.dart';
-import 'package:jenga_app/screens/splash_screen.dart';
-import 'package:jenga_app/screens/create_solution_screen.dart';
-import 'package:jenga_app/screens/solutions_list_screen.dart';
-import 'package:jenga_app/screens/explore_screen.dart';
 import 'package:jenga_app/screens/solution_detail_screen.dart';
-import 'package:jenga_app/bindings/solution_binding.dart';
+import 'package:jenga_app/screens/splash_screen.dart';
 
 class Pages {
   static const INITIAL = Routes.SPLASH;
@@ -30,12 +29,12 @@ class Pages {
     GetPage(
       name: Routes.LOGIN,
       page: () => const LoginScreen(),
-      binding: LoginBinding(),
+      binding: AuthBinding(),
     ),
     GetPage(
       name: Routes.REGISTER,
       page: () => const RegisterScreen(),
-      binding: RegisterBinding(),
+      binding: AuthBinding(),
     ),
     GetPage(
       name: Routes.HOME,
@@ -53,14 +52,9 @@ class Pages {
       binding: SettingsBinding(),
     ),
     GetPage(
-      name: Routes.SOLUTIONS_LIST,
-      page: () => const SolutionsListScreen(),
-      binding: SolutionBinding(),
-    ),
-    GetPage(
       name: Routes.CREATE_SOLUTION,
       page: () => const CreateSolutionScreen(),
-      binding: SolutionBinding(),
+      binding: CreateSolutionBinding(),
     ),
     GetPage(
       name: Routes.EXPLORE,
@@ -70,6 +64,7 @@ class Pages {
     GetPage(
       name: Routes.SOLUTION_DETAIL,
       page: () => const SolutionDetailScreen(),
+      binding: SolutionBinding(),
     ),
   ];
 }

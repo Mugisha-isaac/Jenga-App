@@ -36,16 +36,19 @@ class SolutionController extends GetxController {
   final RxList<Solution> solutions = <Solution>[].obs;
   final RxBool isLoadingSolutions = false.obs;
 
-  // Predefined categories
+  // New variables for filtering and search
+  final RxString selectedFilterCategory = ''.obs;
+  final RxString searchQuery = ''.obs;
+  final RxList<Solution> filteredSolutions = <Solution>[].obs;
+
+  // Categories list
   final List<String> categories = [
     'Agriculture',
-    'Technology',
-    'Healthcare',
+    'Health',
     'Education',
-    'Environment',
+    'Technology',
     'Business',
-    'Social',
-    'Other',
+    'Environment',
   ];
 
   @override
@@ -54,7 +57,19 @@ class SolutionController extends GetxController {
     // Set default values
     countryController.text = 'Rwanda';
     cityController.text = 'Kigali';
-    loadSolutions();
+    
+    // Load solutions if not already loaded
+    if (solutions.isEmpty) {
+      loadSolutions();
+    }
+    
+    // Listen to solutions changes and update filtered solutions
+    ever(solutions, (_) => _updateFilteredSolutions());
+    ever(selectedFilterCategory, (_) => _updateFilteredSolutions());
+    ever(searchQuery, (_) => _updateFilteredSolutions());
+    
+    // Initial update of filtered solutions
+    _updateFilteredSolutions();
   }
 
   @override
@@ -74,19 +89,18 @@ class SolutionController extends GetxController {
 
   // Load all solutions
   Future<void> loadSolutions() async {
+    if (isLoadingSolutions.value) return; // Prevent multiple simultaneous loads
+    
     isLoadingSolutions.value = true;
     try {
       final loadedSolutions = await _solutionRepository.getAllSolutions(
         limit: 50,
       );
       solutions.assignAll(loadedSolutions);
+      _updateFilteredSolutions();
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to load solutions: ${e.toString()}',
-        backgroundColor: AppTheme.error,
-        colorText: AppTheme.onError,
-      );
+      print('Error loading solutions: $e');
+      // Don't show error snackbar on initial load failure
     } finally {
       isLoadingSolutions.value = false;
     }
@@ -478,5 +492,61 @@ class SolutionController extends GetxController {
         colorText: Colors.white,
       );
     }
+  }
+
+  // Filter solutions by category
+  void filterByCategory(String category) {
+    selectedFilterCategory.value = category;
+  }
+
+  // Search solutions
+  void searchSolutions(String query) {
+    searchQuery.value = query;
+  }
+
+  // Update filtered solutions based on current filters
+  void _updateFilteredSolutions() {
+    List<Solution> filtered = solutions.toList();
+
+    // Apply category filter
+    if (selectedFilterCategory.value.isNotEmpty) {
+      filtered = filtered.where((solution) => 
+        solution.category.toLowerCase() == selectedFilterCategory.value.toLowerCase()
+      ).toList();
+    }
+
+    // Apply search filter
+    if (searchQuery.value.isNotEmpty) {
+      final query = searchQuery.value.toLowerCase();
+      filtered = filtered.where((solution) =>
+        solution.title.toLowerCase().contains(query) ||
+        solution.description.toLowerCase().contains(query) ||
+        solution.category.toLowerCase().contains(query) ||
+        solution.tags.any((tag) => tag.toLowerCase().contains(query))
+      ).toList();
+    }
+
+    filteredSolutions.assignAll(filtered);
+  }
+
+  // Clear all filters
+  void clearFilters() {
+    selectedFilterCategory.value = '';
+    searchQuery.value = '';
+  }
+
+  // Get featured solutions
+  List<Solution> get featuredSolutions => 
+    solutions.where((solution) => solution.featured).toList();
+
+  // Get trending solutions (non-featured)
+  List<Solution> get trendingSolutions => 
+    solutions.where((solution) => !solution.featured).toList();
+
+  // Get recent solutions
+  List<Solution> get recentSolutions {
+    final sorted = solutions.toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return sorted;
   }
 }
