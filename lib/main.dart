@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       title: 'Jenga App',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      initialRoute: Routes.SOLUTIONS_LIST,
+      initialRoute: Routes.HOME,
       getPages: Pages.routes,
       debugShowCheckedModeBanner: false,
     );

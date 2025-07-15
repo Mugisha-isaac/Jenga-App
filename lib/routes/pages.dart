@@ -14,6 +14,8 @@ import 'package:jenga_app/screens/settings_screen.dart';
 import 'package:jenga_app/screens/splash_screen.dart';
 import 'package:jenga_app/screens/create_solution_screen.dart';
 import 'package:jenga_app/screens/solutions_list_screen.dart';
+import 'package:jenga_app/screens/explore_screen.dart';
+import 'package:jenga_app/screens/solution_detail_screen.dart';
 import 'package:jenga_app/bindings/solution_binding.dart';
 
 class Pages {
@@ -59,6 +61,15 @@ class Pages {
       name: Routes.CREATE_SOLUTION,
       page: () => const CreateSolutionScreen(),
       binding: SolutionBinding(),
+    ),
+    GetPage(
+      name: Routes.EXPLORE,
+      page: () => const ExploreScreen(),
+      binding: SolutionBinding(),
+    ),
+    GetPage(
+      name: Routes.SOLUTION_DETAIL,
+      page: () => const SolutionDetailScreen(),
     ),
   ];
 }
