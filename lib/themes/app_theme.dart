@@ -33,8 +33,6 @@ class AppTheme {
       onError: onError,
       surface: surface,
       onSurface: onSurface,
-      background: background,
-      onBackground: onBackground,
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: cardBackground,
@@ -90,8 +88,6 @@ class AppTheme {
       onError: onError,
       surface: Color(0xFF1E1E1E),
       onSurface: Color(0xFFE0E0E0),
-      background: Color(0xFF121212),
-      onBackground: Color(0xFFE0E0E0),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF1E1E1E),

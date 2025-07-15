@@ -43,3 +43,19 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.production
+.env.development
+*.env
+#.env.example
+
+# API Keys and Secrets (SECURITY)
+**/cloudinary_credentials.dart
+**/api_keys.dart
+**/secrets.dart
+
+# Firebase Config (if contains sensitive data)
+**/firebase_options_prod.dart
