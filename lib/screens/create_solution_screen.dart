@@ -13,17 +13,23 @@ class CreateSolutionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ensure AuthController is available for solution creation
     Get.put(AuthController());
     final controller = Get.put(SolutionController());
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Solution'),
+        title: Obx(
+          () => Text(
+            controller.isEditMode.value ? 'Edit Solution' : 'Create Solution',
+          ),
+        ),
         backgroundColor: AppTheme.primaryColor,
-        foregroundColor: AppTheme.onPrimary,
+        foregroundColor: Colors.white,
         centerTitle: true,
-        titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        titleTextStyle: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
         elevation: 0,
       ),
       body: Obx(
@@ -54,6 +60,29 @@ class CreateSolutionScreen extends StatelessWidget {
                   ],
                 ),
               ),
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton(SolutionController controller) {
+    return SizedBox(
+      width: double.infinity,
+      child: Obx(
+        () => ElevatedButton(
+          onPressed: controller.createSolution,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF00BF63),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Text(
+            controller.isEditMode.value ? 'Update Solution' : 'Create Solution',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
     );
   }
@@ -517,27 +546,6 @@ class CreateSolutionScreen extends StatelessWidget {
                 : const SizedBox(),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSubmitButton(SolutionController controller) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: controller.createSolution,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.primaryVariant,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: const Text(
-          'Create Solution',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
       ),
     );
   }

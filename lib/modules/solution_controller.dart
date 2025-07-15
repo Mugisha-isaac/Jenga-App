@@ -30,6 +30,12 @@ class SolutionController extends GetxController {
   final RxBool isUploadingImages = false.obs;
   final RxString selectedCategory = ''.obs;
 
+  // Edit mode variables
+  final RxBool isEditMode = false.obs;
+  final Rx<Solution?> editingSolution = Rx<Solution?>(null);
+  final RxList<Solution> solutions = <Solution>[].obs;
+  final RxBool isLoadingSolutions = false.obs;
+
   // Predefined categories
   final List<String> categories = [
     'Agriculture',
@@ -48,6 +54,7 @@ class SolutionController extends GetxController {
     // Set default values
     countryController.text = 'Rwanda';
     cityController.text = 'Kigali';
+    loadSolutions();
   }
 
   @override
@@ -63,6 +70,54 @@ class SolutionController extends GetxController {
     stepDescriptionController.dispose();
     premiumPriceController.dispose();
     super.onClose();
+  }
+
+  // Load all solutions
+  Future<void> loadSolutions() async {
+    isLoadingSolutions.value = true;
+    try {
+      final loadedSolutions = await _solutionRepository.getAllSolutions(
+        limit: 50,
+      );
+      solutions.assignAll(loadedSolutions);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to load solutions: ${e.toString()}',
+        backgroundColor: AppTheme.error,
+        colorText: AppTheme.onError,
+      );
+    } finally {
+      isLoadingSolutions.value = false;
+    }
+  }
+
+  // Set edit mode with solution data
+  void setEditMode(Solution solution) {
+    isEditMode.value = true;
+    editingSolution.value = solution;
+
+    // Populate form fields
+    titleController.text = solution.title;
+    descriptionController.text = solution.description;
+    countryController.text = solution.country;
+    cityController.text = solution.city;
+    selectedCategory.value = solution.category;
+    isPremium.value = solution.isPremium;
+    premiumPriceController.text = solution.premiumPrice?.toString() ?? '';
+
+    // Populate lists
+    materials.assignAll(solution.materials);
+    tags.assignAll(solution.tags);
+    steps.assignAll(solution.steps);
+    imageUrls.assignAll(solution.images.map((img) => img.url));
+  }
+
+  // Exit edit mode
+  void exitEditMode() {
+    isEditMode.value = false;
+    editingSolution.value = null;
+    clearForm();
   }
 
   // Add material to the list
@@ -148,89 +203,212 @@ class SolutionController extends GetxController {
   // Validate form
   bool validateForm() {
     if (titleController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Title is required');
+      Get.snackbar(
+        'Error',
+        'Title is required',
+        colorText: AppTheme.onError,
+        backgroundColor: AppTheme.error,
+      );
       return false;
     }
     if (descriptionController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Description is required');
+      Get.snackbar(
+        'Error',
+        'Description is required',
+        colorText: AppTheme.onError,
+        backgroundColor: AppTheme.error,
+      );
       return false;
     }
     if (selectedCategory.value.isEmpty) {
-      Get.snackbar('Error', 'Category is required');
+      Get.snackbar(
+        'Error',
+        'Category is required',
+        colorText: AppTheme.onError,
+        backgroundColor: AppTheme.error,
+      );
       return false;
     }
     if (materials.isEmpty) {
-      Get.snackbar('Error', 'At least one material is required');
+      Get.snackbar(
+        'Error',
+        'At least one material is required',
+        colorText: AppTheme.onError,
+        backgroundColor: AppTheme.error,
+      );
       return false;
     }
     if (steps.isEmpty) {
-      Get.snackbar('Error', 'At least one step is required');
+      Get.snackbar(
+        'Error',
+        'At least one step is required',
+        colorText: AppTheme.onError,
+        backgroundColor: AppTheme.error,
+      );
       return false;
     }
     if (tags.isEmpty) {
-      Get.snackbar('Error', 'At least one tag is required');
+      Get.snackbar(
+        'Error',
+        'At least one tag is required',
+        colorText: AppTheme.onError,
+        backgroundColor: AppTheme.error,
+      );
       return false;
     }
     if (isPremium.value && premiumPriceController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Premium price is required for premium solutions');
+      Get.snackbar(
+        'Error',
+        'Premium price is required for premium solutions',
+        colorText: AppTheme.onError,
+        backgroundColor: AppTheme.error,
+      );
       return false;
     }
     return true;
   }
 
-  // Create solution
+  // Create or update solution
   Future<void> createSolution() async {
     if (!validateForm()) return;
 
     isLoading.value = true;
 
     try {
-      final solution = Solution(
-        solutionId: _generateSolutionId(),
-        title: titleController.text.trim(),
-        description: descriptionController.text.trim(),
-        category: selectedCategory.value,
-        userId:
-            Get.find<AuthController>().currentUser.value?.uid ??
-            'user123', // Assuming you have AuthController
-        country: countryController.text.trim(),
-        city: cityController.text.trim(),
-        images: imageUrls.map((url) => SolutionImage(url: url)).toList(),
-        materials: materials.toList(),
-        steps: steps.toList(),
-        tags: tags.toList(),
-        metrics: SolutionMetrics(), // Default metrics (all zeros)
-        premiumPrice: isPremium.value
-            ? double.tryParse(premiumPriceController.text)
-            : null,
-        isPremium: isPremium.value,
-        featured: false, // Default to false, can be changed by admin
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+      if (isEditMode.value && editingSolution.value != null) {
+        // Update existing solution
+        final updatedSolution = editingSolution.value!.copyWith(
+          title: titleController.text.trim(),
+          description: descriptionController.text.trim(),
+          category: selectedCategory.value,
+          country: countryController.text.trim(),
+          city: cityController.text.trim(),
+          images: imageUrls.map((url) => SolutionImage(url: url)).toList(),
+          materials: materials.toList(),
+          steps: steps.toList(),
+          tags: tags.toList(),
+          premiumPrice: isPremium.value
+              ? double.tryParse(premiumPriceController.text)
+              : null,
+          isPremium: isPremium.value,
+          updatedAt: DateTime.now(),
+        );
 
-      await _solutionRepository.createSolution(solution);
+        await _solutionRepository.updateSolution(updatedSolution);
 
-      Get.snackbar(
-        'Success',
-        'Solution created successfully!',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppTheme.successColor,
-        colorText: Colors.white,
-      );
+        Get.snackbar(
+          'Success',
+          'Solution updated successfully!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppTheme.successColor,
+          colorText: AppTheme.onSecondary,
+        );
+      } else {
+        // Create new solution
+        final solution = Solution(
+          solutionId: _generateSolutionId(),
+          title: titleController.text.trim(),
+          description: descriptionController.text.trim(),
+          category: selectedCategory.value,
+          userId:
+              Get.find<AuthController>().currentUser.value?.uid ??
+              'user123', // Assuming you have AuthController
+          country: countryController.text.trim(),
+          city: cityController.text.trim(),
+          images: imageUrls.map((url) => SolutionImage(url: url)).toList(),
+          materials: materials.toList(),
+          steps: steps.toList(),
+          tags: tags.toList(),
+          metrics: SolutionMetrics(), // Default metrics (all zeros)
+          premiumPrice: isPremium.value
+              ? double.tryParse(premiumPriceController.text)
+              : null,
+          isPremium: isPremium.value,
+          featured: false, // Default to false, can be changed by admin
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
 
-      // Clear form
+        await _solutionRepository.createSolution(solution);
+
+        Get.snackbar(
+          'Success',
+          'Solution created successfully!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppTheme.successColor,
+          colorText: AppTheme.onSecondary,
+        );
+      }
+
+      // Clear form and exit edit mode
       clearForm();
+      exitEditMode();
+
+      // Reload solutions
+      await loadSolutions();
 
       // Navigate back or to solutions list
       Get.back();
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Failed to create solution: ${e.toString()}',
+        'Failed to ${isEditMode.value ? 'update' : 'create'} solution: ${e.toString()}',
         snackPosition: SnackPosition.TOP,
         backgroundColor: AppTheme.error,
-        colorText: Colors.white,
+        colorText: AppTheme.onError,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Update solution
+  Future<void> updateSolution() async {
+    if (!validateForm() || editingSolution.value == null) return;
+
+    isLoading.value = true;
+
+    try {
+      final updatedSolution = editingSolution.value!.copyWith(
+        title: titleController.text.trim(),
+        description: descriptionController.text.trim(),
+        category: selectedCategory.value,
+        country: countryController.text.trim(),
+        city: cityController.text.trim(),
+        images: imageUrls.map((url) => SolutionImage(url: url)).toList(),
+        materials: materials.toList(),
+        steps: steps.toList(),
+        tags: tags.toList(),
+        premiumPrice: isPremium.value
+            ? double.tryParse(premiumPriceController.text)
+            : null,
+        isPremium: isPremium.value,
+        updatedAt: DateTime.now(),
+      );
+
+      await _solutionRepository.updateSolution(updatedSolution);
+
+      Get.snackbar(
+        'Success',
+        'Solution updated successfully!',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppTheme.successColor,
+        colorText: AppTheme.onSecondary,
+      );
+
+      // Clear form and exit edit mode
+      clearForm();
+      exitEditMode();
+
+      // Navigate back or to solutions list
+      Get.back();
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to update solution: ${e.toString()}',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppTheme.error,
+        colorText: AppTheme.onError,
       );
     } finally {
       isLoading.value = false;
@@ -261,6 +439,10 @@ class SolutionController extends GetxController {
     isPremium.value = false;
     isUploadingImages.value = false;
     selectedCategory.value = '';
+
+    // Reset edit mode
+    isEditMode.value = false;
+    editingSolution.value = null;
   }
 
   // Set category
@@ -273,6 +455,28 @@ class SolutionController extends GetxController {
     isPremium.value = !isPremium.value;
     if (!isPremium.value) {
       premiumPriceController.clear();
+    }
+  }
+
+  // Delete solution
+  Future<void> deleteSolution(String solutionId) async {
+    try {
+      await _solutionRepository.deleteSolution(solutionId);
+      solutions.removeWhere((s) => s.solutionId == solutionId);
+
+      Get.snackbar(
+        'Success',
+        'Solution deleted successfully',
+        backgroundColor: AppTheme.successColor,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to delete solution: ${e.toString()}',
+        backgroundColor: AppTheme.error,
+        colorText: Colors.white,
+      );
     }
   }
 }

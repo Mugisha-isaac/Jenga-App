@@ -85,6 +85,47 @@ class Solution {
       updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
+
+  // CopyWith method for creating modified copies
+  Solution copyWith({
+    String? solutionId,
+    String? title,
+    String? description,
+    String? category,
+    String? userId,
+    String? country,
+    String? city,
+    List<SolutionImage>? images,
+    List<String>? materials,
+    List<SolutionStep>? steps,
+    List<String>? tags,
+    SolutionMetrics? metrics,
+    double? premiumPrice,
+    bool? isPremium,
+    bool? featured,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Solution(
+      solutionId: solutionId ?? this.solutionId,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      userId: userId ?? this.userId,
+      country: country ?? this.country,
+      city: city ?? this.city,
+      images: images ?? this.images,
+      materials: materials ?? this.materials,
+      steps: steps ?? this.steps,
+      tags: tags ?? this.tags,
+      metrics: metrics ?? this.metrics,
+      premiumPrice: premiumPrice ?? this.premiumPrice,
+      isPremium: isPremium ?? this.isPremium,
+      featured: featured ?? this.featured,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }
 
 class SolutionImage {
