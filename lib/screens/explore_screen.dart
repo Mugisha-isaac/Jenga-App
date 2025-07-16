@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../modules/solution_controller.dart';
 import '../modules/auth_controller.dart';
+import '../modules/payment_controller.dart';
 import '../models/solution.dart';
 import '../routes/routes.dart';
 
@@ -622,9 +623,14 @@ class ExploreScreen extends StatelessWidget {
     final user = authController.currentUser.value;
     if (user == null) return false;
 
-    // For now, we'll assume all logged-in users have premium access
-    // In a real app, you'd check against a list of purchased solutions or premium subscription
-    return true;
+    // Check if user has paid for this specific solution
+    try {
+      final paymentController = Get.find<PaymentController>();
+      return paymentController.hasUserPaidForSolution(solution.solutionId);
+    } catch (e) {
+      // PaymentController not found, assume user hasn't paid
+      return false;
+    }
   }
 
   void _showPremiumModal(Solution solution) {
@@ -764,21 +770,21 @@ class ExploreScreen extends StatelessWidget {
     );
   }
 
-  void _handlePurchase(Solution solution) {
-    // TODO: Implement actual payment processing
-    // For now, show a success message
-    Get.snackbar(
-      'Purchase Successful',
-      'You now have access to this premium solution!',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-      icon: const Icon(Icons.check_circle, color: Colors.white),
-      duration: const Duration(seconds: 3),
-    );
+  void _handlePurchase(Solution solution) async {
+    // Navigate to payment screen
+    final result = await Get.toNamed(Routes.PAYMENT, arguments: solution);
 
-    // Navigate to the solution detail after purchase
-    Future.delayed(const Duration(seconds: 1), () {
+    if (result == true) {
+      // Payment successful, refresh the payment controller
+      try {
+        final paymentController = Get.find<PaymentController>();
+        paymentController.loadUserPaidSolutions();
+      } catch (e) {
+        // PaymentController not found, continue anyway
+      }
+
+      // Navigate to the solution detail after successful payment
       Get.toNamed(Routes.SOLUTION_DETAIL, arguments: solution);
-    });
+    }
   }
 }

@@ -9,4 +9,5 @@ class Routes {
   static const String CREATE_SOLUTION = '/create-solution';
   static const String EXPLORE = '/explore';
   static const String SOLUTION_DETAIL = '/solution-detail';
+  static const String PAYMENT = '/payment';
 }
