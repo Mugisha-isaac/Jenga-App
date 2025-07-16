@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../modules/solution_controller.dart';
 import '../modules/auth_controller.dart';
-import '../modules/payment_controller.dart';
 import '../models/solution.dart';
 import '../routes/routes.dart';
+import '../themes/app_theme.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
@@ -25,7 +25,7 @@ class ExploreScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: const Text(
           'Explore',
@@ -203,7 +203,7 @@ class ExploreScreen extends StatelessWidget {
     AuthController authController,
   ) {
     return GestureDetector(
-      onTap: () => _handleSolutionTap(solution, authController),
+      onTap: () => _handleSolutionTap(solution),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
@@ -217,143 +217,125 @@ class ExploreScreen extends StatelessWidget {
             ),
           ],
         ),
-        child: Stack(
+        child: Row(
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      bottomLeft: Radius.circular(16),
-                    ),
-                    image: solution.images.isNotEmpty
-                        ? DecorationImage(
-                            image: NetworkImage(solution.images.first.url),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                    color: solution.images.isEmpty
-                        ? Colors.grey.shade300
-                        : null,
-                  ),
-                  child: solution.images.isEmpty
-                      ? const Icon(
-                          Icons.lightbulb_outlined,
-                          size: 40,
-                          color: Colors.grey,
-                        )
-                      : null,
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  bottomLeft: Radius.circular(16),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                image: solution.images.isNotEmpty
+                    ? DecorationImage(
+                        image: NetworkImage(solution.images.first.url),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+                color: solution.images.isEmpty ? Colors.grey.shade300 : null,
+              ),
+              child: solution.images.isEmpty
+                  ? const Icon(
+                      Icons.lightbulb_outlined,
+                      size: 40,
+                      color: Colors.grey,
+                    )
+                  : null,
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.green.shade50,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                solution.category.toUpperCase(),
-                                style: TextStyle(
-                                  color: Colors.green.shade700,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppTheme.lightGreen,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            solution.category.toUpperCase(),
+                            style: TextStyle(
+                              color: AppTheme.primaryColor,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        if (solution.isPremium)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              'PREMIUM',
+                              style: TextStyle(
+                                color: Colors.amber.shade800,
+                                fontSize: 8,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const Spacer(),
-                            if (solution.isPremium)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.amber.shade100,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  'PREMIUM',
-                                  style: TextStyle(
-                                    color: Colors.amber.shade800,
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          solution.title,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          solution.description,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade600,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        if (solution.isPremium) ...[
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.attach_money,
-                                size: 16,
-                                color: Colors.amber.shade700,
-                              ),
-                              Text(
-                                '\$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.amber.shade700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
                       ],
                     ),
-                  ),
-                ),
-              ],
-            ),
-            // Premium overlay
-            if (solution.isPremium &&
-                !_hasUserPaidForSolution(solution, authController))
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Center(
-                  child: Icon(Icons.lock, color: Colors.white, size: 32),
+                    const SizedBox(height: 8),
+                    Text(
+                      solution.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      solution.description,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (solution.isPremium) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.attach_money,
+                            size: 16,
+                            color: Colors.amber.shade700,
+                          ),
+                          Text(
+                            '\$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.amber.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
                 ),
               ),
+            ),
           ],
         ),
       ),
@@ -415,7 +397,7 @@ class ExploreScreen extends StatelessWidget {
 
   Widget _buildSolutionCard(Solution solution, AuthController authController) {
     return GestureDetector(
-      onTap: () => _handleSolutionTap(solution, authController),
+      onTap: () => _handleSolutionTap(solution),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
@@ -429,362 +411,163 @@ class ExploreScreen extends StatelessWidget {
             ),
           ],
         ),
-        child: Stack(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
-                    ),
-                    image: solution.images.isNotEmpty
-                        ? DecorationImage(
-                            image: NetworkImage(solution.images.first.url),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                    color: solution.images.isEmpty
-                        ? Colors.grey.shade300
-                        : null,
-                  ),
-                  child: solution.images.isEmpty
-                      ? const Center(
-                          child: Icon(
-                            Icons.lightbulb_outlined,
-                            size: 60,
-                            color: Colors.grey,
-                          ),
-                        )
-                      : null,
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(16),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                image: solution.images.isNotEmpty
+                    ? DecorationImage(
+                        image: NetworkImage(solution.images.first.url),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+                color: solution.images.isEmpty ? Colors.grey.shade300 : null,
+              ),
+              child: solution.images.isEmpty
+                  ? const Center(
+                      child: Icon(
+                        Icons.lightbulb_outlined,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
+                    )
+                  : null,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.green.shade50,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              solution.category.toUpperCase(),
-                              style: TextStyle(
-                                color: Colors.green.shade700,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.lightGreen,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          solution.category.toUpperCase(),
+                          style: TextStyle(
+                            color: AppTheme.primaryColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
                           ),
-                          const Spacer(),
-                          if (solution.featured)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.orange.shade100,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                'FEATURED',
-                                style: TextStyle(
-                                  color: Colors.orange.shade800,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          if (solution.isPremium)
-                            Container(
-                              margin: const EdgeInsets.only(left: 8),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.amber.shade100,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                'PREMIUM',
-                                style: TextStyle(
-                                  color: Colors.amber.shade800,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        solution.title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        solution.description,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade600,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 16,
-                            color: Colors.grey.shade600,
+                      const Spacer(),
+                      if (solution.featured)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${solution.city}, ${solution.country}',
+                          decoration: BoxDecoration(
+                            color: Colors.orange.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            'FEATURED',
                             style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: Colors.orange.shade800,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const Spacer(),
-                          if (solution.isPremium)
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.attach_money,
-                                  size: 16,
-                                  color: Colors.amber.shade700,
-                                ),
-                                Text(
-                                  '\$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.amber.shade700,
-                                  ),
-                                ),
-                              ],
+                        ),
+                      if (solution.isPremium)
+                        Container(
+                          margin: const EdgeInsets.only(left: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            'PREMIUM',
+                            style: TextStyle(
+                              color: Colors.amber.shade800,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
                             ),
-                        ],
-                      ),
+                          ),
+                        ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            // Premium overlay
-            if (solution.isPremium &&
-                !_hasUserPaidForSolution(solution, authController))
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Center(
-                  child: Icon(Icons.lock, color: Colors.white, size: 48),
-                ),
+                  const SizedBox(height: 8),
+                  Text(
+                    solution.title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    solution.description,
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        size: 16,
+                        color: Colors.grey.shade600,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${solution.city}, ${solution.country}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (solution.isPremium)
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.attach_money,
+                              size: 16,
+                              color: Colors.amber.shade700,
+                            ),
+                            Text(
+                              '\$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.amber.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ],
               ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  void _handleSolutionTap(Solution solution, AuthController authController) {
-    if (solution.isPremium &&
-        !_hasUserPaidForSolution(solution, authController)) {
-      _showPremiumModal(solution);
-    } else {
-      Get.toNamed(Routes.SOLUTION_DETAIL, arguments: solution);
-    }
-  }
-
-  bool _hasUserPaidForSolution(
-    Solution solution,
-    AuthController authController,
-  ) {
-    // Check if user has premium subscription or has purchased this specific solution
-    final user = authController.currentUser.value;
-    if (user == null) return false;
-
-    // Check if user has paid for this specific solution
-    try {
-      final paymentController = Get.find<PaymentController>();
-      return paymentController.hasUserPaidForSolution(solution.solutionId);
-    } catch (e) {
-      // PaymentController not found, assume user hasn't paid
-      return false;
-    }
-  }
-
-  void _showPremiumModal(Solution solution) {
-    Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.amber.shade100,
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                child: Icon(Icons.lock, size: 40, color: Colors.amber.shade700),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Premium Solution',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'This solution requires premium access to view full details and implementation steps.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade600,
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                solution.title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.amber.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.amber.shade200),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.attach_money,
-                      color: Colors.amber.shade700,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '\$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.amber.shade700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Get.back(),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.grey.shade700,
-                        side: BorderSide(color: Colors.grey.shade300),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Get.back();
-                        _handlePurchase(solution);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber.shade600,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        'Purchase',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-      barrierDismissible: false,
-    );
-  }
-
-  void _handlePurchase(Solution solution) async {
-    // Navigate to payment screen
-    final result = await Get.toNamed(Routes.PAYMENT, arguments: solution);
-
-    if (result == true) {
-      // Payment successful, refresh the payment controller
-      try {
-        final paymentController = Get.find<PaymentController>();
-        paymentController.loadUserPaidSolutions();
-      } catch (e) {
-        // PaymentController not found, continue anyway
-      }
-
-      // Navigate to the solution detail after successful payment
-      Get.toNamed(Routes.SOLUTION_DETAIL, arguments: solution);
-    }
+  void _handleSolutionTap(Solution solution) {
+    Get.toNamed(Routes.SOLUTION_DETAIL, arguments: solution);
   }
 }
