@@ -87,13 +87,14 @@ class ExploreScreen extends StatelessWidget {
 
     return Container(
       height: 50,
-      child: Obx(() {
-        return ListView.builder(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: categories.length,
-          itemBuilder: (context, index) {
-            final category = categories[index];
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          final category = categories[index];
+
+          return Obx(() {
             final isSelected =
                 controller.selectedFilterCategory.value == category ||
                 (controller.selectedFilterCategory.value.isEmpty &&
@@ -127,9 +128,9 @@ class ExploreScreen extends StatelessWidget {
                 ),
               ),
             );
-          },
-        );
-      }),
+          });
+        },
+      ),
     );
   }
 
@@ -322,7 +323,7 @@ class ExploreScreen extends StatelessWidget {
                             color: Colors.amber.shade700,
                           ),
                           Text(
-                            '\${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
+                            '${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -547,7 +548,7 @@ class ExploreScreen extends StatelessWidget {
                               color: Colors.amber.shade700,
                             ),
                             Text(
-                              '\$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
+                              '${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
