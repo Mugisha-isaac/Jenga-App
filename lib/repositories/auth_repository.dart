@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:jenga_app/models/user.dart' as UserModel;
+import 'package:jenga_app/models/user.dart' as user_model;
 import 'package:jenga_app/providers/firebase_auth_provider.dart';
 import 'package:jenga_app/providers/firestore_user_provider.dart';
 
@@ -12,7 +12,7 @@ class AuthRepository {
     required this.firestoreUserProvider,
   });
 
-  Future<UserModel.User> signInWithEmailAndPassword(
+  Future<user_model.User> signInWithEmailAndPassword(
     String email,
     String password,
   ) async {
@@ -26,7 +26,7 @@ class AuthRepository {
     return user;
   }
 
-  Future<UserModel.User> createUserWithEmailAndPassword(
+  Future<user_model.User> createUserWithEmailAndPassword(
     String email,
     String password,
     String fullName,
@@ -35,7 +35,7 @@ class AuthRepository {
     final userCredential = await firebaseAuthProvider
         .createUserWithEmailAndPassword(email, password);
 
-    final user = UserModel.User(
+    final user = user_model.User(
       id: userCredential.user!.uid,
       email: email,
       fullName: fullName,

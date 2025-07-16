@@ -7,7 +7,7 @@ import '../modules/auth_controller.dart';
 import '../themes/app_theme.dart';
 
 class SolutionController extends GetxController {
-  final SolutionRepository _solutionRepository = Get.find<SolutionRepository>();
+  late final SolutionRepository _solutionRepository;
 
   // Form Controllers
   final titleController = TextEditingController();
@@ -54,20 +54,22 @@ class SolutionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _solutionRepository = Get.find<SolutionRepository>();
+
     // Set default values
     countryController.text = 'Rwanda';
     cityController.text = 'Kigali';
-    
+
     // Load solutions if not already loaded
     if (solutions.isEmpty) {
       loadSolutions();
     }
-    
+
     // Listen to solutions changes and update filtered solutions
     ever(solutions, (_) => _updateFilteredSolutions());
     ever(selectedFilterCategory, (_) => _updateFilteredSolutions());
     ever(searchQuery, (_) => _updateFilteredSolutions());
-    
+
     // Initial update of filtered solutions
     _updateFilteredSolutions();
   }
@@ -90,7 +92,7 @@ class SolutionController extends GetxController {
   // Load all solutions
   Future<void> loadSolutions() async {
     if (isLoadingSolutions.value) return; // Prevent multiple simultaneous loads
-    
+
     isLoadingSolutions.value = true;
     try {
       final loadedSolutions = await _solutionRepository.getAllSolutions(
@@ -99,7 +101,7 @@ class SolutionController extends GetxController {
       solutions.assignAll(loadedSolutions);
       _updateFilteredSolutions();
     } catch (e) {
-      print('Error loading solutions: $e');
+      // Error loading solutions - log silently or handle as needed
       // Don't show error snackbar on initial load failure
     } finally {
       isLoadingSolutions.value = false;
@@ -510,20 +512,27 @@ class SolutionController extends GetxController {
 
     // Apply category filter
     if (selectedFilterCategory.value.isNotEmpty) {
-      filtered = filtered.where((solution) => 
-        solution.category.toLowerCase() == selectedFilterCategory.value.toLowerCase()
-      ).toList();
+      filtered = filtered
+          .where(
+            (solution) =>
+                solution.category.toLowerCase() ==
+                selectedFilterCategory.value.toLowerCase(),
+          )
+          .toList();
     }
 
     // Apply search filter
     if (searchQuery.value.isNotEmpty) {
       final query = searchQuery.value.toLowerCase();
-      filtered = filtered.where((solution) =>
-        solution.title.toLowerCase().contains(query) ||
-        solution.description.toLowerCase().contains(query) ||
-        solution.category.toLowerCase().contains(query) ||
-        solution.tags.any((tag) => tag.toLowerCase().contains(query))
-      ).toList();
+      filtered = filtered
+          .where(
+            (solution) =>
+                solution.title.toLowerCase().contains(query) ||
+                solution.description.toLowerCase().contains(query) ||
+                solution.category.toLowerCase().contains(query) ||
+                solution.tags.any((tag) => tag.toLowerCase().contains(query)),
+          )
+          .toList();
     }
 
     filteredSolutions.assignAll(filtered);
@@ -536,12 +545,12 @@ class SolutionController extends GetxController {
   }
 
   // Get featured solutions
-  List<Solution> get featuredSolutions => 
-    solutions.where((solution) => solution.featured).toList();
+  List<Solution> get featuredSolutions =>
+      solutions.where((solution) => solution.featured).toList();
 
   // Get trending solutions (non-featured)
-  List<Solution> get trendingSolutions => 
-    solutions.where((solution) => !solution.featured).toList();
+  List<Solution> get trendingSolutions =>
+      solutions.where((solution) => !solution.featured).toList();
 
   // Get recent solutions
   List<Solution> get recentSolutions {

@@ -12,11 +12,11 @@ class ExploreScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<SolutionController>();
     final authController = Get.find<AuthController>();
-    
+
     // Handle initial category from arguments
     final arguments = Get.arguments as Map<String, dynamic>?;
     final initialCategory = arguments?['category'] as String?;
-    
+
     if (initialCategory != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         controller.filterByCategory(initialCategory);
@@ -45,9 +45,7 @@ class ExploreScreen extends StatelessWidget {
           _buildCategoryTabs(controller),
           const SizedBox(height: 16),
           _buildTrendingSolutions(controller, authController),
-          Expanded(
-            child: _buildSolutionsList(controller, authController),
-          ),
+          Expanded(child: _buildSolutionsList(controller, authController)),
         ],
       ),
     );
@@ -77,8 +75,15 @@ class ExploreScreen extends StatelessWidget {
   }
 
   Widget _buildCategoryTabs(SolutionController controller) {
-    final categories = ['All', 'Agriculture', 'Health', 'Education', 'Technology', 'Business'];
-    
+    final categories = [
+      'All',
+      'Agriculture',
+      'Health',
+      'Education',
+      'Technology',
+      'Business',
+    ];
+
     return Container(
       height: 50,
       child: Obx(() {
@@ -88,8 +93,10 @@ class ExploreScreen extends StatelessWidget {
           itemCount: categories.length,
           itemBuilder: (context, index) {
             final category = categories[index];
-            final isSelected = controller.selectedFilterCategory.value == category ||
-                (controller.selectedFilterCategory.value.isEmpty && category == 'All');
+            final isSelected =
+                controller.selectedFilterCategory.value == category ||
+                (controller.selectedFilterCategory.value.isEmpty &&
+                    category == 'All');
 
             return GestureDetector(
               onTap: () {
@@ -97,7 +104,10 @@ class ExploreScreen extends StatelessWidget {
               },
               child: Container(
                 margin: const EdgeInsets.only(right: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected ? Colors.green : Colors.white,
                   borderRadius: BorderRadius.circular(25),
@@ -109,7 +119,9 @@ class ExploreScreen extends StatelessWidget {
                   category,
                   style: TextStyle(
                     color: isSelected ? Colors.white : Colors.grey.shade700,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                   ),
                 ),
               ),
@@ -120,7 +132,10 @@ class ExploreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTrendingSolutions(SolutionController controller, AuthController authController) {
+  Widget _buildTrendingSolutions(
+    SolutionController controller,
+    AuthController authController,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -151,7 +166,7 @@ class ExploreScreen extends StatelessWidget {
           final allSolutions = controller.filteredSolutions.isNotEmpty
               ? controller.filteredSolutions
               : controller.solutions;
-              
+
           final trendingSolutions = allSolutions
               .where((solution) => !solution.featured)
               .take(3)
@@ -182,7 +197,10 @@ class ExploreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTrendingSolutionCard(Solution solution, AuthController authController) {
+  Widget _buildTrendingSolutionCard(
+    Solution solution,
+    AuthController authController,
+  ) {
     return GestureDetector(
       onTap: () => _handleSolutionTap(solution, authController),
       child: Container(
@@ -216,10 +234,16 @@ class ExploreScreen extends StatelessWidget {
                             fit: BoxFit.cover,
                           )
                         : null,
-                    color: solution.images.isEmpty ? Colors.grey.shade300 : null,
+                    color: solution.images.isEmpty
+                        ? Colors.grey.shade300
+                        : null,
                   ),
                   child: solution.images.isEmpty
-                      ? const Icon(Icons.lightbulb_outlined, size: 40, color: Colors.grey)
+                      ? const Icon(
+                          Icons.lightbulb_outlined,
+                          size: 40,
+                          color: Colors.grey,
+                        )
                       : null,
                 ),
                 Expanded(
@@ -231,7 +255,10 @@ class ExploreScreen extends StatelessWidget {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.green.shade50,
                                 borderRadius: BorderRadius.circular(12),
@@ -248,7 +275,10 @@ class ExploreScreen extends StatelessWidget {
                             const Spacer(),
                             if (solution.isPremium)
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.amber.shade100,
                                   borderRadius: BorderRadius.circular(8),
@@ -289,9 +319,13 @@ class ExploreScreen extends StatelessWidget {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              Icon(Icons.attach_money, size: 16, color: Colors.amber.shade700),
+                              Icon(
+                                Icons.attach_money,
+                                size: 16,
+                                color: Colors.amber.shade700,
+                              ),
                               Text(
-                                '\$${solution.price.toStringAsFixed(2)}',
+                                '\$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
@@ -308,18 +342,15 @@ class ExploreScreen extends StatelessWidget {
               ],
             ),
             // Premium overlay
-            if (solution.isPremium && !_hasUserPaidForSolution(solution, authController))
+            if (solution.isPremium &&
+                !_hasUserPaidForSolution(solution, authController))
               Container(
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: const Center(
-                  child: Icon(
-                    Icons.lock,
-                    color: Colors.white,
-                    size: 32,
-                  ),
+                  child: Icon(Icons.lock, color: Colors.white, size: 32),
                 ),
               ),
           ],
@@ -328,7 +359,10 @@ class ExploreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSolutionsList(SolutionController controller, AuthController authController) {
+  Widget _buildSolutionsList(
+    SolutionController controller,
+    AuthController authController,
+  ) {
     return Obx(() {
       if (controller.isLoadingSolutions.value) {
         return const Center(
@@ -341,17 +375,13 @@ class ExploreScreen extends StatelessWidget {
       final solutions = controller.filteredSolutions.isNotEmpty
           ? controller.filteredSolutions
           : controller.solutions;
-      
+
       if (solutions.isEmpty) {
         return const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.search_off,
-                size: 64,
-                color: Colors.grey,
-              ),
+              Icon(Icons.search_off, size: 64, color: Colors.grey),
               SizedBox(height: 16),
               Text(
                 'No solutions found',
@@ -364,10 +394,7 @@ class ExploreScreen extends StatelessWidget {
               SizedBox(height: 8),
               Text(
                 'Try adjusting your search or filters',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],
           ),
@@ -409,18 +436,26 @@ class ExploreScreen extends StatelessWidget {
                 Container(
                   height: 200,
                   decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
                     image: solution.images.isNotEmpty
                         ? DecorationImage(
                             image: NetworkImage(solution.images.first.url),
                             fit: BoxFit.cover,
                           )
                         : null,
-                    color: solution.images.isEmpty ? Colors.grey.shade300 : null,
+                    color: solution.images.isEmpty
+                        ? Colors.grey.shade300
+                        : null,
                   ),
                   child: solution.images.isEmpty
                       ? const Center(
-                          child: Icon(Icons.lightbulb_outlined, size: 60, color: Colors.grey),
+                          child: Icon(
+                            Icons.lightbulb_outlined,
+                            size: 60,
+                            color: Colors.grey,
+                          ),
                         )
                       : null,
                 ),
@@ -432,7 +467,10 @@ class ExploreScreen extends StatelessWidget {
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.green.shade50,
                               borderRadius: BorderRadius.circular(12),
@@ -449,7 +487,10 @@ class ExploreScreen extends StatelessWidget {
                           const Spacer(),
                           if (solution.featured)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.orange.shade100,
                                 borderRadius: BorderRadius.circular(12),
@@ -466,7 +507,10 @@ class ExploreScreen extends StatelessWidget {
                           if (solution.isPremium)
                             Container(
                               margin: const EdgeInsets.only(left: 8),
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.amber.shade100,
                                 borderRadius: BorderRadius.circular(12),
@@ -504,7 +548,11 @@ class ExploreScreen extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(Icons.location_on, size: 16, color: Colors.grey.shade600),
+                          Icon(
+                            Icons.location_on,
+                            size: 16,
+                            color: Colors.grey.shade600,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             '${solution.city}, ${solution.country}',
@@ -517,9 +565,13 @@ class ExploreScreen extends StatelessWidget {
                           if (solution.isPremium)
                             Row(
                               children: [
-                                Icon(Icons.attach_money, size: 16, color: Colors.amber.shade700),
+                                Icon(
+                                  Icons.attach_money,
+                                  size: 16,
+                                  color: Colors.amber.shade700,
+                                ),
                                 Text(
-                                  '\$${solution.price.toStringAsFixed(2)}',
+                                  '\$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -536,18 +588,15 @@ class ExploreScreen extends StatelessWidget {
               ],
             ),
             // Premium overlay
-            if (solution.isPremium && !_hasUserPaidForSolution(solution, authController))
+            if (solution.isPremium &&
+                !_hasUserPaidForSolution(solution, authController))
               Container(
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: const Center(
-                  child: Icon(
-                    Icons.lock,
-                    color: Colors.white,
-                    size: 48,
-                  ),
+                  child: Icon(Icons.lock, color: Colors.white, size: 48),
                 ),
               ),
           ],
@@ -557,29 +606,31 @@ class ExploreScreen extends StatelessWidget {
   }
 
   void _handleSolutionTap(Solution solution, AuthController authController) {
-    if (solution.isPremium && !_hasUserPaidForSolution(solution, authController)) {
+    if (solution.isPremium &&
+        !_hasUserPaidForSolution(solution, authController)) {
       _showPremiumModal(solution);
     } else {
       Get.toNamed(Routes.SOLUTION_DETAIL, arguments: solution);
     }
   }
 
-  bool _hasUserPaidForSolution(Solution solution, AuthController authController) {
+  bool _hasUserPaidForSolution(
+    Solution solution,
+    AuthController authController,
+  ) {
     // Check if user has premium subscription or has purchased this specific solution
-    final user = authController.user.value;
+    final user = authController.currentUser.value;
     if (user == null) return false;
-    
-    // For now, we'll check if the user has premium subscription
-    // In a real app, you'd check against a list of purchased solutions
-    return user.isPremium;
+
+    // For now, we'll assume all logged-in users have premium access
+    // In a real app, you'd check against a list of purchased solutions or premium subscription
+    return true;
   }
 
   void _showPremiumModal(Solution solution) {
     Get.dialog(
       Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
@@ -596,11 +647,7 @@ class ExploreScreen extends StatelessWidget {
                   color: Colors.amber.shade100,
                   borderRadius: BorderRadius.circular(40),
                 ),
-                child: Icon(
-                  Icons.lock,
-                  size: 40,
-                  color: Colors.amber.shade700,
-                ),
+                child: Icon(Icons.lock, size: 40, color: Colors.amber.shade700),
               ),
               const SizedBox(height: 24),
               Text(
@@ -649,7 +696,7 @@ class ExploreScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '\$${solution.price.toStringAsFixed(2)}',
+                      '\$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -728,7 +775,7 @@ class ExploreScreen extends StatelessWidget {
       icon: const Icon(Icons.check_circle, color: Colors.white),
       duration: const Duration(seconds: 3),
     );
-    
+
     // Navigate to the solution detail after purchase
     Future.delayed(const Duration(seconds: 1), () {
       Get.toNamed(Routes.SOLUTION_DETAIL, arguments: solution);

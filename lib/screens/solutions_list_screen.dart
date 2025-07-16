@@ -498,7 +498,7 @@ class SolutionsListScreen extends StatelessWidget {
                               ],
                             ),
                           );
-                        }).toList(),
+                        }),
                         if (solution.steps.length > 3)
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
@@ -760,7 +760,7 @@ class SolutionsListScreen extends StatelessWidget {
                     ],
                   ),
                 );
-              }).toList(),
+              }),
             ],
           ),
         ),
