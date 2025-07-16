@@ -21,6 +21,14 @@ class AppTheme {
   static const Color successColor = Color(0xFF00C853);
   static const Color lightGreen = Color(0xFFE8F5E8);
 
+  // Premium overlay color with opacity
+  static const Color premiumOverlayColor = Color(
+    0x88000000,
+  ); // Black with 53% opacity
+  static const Color premiumOverlayColorLight = Color(
+    0x6600C853,
+  ); // Green with 40% opacity
+
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     colorScheme: const ColorScheme(

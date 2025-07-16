@@ -585,7 +585,7 @@ class SolutionDetailScreen extends StatelessWidget {
   Widget _buildFullScreenPremiumOverlay(Solution solution) {
     return Positioned.fill(
       child: Container(
-        color: AppTheme.primaryColor.withOpacity(0.95),
+        color: AppTheme.premiumOverlayColorLight,
         child: Center(
           child: Container(
             margin: const EdgeInsets.all(32),
@@ -595,7 +595,7 @@ class SolutionDetailScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withOpacity(0.15),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -607,7 +607,7 @@ class SolutionDetailScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withOpacity(0.1),
+                    color: AppTheme.lightGreen,
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: Icon(

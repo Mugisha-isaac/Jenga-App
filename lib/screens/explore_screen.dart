@@ -322,7 +322,7 @@ class ExploreScreen extends StatelessWidget {
                             color: Colors.amber.shade700,
                           ),
                           Text(
-                            '\$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
+                            '\${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
