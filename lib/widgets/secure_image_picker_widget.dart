@@ -290,7 +290,7 @@ class _SecureImagePickerWidgetState extends State<SecureImagePickerWidget> {
         border: Border.all(color: Colors.grey.shade300, width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:(0.1)),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 1),

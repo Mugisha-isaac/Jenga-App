@@ -85,7 +85,8 @@ class ExploreScreen extends StatelessWidget {
       'Business',
     ];
 
-    return Container(
+
+    return SizedBox(
       height: 50,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -212,7 +213,7 @@ class ExploreScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha:(0.08)),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -406,7 +407,7 @@ class ExploreScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha:(0.08)),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
