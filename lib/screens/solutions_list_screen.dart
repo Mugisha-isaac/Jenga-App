@@ -145,7 +145,7 @@ class SolutionsListScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withAlpha((0.08 * 255).round()),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -234,10 +234,10 @@ class SolutionsListScreen extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryColor.withOpacity(0.1),
+                        color: AppTheme.primaryColor.withValues(alpha:(0.1)),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: AppTheme.primaryColor.withOpacity(0.3),
+                          color: AppTheme.primaryColor.withValues(alpha:(0.3)),
                           width: 1,
                         ),
                       ),
@@ -280,7 +280,7 @@ class SolutionsListScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.amber.withOpacity(0.3),
+                              color: Colors.amber.withValues(alpha:(0.3)),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -512,11 +512,11 @@ class SolutionsListScreen extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.primaryColor.withOpacity(0.1),
+                                  color: AppTheme.primaryColor.withValues(alpha:(0.1)),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: AppTheme.primaryColor.withOpacity(
-                                      0.3,
+                                    color: AppTheme.primaryColor.withValues(alpha:(
+                                      0.3),
                                     ),
                                     width: 1,
                                   ),

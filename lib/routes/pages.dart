@@ -17,6 +17,8 @@ import 'package:jenga_app/screens/register_screen.dart';
 import 'package:jenga_app/screens/settings_screen.dart';
 import 'package:jenga_app/screens/solution_detail_screen.dart';
 import 'package:jenga_app/screens/splash_screen.dart';
+import 'package:jenga_app/screens/welcome_screen.dart';
+
 
 class Pages {
   static const INITIAL = Routes.SPLASH;
@@ -27,6 +29,12 @@ class Pages {
       page: () => const SplashScreen(),
       binding: SplashBinding(),
     ),
+
+    GetPage(
+      name: Routes.WELCOME,
+      page: () => const WelcomeScreen(),
+  ),
+
     GetPage(
       name: Routes.LOGIN,
       page: () => const LoginScreen(),

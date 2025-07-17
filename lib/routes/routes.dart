@@ -10,4 +10,5 @@ class Routes {
   static const String EXPLORE = '/explore';
   static const String SOLUTION_DETAIL = '/solution-detail';
   static const String PAYMENT = '/payment';
+  static const String WELCOME = '/welcome';
 }

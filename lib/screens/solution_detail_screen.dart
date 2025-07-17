@@ -81,7 +81,7 @@ class SolutionDetailScreen extends StatelessWidget {
                   color: AppTheme.lightGreen,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: AppTheme.primaryColor.withOpacity(0.3),
+                    color: AppTheme.primaryColor.withValues(alpha:(0.3)),
                   ),
                 ),
                 child: Text(
@@ -184,7 +184,7 @@ class SolutionDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:(0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -246,7 +246,7 @@ class SolutionDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:(0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -309,7 +309,7 @@ class SolutionDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:(0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -381,7 +381,7 @@ class SolutionDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:(0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -482,7 +482,7 @@ class SolutionDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:(0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -595,7 +595,7 @@ class SolutionDetailScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
+                  color: Colors.black.withAlpha((0.5 * 255).toInt()),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
