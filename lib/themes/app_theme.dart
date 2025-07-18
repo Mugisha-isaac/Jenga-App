@@ -21,6 +21,14 @@ class AppTheme {
   static const Color successColor = Color(0xFF00C853);
   static const Color lightGreen = Color(0xFFE8F5E8);
 
+  // Premium overlay color with opacity
+  static const Color premiumOverlayColor = Color(
+    0x88000000,
+  ); // Black with 53% opacity
+  static const Color premiumOverlayColorLight = Color(
+    0x6600C853,
+  ); // Green with 40% opacity
+
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     colorScheme: const ColorScheme(
@@ -33,8 +41,6 @@ class AppTheme {
       onError: onError,
       surface: surface,
       onSurface: onSurface,
-      background: background,
-      onBackground: onBackground,
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: cardBackground,
@@ -55,7 +61,7 @@ class AppTheme {
       color: cardBackground,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      shadowColor: Colors.black.withOpacity(0.1),
+      shadowColor: Colors.black.withValues(alpha:(0.1)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
@@ -90,8 +96,6 @@ class AppTheme {
       onError: onError,
       surface: Color(0xFF1E1E1E),
       onSurface: Color(0xFFE0E0E0),
-      background: Color(0xFF121212),
-      onBackground: Color(0xFFE0E0E0),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF1E1E1E),
@@ -103,7 +107,7 @@ class AppTheme {
       color: const Color(0xFF1E1E1E),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      shadowColor: Colors.black.withOpacity(0.3),
+      shadowColor: Colors.black.withValues(alpha:(0.3)),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(

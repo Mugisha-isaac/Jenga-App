@@ -1,11 +1,14 @@
-abstract class Routes {
-  static const SPLASH = '/splash';
-  static const LOGIN = '/login';
-  static const REGISTER = '/register';
-  static const HOME = '/home';
-  static const PROFILE = '/profile';
-  static const SETTINGS = '/settings';
-  static const EXPLORE = '/explore';
-  static const SOLUTION_DETAIL = '/solution-detail';
-  static const CREATE_SOLUTION = '/create-solution';
+class Routes {
+  static const String SPLASH = '/splash';
+  static const String LOGIN = '/login';
+  static const String REGISTER = '/register';
+  static const String HOME = '/home';
+  static const String PROFILE = '/profile';
+  static const String SETTINGS = '/settings';
+  static const String SOLUTIONS_LIST = '/solutions-list';
+  static const String CREATE_SOLUTION = '/create-solution';
+  static const String EXPLORE = '/explore';
+  static const String SOLUTION_DETAIL = '/solution-detail';
+  static const String PAYMENT = '/payment';
+  static const String WELCOME = '/welcome';
 }
