@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:jenga_app/routes/routes.dart';
+import 'package:jenga_app/services/preference_service.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -67,8 +70,12 @@ class OnboardingScreen extends StatelessWidget {
               const Spacer(),
               _CustomButton(
                 text: 'Next',
-                onPressed: () {
-                  },
+                onPressed: () async {
+                  // Mark onboarding as completed
+                  await PreferenceService.instance.setOnboardingCompleted();
+                  // Navigate to login screen
+                  Get.offNamed(Routes.LOGIN);
+                },
               ),
             ],
           ),
