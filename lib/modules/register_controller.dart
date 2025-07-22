@@ -27,16 +27,28 @@ class RegisterController extends GetxController {
       isLoading.value = true;
 
       try {
-        // TODO: Implement registration logic
+        // TODO: Implement actual Firebase registration logic
+        // For now, simulate successful registration
         await Future.delayed(const Duration(seconds: 2));
 
+        // Navigate to home and clear the navigation stack
+        // This ensures users can't go back to registration after successful signup
         Get.offAllNamed(Routes.HOME);
+        
+        Get.snackbar(
+          'Success',
+          'Welcome to Jenga! Your account has been created successfully.',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
       } catch (e) {
         Get.snackbar(
           'Error',
           'Registration failed: ${e.toString()}',
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
         );
       } finally {
         isLoading.value = false;

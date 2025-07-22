@@ -1,6 +1,8 @@
 // lib/controllers/auth_controller.dart
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jenga_app/routes/routes.dart';
+import 'package:jenga_app/services/preference_service.dart';
 
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -21,5 +23,8 @@ class AuthController extends GetxController {
   // Sign out
   Future<void> signOut() async {
     await _auth.signOut();
+    // Navigate to login screen after logout
+    // Users don't need to see onboarding again
+    Get.offAllNamed(Routes.LOGIN);
   }
 }
