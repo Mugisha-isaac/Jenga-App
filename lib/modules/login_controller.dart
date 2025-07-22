@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jenga_app/modules/auth_controller.dart';
 import 'package:jenga_app/routes/routes.dart';
+import 'package:jenga_app/services/preference_service.dart';
 
 class LoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -27,9 +28,17 @@ class LoginController extends GetxController {
         // For now, simulate successful login
         await Future.delayed(const Duration(seconds: 2));
 
+        // Mark onboarding as completed if not already done
+        final preferenceService = Get.find<PreferenceService>();
+        if (!preferenceService.hasCompletedOnboarding) {
+          await preferenceService.setOnboardingCompleted();
+        }
+
         // Navigate to home and clear the navigation stack
         // This ensures users can't go back to login after successful login
         Get.offAllNamed(Routes.HOME);
+        
+        print('✅ Login successful, navigated to home');
         
         Get.snackbar(
           'Success',
@@ -39,6 +48,7 @@ class LoginController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
         );
       } catch (e) {
+        print('❌ Login error: $e');
         Get.snackbar(
           'Error',
           'Login failed: ${e.toString()}',

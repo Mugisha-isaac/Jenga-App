@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jenga_app/routes/routes.dart';
+import 'package:jenga_app/services/preference_service.dart';
 
 class RegisterController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -31,9 +32,17 @@ class RegisterController extends GetxController {
         // For now, simulate successful registration
         await Future.delayed(const Duration(seconds: 2));
 
+        // Mark onboarding as completed if not already done
+        final preferenceService = Get.find<PreferenceService>();
+        if (!preferenceService.hasCompletedOnboarding) {
+          await preferenceService.setOnboardingCompleted();
+        }
+
         // Navigate to home and clear the navigation stack
         // This ensures users can't go back to registration after successful signup
         Get.offAllNamed(Routes.HOME);
+        
+        print('✅ Registration successful, navigated to home');
         
         Get.snackbar(
           'Success',
@@ -43,6 +52,7 @@ class RegisterController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
         );
       } catch (e) {
+        print('❌ Registration error: $e');
         Get.snackbar(
           'Error',
           'Registration failed: ${e.toString()}',

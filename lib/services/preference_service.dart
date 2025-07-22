@@ -8,6 +8,7 @@ class PreferenceService extends GetxService {
 
   Future<PreferenceService> init() async {
     _prefs = await SharedPreferences.getInstance();
+    print('🔧 PreferenceService initialized');
     return this;
   }
 
@@ -16,21 +17,39 @@ class PreferenceService extends GetxService {
   static const String _firstLaunchKey = 'first_launch';
 
   // Onboarding completion status
-  bool get hasCompletedOnboarding => _prefs.getBool(_onboardingKey) ?? false;
+  bool get hasCompletedOnboarding {
+    final completed = _prefs.getBool(_onboardingKey) ?? false;
+    print('📱 Onboarding completed: $completed');
+    return completed;
+  }
   
   Future<void> setOnboardingCompleted() async {
     await _prefs.setBool(_onboardingKey, true);
+    print('✅ Onboarding marked as completed');
   }
 
   // First launch detection
-  bool get isFirstLaunch => _prefs.getBool(_firstLaunchKey) ?? true;
+  bool get isFirstLaunch {
+    final firstLaunch = _prefs.getBool(_firstLaunchKey) ?? true;
+    print('📱 Is first launch: $firstLaunch');
+    return firstLaunch;
+  }
   
   Future<void> setNotFirstLaunch() async {
     await _prefs.setBool(_firstLaunchKey, false);
+    print('✅ First launch flag set to false');
   }
 
   // Clear all preferences (for logout)
   Future<void> clearAll() async {
     await _prefs.clear();
+    print('🗑️ All preferences cleared');
+  }
+
+  // Debug method to check all stored values
+  void debugPrintAll() {
+    print('🔍 All preferences:');
+    print('  - Onboarding completed: ${hasCompletedOnboarding}');
+    print('  - Is first launch: ${isFirstLaunch}');
   }
 }

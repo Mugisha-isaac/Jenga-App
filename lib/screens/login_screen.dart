@@ -206,24 +206,8 @@ class LoginScreen extends GetView<LoginController> {
                               const Icon(Icons.g_mobiledata, size: 24),
                         ),
                       ),
-                    
-                      const SizedBox(width: 16),
-                    
-                      // Apple
-                      IconButton(
-                        onPressed: () {
-                          // TODO: Implement Apple Sign In
-                        },
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.grey[100],
-                          padding: const EdgeInsets.all(16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(color: Colors.grey[200]!),
-                          ),
-                        ),
-                        icon: const Icon(Icons.apple, size: 24),
-                      ),
+                                        
+                
                     ],
                   ),
                 

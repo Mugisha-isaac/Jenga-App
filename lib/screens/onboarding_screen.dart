@@ -71,10 +71,19 @@ class OnboardingScreen extends StatelessWidget {
               _CustomButton(
                 text: 'Next',
                 onPressed: () async {
-                  // Mark onboarding as completed
-                  await PreferenceService.instance.setOnboardingCompleted();
-                  // Navigate to login screen
-                  Get.offNamed(Routes.LOGIN);
+                  try {
+                    // Mark onboarding as completed
+                    final preferenceService = Get.find<PreferenceService>();
+                    await preferenceService.setOnboardingCompleted();
+                    print('✅ Onboarding completed and saved');
+                    
+                    // Navigate to login screen
+                    Get.offNamed(Routes.LOGIN);
+                  } catch (e) {
+                    print('❌ Error completing onboarding: $e');
+                    // Still navigate to login even if saving fails
+                    Get.offNamed(Routes.LOGIN);
+                  }
                 },
               ),
             ],
