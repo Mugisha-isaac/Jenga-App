@@ -16,14 +16,21 @@ class AuthRepository {
     String email,
     String password,
   ) async {
-    final userCredential = await firebaseAuthProvider
-        .signInWithEmailAndPassword(email, password);
+    try {
+      final userCredential = await firebaseAuthProvider
+          .signInWithEmailAndPassword(email, password);
 
-    final user = await firestoreUserProvider.getUser(userCredential.user!.uid);
-    if (user == null) {
-      throw Exception('User data not found');
+      print('🔥 Retrieving user document from Firestore for ${userCredential.user!.uid}');
+      final user = await firestoreUserProvider.getUser(userCredential.user!.uid);
+      if (user == null) {
+        throw Exception('User data not found');
+      }
+      print('✅ User document retrieved successfully');
+      return user;
+    } catch (e) {
+      print('❌ Error in signInWithEmailAndPassword: $e');
+      rethrow;
     }
-    return user;
   }
 
   Future<user_model.User> createUserWithEmailAndPassword(
@@ -32,18 +39,29 @@ class AuthRepository {
     String fullName,
     String phoneNumber,
   ) async {
-    final userCredential = await firebaseAuthProvider
-        .createUserWithEmailAndPassword(email, password);
+    try {
+      final userCredential = await firebaseAuthProvider
+          .createUserWithEmailAndPassword(email, password);
 
-    final user = user_model.User(
-      id: userCredential.user!.uid,
-      email: email,
-      fullName: fullName,
-      phoneNumber: phoneNumber,
-    );
+      final now = DateTime.now();
+      final user = user_model.User(
+        id: userCredential.user!.uid,
+        email: email,
+        fullName: fullName,
+        phoneNumber: phoneNumber,
+        createdAt: now,
+        updatedAt: now,
+        isActive: true,
+      );
 
-    await firestoreUserProvider.createUser(user);
-    return user;
+      print('🔥 Creating user document in Firestore for ${user.id}');
+      await firestoreUserProvider.createUser(user);
+      print('✅ User document created successfully');
+      return user;
+    } catch (e) {
+      print('❌ Error in createUserWithEmailAndPassword: $e');
+      rethrow;
+    }
   }
 
   Future<void> signOut() async {

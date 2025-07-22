@@ -7,6 +7,7 @@ import 'package:jenga_app/repositories/auth_repository.dart';
 import 'package:jenga_app/repositories/solution_repository.dart';
 import 'package:jenga_app/repositories/paid_solution_repository.dart';
 import 'package:jenga_app/modules/auth_controller.dart';
+import 'package:jenga_app/services/preference_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DependencyInjection {
@@ -16,6 +17,9 @@ class DependencyInjection {
 
     // Register SharedPreferences
     Get.put(sharedPreferences);
+
+    // Register PreferenceService
+    await Get.putAsync(() => PreferenceService().init());
 
     // Register providers
     Get.put(FirebaseAuthProvider());

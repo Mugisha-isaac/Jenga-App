@@ -3,23 +3,19 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../models/paid_solution.dart';
 import '../models/solution.dart';
+import '../models/payment.dart';
 import '../repositories/paid_solution_repository.dart';
 import '../modules/auth_controller.dart';
+import '../services/paypal_service.dart';
+import '../screens/payment_success_screen.dart';
 
 class PaymentController extends GetxController {
   final PaidSolutionRepository _paidSolutionRepository =
       Get.find<PaidSolutionRepository>();
   late final AuthController _authController;
 
-  // Form Controllers
-  final cardNumberController = TextEditingController();
-  final expiryDateController = TextEditingController();
-  final cvvController = TextEditingController();
-  final cardHolderNameController = TextEditingController();
-
   // Observable variables
   final RxBool isProcessingPayment = false.obs;
-  final RxString selectedPaymentMethod = 'card'.obs;
   final RxList<PaidSolution> userPaidSolutions = <PaidSolution>[].obs;
 
   @override
@@ -27,15 +23,6 @@ class PaymentController extends GetxController {
     super.onInit();
     _authController = Get.find<AuthController>();
     loadUserPaidSolutions();
-  }
-
-  @override
-  void onClose() {
-    cardNumberController.dispose();
-    expiryDateController.dispose();
-    cvvController.dispose();
-    cardHolderNameController.dispose();
-    super.onClose();
   }
 
   void loadUserPaidSolutions() async {
@@ -57,7 +44,7 @@ class PaymentController extends GetxController {
     );
   }
 
-  Future<bool> processPremiumPayment(Solution solution) async {
+  Future<bool> processPremiumPayment(Solution solution, BuildContext context) async {
     final userId = _authController.currentUser.value?.uid;
     if (userId == null) {
       Get.snackbar('Error', 'Please login to purchase premium solutions');
@@ -72,36 +59,54 @@ class PaymentController extends GetxController {
     isProcessingPayment.value = true;
 
     try {
-      // Simulate payment processing
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Generate transaction ID
-      final transactionId = 'txn_${DateTime.now().millisecondsSinceEpoch}';
-
-      // Create paid solution record
-      final paidSolution = PaidSolution(
-        id: '${userId}_${solution.solutionId}',
-        solutionId: solution.solutionId,
-        userId: userId,
-        purchaseDate: DateTime.now(),
-        amountPaid: solution.premiumPrice ?? 0.0,
-        paymentMethod: selectedPaymentMethod.value,
-        transactionId: transactionId,
+      // Create PayPal payment item
+      final paymentItem = PaymentItem(
+        name: solution.title,
+        price: solution.premiumPrice ?? 0.0,
+        quantity: 1,
+        currency: 'USD',
       );
 
-      await _paidSolutionRepository.createPaidSolution(paidSolution);
-      userPaidSolutions.add(paidSolution);
-
-      Get.snackbar(
-        'Success',
-        'Payment successful! You can now access this premium solution.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      // Process PayPal payment
+      final paymentTransaction = await PayPalService.makePayment(
+        item: paymentItem,
+        context: context,
       );
 
-      _clearForm();
-      return true;
+      if (paymentTransaction != null) {
+        // Create paid solution record
+        final paidSolution = PaidSolution(
+          id: '${userId}_${solution.solutionId}',
+          solutionId: solution.solutionId,
+          userId: userId,
+          purchaseDate: paymentTransaction.createdAt,
+          amountPaid: paymentTransaction.amount,
+          paymentMethod: 'paypal',
+          transactionId: paymentTransaction.transactionId,
+        );
+
+        await _paidSolutionRepository.createPaidSolution(paidSolution);
+        userPaidSolutions.add(paidSolution);
+
+        // Navigate to success screen
+        await Get.to(
+          () => const PaymentSuccessScreen(),
+          arguments: paymentTransaction,
+          transition: Transition.fadeIn,
+          duration: const Duration(milliseconds: 300),
+        );
+
+        return true;
+      } else {
+        Get.snackbar(
+          'Error',
+          'Payment was cancelled or failed. Please try again.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+        return false;
+      }
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -114,26 +119,5 @@ class PaymentController extends GetxController {
     } finally {
       isProcessingPayment.value = false;
     }
-  }
-
-  void _clearForm() {
-    cardNumberController.clear();
-    expiryDateController.clear();
-    cvvController.clear();
-    cardHolderNameController.clear();
-  }
-
-  void selectPaymentMethod(String method) {
-    selectedPaymentMethod.value = method;
-  }
-
-  bool validateForm() {
-    if (selectedPaymentMethod.value == 'card') {
-      return cardNumberController.text.isNotEmpty &&
-          expiryDateController.text.isNotEmpty &&
-          cvvController.text.isNotEmpty &&
-          cardHolderNameController.text.isNotEmpty;
-    }
-    return true;
   }
 }
