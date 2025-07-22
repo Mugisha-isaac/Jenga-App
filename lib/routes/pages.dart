@@ -11,6 +11,7 @@ import 'package:jenga_app/screens/create_solution_screen.dart';
 import 'package:jenga_app/screens/explore_screen.dart';
 import 'package:jenga_app/screens/home_screen.dart';
 import 'package:jenga_app/screens/login_screen.dart';
+import 'package:jenga_app/screens/onboarding_screen.dart';
 import 'package:jenga_app/screens/payment_screen.dart';
 import 'package:jenga_app/screens/profile_screen.dart';
 import 'package:jenga_app/screens/register_screen.dart';
@@ -33,7 +34,12 @@ class Pages {
     GetPage(
       name: Routes.WELCOME,
       page: () => const WelcomeScreen(),
-  ),
+    ),
+
+    GetPage(
+      name: Routes.ONBOARDING,
+      page: () => const OnboardingScreen(),
+    ),
 
     GetPage(
       name: Routes.LOGIN,

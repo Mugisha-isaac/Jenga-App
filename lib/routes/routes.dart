@@ -1,5 +1,7 @@
 class Routes {
   static const String SPLASH = '/splash';
+  static const String WELCOME = '/welcome';
+  static const String ONBOARDING = '/onboarding';
   static const String LOGIN = '/login';
   static const String REGISTER = '/register';
   static const String HOME = '/home';
@@ -10,5 +12,4 @@ class Routes {
   static const String EXPLORE = '/explore';
   static const String SOLUTION_DETAIL = '/solution-detail';
   static const String PAYMENT = '/payment';
-  static const String WELCOME = '/welcome';
 }
