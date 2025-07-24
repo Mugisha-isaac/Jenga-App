@@ -83,7 +83,10 @@ class MyApp extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppTheme.primaryColor, width: 2),
+            borderSide: const BorderSide(
+              color: AppTheme.primaryColor,
+              width: 2,
+            ),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -93,7 +96,10 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Colors.red, width: 2),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
           labelStyle: const TextStyle(color: Colors.black54),
           hintStyle: const TextStyle(color: Colors.black38),
         ),
@@ -116,9 +122,7 @@ class MyApp extends StatelessWidget {
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             foregroundColor: AppTheme.primaryColor,
-            textStyle: const TextStyle(
-              fontWeight: FontWeight.w500,
-            ),
+            textStyle: const TextStyle(fontWeight: FontWeight.w500),
           ),
         ),
         // Other theme configurations

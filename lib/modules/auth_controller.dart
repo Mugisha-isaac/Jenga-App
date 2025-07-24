@@ -19,12 +19,36 @@ class AuthController extends GetxController {
   }
 
   void _initAuth() async {
+    // Check for saved session first
+    final preferenceService = Get.find<PreferenceService>();
+
+    if (preferenceService.hasValidSession) {
+      print('📱 Valid session found, attempting to restore user...');
+      final savedUserId = preferenceService.savedUserId;
+      if (savedUserId != null) {
+        try {
+          // Load user data from saved session
+          final authRepository = Get.find<AuthRepository>();
+          final userData =
+              await authRepository.firestoreUserProvider.getUser(savedUserId);
+          if (userData != null) {
+            currentUserData.value = userData;
+            print('✅ User session restored: ${userData.fullName}');
+          }
+        } catch (e) {
+          print('❌ Error restoring session: $e');
+          // Clear invalid session
+          await preferenceService.clearUserSession();
+        }
+      }
+    }
+
     // Set initial user if already logged in
     currentUser.value = _auth.currentUser;
-    
+
     // Listen to auth state changes
     currentUser.bindStream(_auth.authStateChanges());
-    
+
     // Listen to user changes and debug
     ever(currentUser, (User? user) {
       print('🔐 Auth state changed: ${user?.uid ?? 'null'}');
@@ -36,7 +60,7 @@ class AuthController extends GetxController {
         currentUserData.value = null;
       }
     });
-    
+
     isInitialized.value = true;
     print('🔧 AuthController initialized');
   }
@@ -45,18 +69,37 @@ class AuthController extends GetxController {
   void _loadUserData(String userId) async {
     try {
       final authRepository = Get.find<AuthRepository>();
-      final userData = await authRepository.firestoreUserProvider.getUser(userId);
+      final userData =
+          await authRepository.firestoreUserProvider.getUser(userId);
       currentUserData.value = userData;
       print('📋 User data loaded: ${userData?.fullName}');
+
+      // Save session when user data is loaded
+      if (userData != null && currentUser.value != null) {
+        final preferenceService = Get.find<PreferenceService>();
+        await preferenceService.saveUserSession(
+          userId: userId,
+          email: currentUser.value!.email ?? userData.email ?? '',
+          fullName: userData.fullName,
+        );
+      }
     } catch (e) {
       print('❌ Error loading user data: $e');
     }
   }
 
   // Set current user data (called after login/register)
-  void setCurrentUser(user_model.User user) {
+  void setCurrentUser(user_model.User user) async {
     currentUserData.value = user;
     print('👤 Current user data set: ${user.fullName}');
+
+    // Save session when user is set
+    final preferenceService = Get.find<PreferenceService>();
+    await preferenceService.saveUserSession(
+      userId: user.id ?? '',
+      email: user.email ?? '',
+      fullName: user.fullName,
+    );
   }
 
   // Get current user ID
@@ -64,9 +107,21 @@ class AuthController extends GetxController {
 
   // Check if user is logged in
   bool get isLoggedIn {
-    final loggedIn = currentUser.value != null;
-    print('🔍 Checking isLoggedIn: $loggedIn');
-    return loggedIn;
+    // Check Firebase auth first
+    final firebaseLoggedIn = currentUser.value != null;
+
+    // If not logged in via Firebase, check saved session
+    if (!firebaseLoggedIn) {
+      final preferenceService = Get.find<PreferenceService>();
+      final sessionValid = preferenceService.hasValidSession;
+      print('🔍 Checking isLoggedIn:');
+      print('   - Firebase: $firebaseLoggedIn');
+      print('   - Session: $sessionValid');
+      return sessionValid;
+    }
+
+    print('🔍 Checking isLoggedIn: $firebaseLoggedIn (Firebase)');
+    return firebaseLoggedIn;
   }
 
   // Sign out
@@ -74,19 +129,22 @@ class AuthController extends GetxController {
     try {
       final authRepository = Get.find<AuthRepository>();
       await authRepository.signOut();
-      
+
       // Clear user data
       currentUserData.value = null;
-      
+
+      // Clear user session
+      final preferenceService = Get.find<PreferenceService>();
+      await preferenceService.clearUserSession();
+
       print('✅ User signed out successfully');
-      
+
       // Don't clear onboarding preference on logout
       // Users shouldn't see onboarding again
-      final preferenceService = Get.find<PreferenceService>();
       if (!preferenceService.hasCompletedOnboarding) {
         await preferenceService.setOnboardingCompleted();
       }
-      
+
       // Navigate to login screen after logout
       Get.offAllNamed(Routes.LOGIN);
     } catch (e) {

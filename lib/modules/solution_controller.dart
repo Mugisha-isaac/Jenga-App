@@ -2,9 +2,13 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../models/solution.dart';
+import '../models/user.dart' as user_model;
+import '../models/comment.dart';
 import '../repositories/solution_repository.dart';
 import '../modules/auth_controller.dart';
+import '../providers/firestore_user_provider.dart';
 import '../themes/app_theme.dart';
+import '../routes/routes.dart';
 
 class SolutionController extends GetxController {
   late final SolutionRepository _solutionRepository;
@@ -76,16 +80,21 @@ class SolutionController extends GetxController {
 
   @override
   void onClose() {
-    // Dispose controllers
-    titleController.dispose();
-    descriptionController.dispose();
-    categoryController.dispose();
-    countryController.dispose();
-    cityController.dispose();
-    materialController.dispose();
-    tagController.dispose();
-    stepDescriptionController.dispose();
-    premiumPriceController.dispose();
+    // Dispose controllers safely
+    try {
+      titleController.dispose();
+      descriptionController.dispose();
+      categoryController.dispose();
+      countryController.dispose();
+      cityController.dispose();
+      materialController.dispose();
+      tagController.dispose();
+      stepDescriptionController.dispose();
+      premiumPriceController.dispose();
+    } catch (e) {
+      // Controllers might already be disposed, ignore the error
+      print('Warning: Some controllers already disposed in onClose: $e');
+    }
     super.onClose();
   }
 
@@ -326,8 +335,7 @@ class SolutionController extends GetxController {
           title: titleController.text.trim(),
           description: descriptionController.text.trim(),
           category: selectedCategory.value,
-          userId:
-              Get.find<AuthController>().currentUser.value?.uid ??
+          userId: Get.find<AuthController>().currentUser.value?.uid ??
               'user123', // Assuming you have AuthController
           country: countryController.text.trim(),
           city: cityController.text.trim(),
@@ -363,8 +371,8 @@ class SolutionController extends GetxController {
       // Reload solutions
       await loadSolutions();
 
-      // Navigate back or to solutions list
-      Get.back();
+      // Navigate to home screen
+      Get.offAllNamed(Routes.HOME);
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -416,8 +424,11 @@ class SolutionController extends GetxController {
       clearForm();
       exitEditMode();
 
-      // Navigate back or to solutions list
-      Get.back();
+      // Reload solutions
+      await loadSolutions();
+
+      // Navigate to home screen
+      Get.offAllNamed(Routes.HOME);
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -438,15 +449,21 @@ class SolutionController extends GetxController {
 
   // Clear form
   void clearForm() {
-    titleController.clear();
-    descriptionController.clear();
-    categoryController.clear();
-    countryController.text = 'Rwanda';
-    cityController.text = 'Kigali';
-    materialController.clear();
-    tagController.clear();
-    stepDescriptionController.clear();
-    premiumPriceController.clear();
+    // Check if controllers are still valid before clearing
+    try {
+      titleController.clear();
+      descriptionController.clear();
+      categoryController.clear();
+      countryController.text = 'Rwanda';
+      cityController.text = 'Kigali';
+      materialController.clear();
+      tagController.clear();
+      stepDescriptionController.clear();
+      premiumPriceController.clear();
+    } catch (e) {
+      // Controllers might be disposed, ignore the error
+      print('Warning: Controllers already disposed in clearForm: $e');
+    }
 
     materials.clear();
     tags.clear();
@@ -470,7 +487,12 @@ class SolutionController extends GetxController {
   void togglePremium() {
     isPremium.value = !isPremium.value;
     if (!isPremium.value) {
-      premiumPriceController.clear();
+      try {
+        premiumPriceController.clear();
+      } catch (e) {
+        // Controller might be disposed, ignore the error
+        print('Warning: premiumPriceController already disposed: $e');
+      }
     }
   }
 
@@ -557,5 +579,114 @@ class SolutionController extends GetxController {
     final sorted = solutions.toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return sorted;
+  }
+
+  // Get user by ID
+  Future<user_model.User?> getUserById(String userId) async {
+    try {
+      print('🔍 Attempting to fetch user with ID: $userId');
+      final firestoreUserProvider = Get.find<FirestoreUserProvider>();
+      print(
+          '✅ FirestoreUserProvider found: ${firestoreUserProvider.runtimeType}');
+
+      final user = await firestoreUserProvider.getUser(userId);
+
+      if (user != null) {
+        print('✅ User fetched successfully: ${user.fullName} (${user.email})');
+        print('📋 Full user data: ${user.toJson()}');
+      } else {
+        print('⚠️ No user found for ID: $userId');
+        print('🔍 Debug: Listing all users to check...');
+        await firestoreUserProvider.debugListAllUsers();
+      }
+
+      return user;
+    } catch (e) {
+      print('❌ Error fetching user by ID $userId: $e');
+      print('❌ Error type: ${e.runtimeType}');
+      print('❌ Stack trace: ${StackTrace.current}');
+      return null;
+    }
+  }
+
+  // Add comment to solution
+  Future<bool> addCommentToSolution({
+    required String solutionId,
+    required String content,
+  }) async {
+    try {
+      final authController = Get.find<AuthController>();
+      final currentUser = authController.currentUserData.value;
+
+      if (currentUser == null) {
+        print('❌ No current user found for adding comment');
+        return false;
+      }
+
+      // First, get the current solution from Firestore
+      final currentSolution =
+          await _solutionRepository.getSolutionById(solutionId);
+      if (currentSolution == null) {
+        print('❌ Solution not found: $solutionId');
+        return false;
+      }
+
+      final comment = SolutionComment(
+        commentId:
+            'comment_${DateTime.now().millisecondsSinceEpoch}_${(1000 + DateTime.now().millisecond).toString().padLeft(4, '0')}',
+        solutionId: solutionId,
+        userId: currentUser.id ?? '',
+        userName: currentUser.fullName ?? 'Anonymous',
+        userEmail: currentUser.email ?? '',
+        content: content,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
+      // Create updated solution with new comment
+      final updatedComments =
+          List<SolutionComment>.from(currentSolution.comments)..add(comment);
+
+      final updatedSolution = Solution(
+        solutionId: currentSolution.solutionId,
+        title: currentSolution.title,
+        description: currentSolution.description,
+        category: currentSolution.category,
+        userId: currentSolution.userId,
+        country: currentSolution.country,
+        city: currentSolution.city,
+        images: currentSolution.images,
+        materials: currentSolution.materials,
+        steps: currentSolution.steps,
+        tags: currentSolution.tags,
+        metrics: currentSolution.metrics,
+        comments: updatedComments,
+        premiumPrice: currentSolution.premiumPrice,
+        isPremium: currentSolution.isPremium,
+        featured: currentSolution.featured,
+        createdAt: currentSolution.createdAt,
+        updatedAt: DateTime.now(),
+      );
+
+      // Update the solution in Firestore
+      await _solutionRepository.updateSolution(updatedSolution);
+
+      // Update local solutions list
+      final solutionIndex =
+          solutions.indexWhere((s) => s.solutionId == solutionId);
+      if (solutionIndex != -1) {
+        solutions[solutionIndex] = updatedSolution;
+        solutions.refresh();
+      }
+
+      print('✅ Comment added and saved to Firestore: $solutionId');
+      print('💬 Comment content: $content');
+      print('👤 By: ${comment.userName}');
+
+      return true;
+    } catch (e) {
+      print('❌ Error adding comment: $e');
+      return false;
+    }
   }
 }

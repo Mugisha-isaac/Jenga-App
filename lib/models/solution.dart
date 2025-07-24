@@ -1,4 +1,6 @@
 // lib/models/solution.dart
+import 'comment.dart';
+
 class Solution {
   final String solutionId;
   final String title;
@@ -12,6 +14,7 @@ class Solution {
   final List<SolutionStep> steps;
   final List<String> tags;
   final SolutionMetrics metrics;
+  final List<SolutionComment> comments;
   final double? premiumPrice;
   final bool isPremium;
   final bool featured;
@@ -31,6 +34,7 @@ class Solution {
     required this.steps,
     required this.tags,
     required this.metrics,
+    this.comments = const [],
     this.premiumPrice,
     this.isPremium = false,
     this.featured = false,
@@ -52,6 +56,7 @@ class Solution {
       'steps': steps.map((step) => step.toJson()).toList(),
       'tags': tags,
       'metrics': metrics.toJson(),
+      'comments': comments.map((comment) => comment.toJson()).toList(),
       'premiumPrice': premiumPrice,
       'isPremium': isPremium,
       'featured': featured,
@@ -78,6 +83,9 @@ class Solution {
           .toList(),
       tags: List<String>.from(json['tags']),
       metrics: SolutionMetrics.fromJson(json['metrics']),
+      comments: (json['comments'] as List? ?? [])
+          .map((comment) => SolutionComment.fromJson(comment))
+          .toList(),
       premiumPrice: json['premiumPrice']?.toDouble(),
       isPremium: json['isPremium'] ?? false,
       featured: json['featured'] ?? false,
@@ -147,9 +155,9 @@ class SolutionStep {
   SolutionStep({required this.stepNumber, required this.description});
 
   Map<String, dynamic> toJson() => {
-    'stepNumber': stepNumber,
-    'description': description,
-  };
+        'stepNumber': stepNumber,
+        'description': description,
+      };
 
   factory SolutionStep.fromJson(Map<String, dynamic> json) {
     return SolutionStep(
@@ -177,13 +185,13 @@ class SolutionMetrics {
   });
 
   Map<String, dynamic> toJson() => {
-    'views': views,
-    'likes': likes,
-    'saves': saves,
-    'comments': comments,
-    'implementations': implementations,
-    'shares': shares,
-  };
+        'views': views,
+        'likes': likes,
+        'saves': saves,
+        'comments': comments,
+        'implementations': implementations,
+        'shares': shares,
+      };
 
   factory SolutionMetrics.fromJson(Map<String, dynamic> json) {
     return SolutionMetrics(
