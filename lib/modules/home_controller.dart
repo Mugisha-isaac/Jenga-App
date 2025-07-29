@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:jenga_app/routes/routes.dart';
+import 'package:jenga_app/routes/pages.dart';
 
 class HomeController extends GetxController {
   final currentIndex = 0.obs;

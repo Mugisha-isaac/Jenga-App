@@ -22,40 +22,47 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/logo.png',
-              width: 200,
-              height: 200,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => const Icon(
-                Icons.apps,
-                size: 100,
-                color: Colors.blue,
+    // Initialize the SplashController
+    Get.put(SplashController());
+
+    return GetBuilder<SplashController>(
+      builder: (controller) => Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/logo.png',
+                width: 150,
+                height: 150,
+                fit: BoxFit.contain,
               ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Jenga',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: theme.textTheme.displayLarge?.color ?? Colors.black,
+              const SizedBox(height: 20),
+              const Text(
+                'Jenga App',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            
-            
-            const SizedBox(height: 32),
-            CircularProgressIndicator(
-              color: theme.primaryColor,
-            ),
-          ],
+              const SizedBox(height: 10),
+              Text(
+                'Building connections, one block at a time',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7)
+                    ?? Colors.black.withOpacity(0.7), // fallback color
+                ),
+              ),
+              const SizedBox(height: 50),
+              CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ),
+            ],
+          ),
         ),
       ),
     );

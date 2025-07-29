@@ -1,45 +1,52 @@
-class User {
-  String? id;
-  String? fullName;
-  String? email;
-  String? phoneNumber;
-  String? profilePictureUrl;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  bool? isActive;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-  User({
-    this.id,
-    this.fullName,
-    this.email,
+part 'user.g.dart';
+
+@JsonSerializable()
+class UserModel {
+  final String id;
+  final String fullName;
+  final String email;
+  final String? phoneNumber;
+  String? profilePictureUrl;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  UserModel({
+    required this.id,
+    required this.fullName,
+    required this.email,
     this.phoneNumber,
     this.profilePictureUrl,
-    this.createdAt,
-    this.updatedAt,
-    this.isActive = true,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
-  User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    fullName = json['fullName'];
-    email = json['email'];
-    phoneNumber = json['phoneNumber'];
-    profilePictureUrl = json['profilePictureUrl'];
-    createdAt = json['createdAt']?.toDate();
-    updatedAt = json['updatedAt']?.toDate();
-    isActive = json['isActive'] ?? true;
+  factory UserModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return UserModel(
+      id: doc.id,
+      fullName: data['fullName'] ?? '',
+      email: data['email'] ?? '',
+      phoneNumber: data['phoneNumber'],
+      profilePictureUrl: data['profilePictureUrl'],
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+    );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toFirestore() {
     return {
-      'id': id,
       'fullName': fullName,
       'email': email,
       'phoneNumber': phoneNumber,
       'profilePictureUrl': profilePictureUrl,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt ?? DateTime.now(),
-      'isActive': isActive,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
     };
   }
+
+  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
+  Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }

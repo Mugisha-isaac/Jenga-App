@@ -1,136 +1,105 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:jenga_app/mixins/safe_controller_mixin.dart';
-import 'package:jenga_app/modules/auth_controller.dart';
-import 'package:jenga_app/repositories/auth_repository.dart';
-import 'package:jenga_app/routes/routes.dart';
-import 'package:jenga_app/services/preference_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:jenga_app/models/user.dart';
+import 'package:jenga_app/routes/pages.dart';
+import 'package:jenga_app/services/user_service.dart';
 
-class RegisterController extends GetxController with SafeControllerMixin {
+class RegisterController extends GetxController {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final RxBool isLoading = false.obs;
   final formKey = GlobalKey<FormState>();
-  late final TextEditingController fullNameController;
-  late final TextEditingController emailController;
-  late final TextEditingController phoneController;
-  late final TextEditingController passwordController;
-  late final TextEditingController confirmPasswordController;
-
-  final isLoading = false.obs;
+  final fullNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   final isPasswordVisible = false.obs;
   final isConfirmPasswordVisible = false.obs;
 
-  // Get the AuthController and AuthRepository instances
-  final AuthController authController = Get.find<AuthController>();
-  final AuthRepository authRepository = Get.find<AuthRepository>();
+  void togglePasswordVisibility() => isPasswordVisible.toggle();
+  void toggleConfirmPasswordVisibility() => isConfirmPasswordVisible.toggle();
 
-  @override
-  void onInit() {
-    super.onInit();
-    fullNameController = TextEditingController();
-    emailController = TextEditingController();
-    phoneController = TextEditingController();
-    passwordController = TextEditingController();
-    confirmPasswordController = TextEditingController();
-  }
+  Future<void> register() async {
+    if (!formKey.currentState!.validate()) return;
+    if (passwordController.text != confirmPasswordController.text) {
+      Get.snackbar('Error', 'Passwords do not match');
+      return;
+    }
 
-  void togglePasswordVisibility() {
-    safeUpdate(isPasswordVisible, !isPasswordVisible.value);
-  }
+    try {
+      isLoading.value = true;
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-  void toggleConfirmPasswordVisibility() {
-    safeUpdate(isConfirmPasswordVisible, !isConfirmPasswordVisible.value);
-  }
-
-  void register() async {
-    if (isControllerDisposed) return;
-    
-    if (formKey.currentState!.validate()) {
-      safeUpdate(isLoading, true);
-
-      try {
-        // Validate password confirmation
-        if (passwordController.text != confirmPasswordController.text) {
-          throw Exception('Passwords do not match');
-        }
-
-        print('📝 Attempting registration for: ${emailController.text}');
-        
-        // Implement actual Firebase registration logic
-        final user = await authRepository.createUserWithEmailAndPassword(
-          emailController.text.trim(),
-          passwordController.text.trim(),
-          fullNameController.text.trim(),
-          phoneController.text.trim(),
+      if (userCredential.user != null) {
+        await UserService().createUserProfile(
+          user: userCredential.user!,
+          fullName: fullNameController.text.trim(),
+          email: emailController.text.trim(),
+          // phoneNumber: phoneController.text.trim(),
         );
-        
-        print('✅ Registration successful for user: ${user.fullName} (${user.email})');
-
-        // Mark onboarding as completed if not already done
-        final preferenceService = Get.find<PreferenceService>();
-        if (!preferenceService.hasCompletedOnboarding) {
-          await preferenceService.setOnboardingCompleted();
-        }
-
-        // Update the auth controller's current user
-        authController.setCurrentUser(user);
-
-        // Navigate to home and clear the navigation stack
         Get.offAllNamed(Routes.HOME);
-        
-        print('✅ Registration successful, navigated to home');
-        
-        Get.snackbar(
-          'Success',
-          'Welcome to Jenga, ${user.fullName}! Your account has been created successfully.',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      } catch (e) {
-        print('❌ Registration error: $e');
-        
-        String errorMessage = 'Registration failed. Please try again.';
-        
-        // Handle specific Firebase auth errors
-        if (e.toString().contains('email-already-in-use')) {
-          errorMessage = 'An account with this email already exists.';
-        } else if (e.toString().contains('weak-password')) {
-          errorMessage = 'Password is too weak. Please choose a stronger password.';
-        } else if (e.toString().contains('invalid-email')) {
-          errorMessage = 'Please enter a valid email address.';
-        } else if (e.toString().contains('network-request-failed')) {
-          errorMessage = 'Network error. Please check your connection.';
-        } else if (e.toString().contains('Passwords do not match')) {
-          errorMessage = 'Passwords do not match. Please check and try again.';
-        }
-        
-        Get.snackbar(
-          'Registration Failed',
-          errorMessage,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 4),
-        );
-      } finally {
-        safeUpdate(isLoading, false);
       }
+    } on FirebaseAuthException catch (e) {
+      String message = 'Failed to register';
+      if (e.code == 'weak-password') {
+        message = 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        message = 'An account already exists for that email.';
+      }
+      Get.snackbar('Error', message);
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  void navigateToLogin() {
-    safeCall(() => Get.back());
+  Future<void> signInWithGoogle() async {
+    try {
+      isLoading.value = true;
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return;
+
+      final GoogleSignInAuthentication googleAuth = 
+          await googleUser.authentication;
+      
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await _auth.signInWithCredential(credential);
+
+      if (userCredential.user != null) {
+        await UserService().createUserProfile(
+          user: userCredential.user!,
+          fullName: userCredential.user?.displayName ?? 'New User',
+          email: userCredential.user?.email ?? '',
+          profilePictureUrl: userCredential.user?.photoURL,
+        );
+        Get.offAllNamed(Routes.HOME);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to sign in with Google');
+    } finally {
+      isLoading.value = false;
+    }
   }
+
+  void navigateToLogin() => Get.offAllNamed(Routes.LOGIN);
 
   @override
   void onClose() {
-    // Delay disposal to avoid issues with ongoing UI interactions
-    Future.delayed(const Duration(milliseconds: 100), () {
-      fullNameController.dispose();
-      emailController.dispose();
-      phoneController.dispose();
-      passwordController.dispose();
-      confirmPasswordController.dispose();
-    });
+    fullNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    _googleSignIn.signOut();
     super.onClose();
   }
 }

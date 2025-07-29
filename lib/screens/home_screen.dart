@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jenga_app/modules/auth_controller.dart';
 import '../modules/solution_controller.dart';
 import '../models/solution.dart';
-import '../models/user.dart' as user_model;
-import '../routes/routes.dart';
+import '../routes/pages.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -14,12 +10,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<SolutionController>();
-    final userController = Get.find<AuthController>();
-
-    final featuredSolutions = controller.solutions
-        .where((solution) => solution.featured)
-        .take(5)
-        .toList();
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -45,11 +35,11 @@ class HomeScreen extends StatelessWidget {
           children: [
             _buildSearchBar(),
             const SizedBox(height: 24),
-            if (featuredSolutions.isNotEmpty)
-              _buildFeaturedSolutions(controller),
+            _buildFeaturedSolutions(controller),
+            const SizedBox(height: 32),
             _buildTrendingTopics(controller),
             const SizedBox(height: 32),
-            _buildRecentSolutions(controller, userController),
+            _buildRecentSolutions(controller),
             const SizedBox(height: 100),
           ],
         ),
@@ -146,7 +136,7 @@ class HomeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: (0.1)),
+              color: Colors.black.withValues(alpha:(0.1)),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -185,10 +175,7 @@ class HomeScreen extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: (0.7))
-                    ],
+                    colors: [Colors.transparent, Colors.black.withValues(alpha:(0.7))],
                   ),
                 ),
               ),
@@ -270,7 +257,7 @@ class HomeScreen extends StatelessWidget {
           // Get trending solutions (non-featured solutions)
           final trendingSolutions = controller.solutions
               .where((solution) => !solution.featured)
-              .take(100)
+              .take(5)
               .toList();
 
           if (trendingSolutions.isEmpty) {
@@ -330,9 +317,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentSolutions(
-      SolutionController controller, AuthController userController) {
-    // getting current user
+  Widget _buildRecentSolutions(SolutionController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -367,7 +352,7 @@ class HomeScreen extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: recentSolutions.take(10).length,
+            itemCount: recentSolutions.take(3).length,
             itemBuilder: (context, index) {
               final solution = recentSolutions[index];
               return _buildRecentSolutionCard(solution);
@@ -391,7 +376,7 @@ class HomeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: (0.05)),
+              color: Colors.black.withValues(alpha:(0.05)),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -436,39 +421,9 @@ class HomeScreen extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  FutureBuilder<user_model.User?>(
-                    future: Get.find<SolutionController>()
-                        .getUserById(solution.userId),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Text(
-                          'By ...',
-                          style: TextStyle(
-                              fontSize: 14, color: Colors.grey.shade600),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text(
-                          'By Error',
-                          style: TextStyle(
-                              fontSize: 14, color: Colors.red.shade600),
-                        );
-                      } else if (snapshot.hasData && snapshot.data != null) {
-                        final user = snapshot.data!;
-                        return Text(
-                          'By ${user.fullName ?? 'No Name'}',
-                          style: TextStyle(
-                              fontSize: 14, color: Colors.grey.shade600),
-                        );
-                      } else {
-                        return Text(
-                          'By Anonymous',
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade500,
-                              fontStyle: FontStyle.italic),
-                        );
-                      }
-                    },
+                  Text(
+                    'By ${solution.userId}',
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -495,7 +450,7 @@ class HomeScreen extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: (0.1)),
+            color: Colors.black.withValues(alpha:(0.1)),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),

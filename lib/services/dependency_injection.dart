@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:jenga_app/providers/firebase_auth_provider.dart';
 import 'package:jenga_app/providers/firestore_user_provider.dart';
 import 'package:jenga_app/providers/firestore_solutions_provider.dart';
 import 'package:jenga_app/providers/firestore_paid_solutions_provider.dart';
@@ -22,33 +21,7 @@ class DependencyInjection {
     await Get.putAsync(() => PreferenceService().init());
 
     // Register providers
-    Get.put(FirebaseAuthProvider());
     Get.put(FirestoreUserProvider());
-    Get.put(FirestoreSolutionsProvider());
-    Get.put(FirestorePaidSolutionsProvider());
-
-    // Register repositories
-    Get.put(
-      AuthRepository(
-        firebaseAuthProvider: Get.find<FirebaseAuthProvider>(),
-        firestoreUserProvider: Get.find<FirestoreUserProvider>(),
-      ),
-    );
-
-    Get.put(
-      SolutionRepository(
-        firestoreSolutionsProvider: Get.find<FirestoreSolutionsProvider>(),
-      ),
-    );
-
-    Get.put(
-      PaidSolutionRepository(
-        firestorePaidSolutionsProvider:
-            Get.find<FirestorePaidSolutionsProvider>(),
-      ),
-    );
-
-    // Register controllers
-    Get.put(AuthController());
+    Get.put(AuthRepository());
   }
 }

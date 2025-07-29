@@ -1,115 +1,113 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jenga_app/mixins/safe_controller_mixin.dart';
-import 'package:jenga_app/modules/auth_controller.dart';
-import 'package:jenga_app/repositories/auth_repository.dart';
-import 'package:jenga_app/routes/routes.dart';
-import 'package:jenga_app/services/preference_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jenga_app/routes/pages.dart';
+import 'package:jenga_app/services/user_service.dart';
 
-class LoginController extends GetxController with SafeControllerMixin {
+class LoginController extends GetxController {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  late final TextEditingController emailController;
-  late final TextEditingController passwordController;
-
-  final isLoading = false.obs;
   final isPasswordVisible = false.obs;
-  
-  // Get the AuthController and AuthRepository instances
-  final AuthController authController = Get.find<AuthController>();
-  final AuthRepository authRepository = Get.find<AuthRepository>();
-
-  @override
-  void onInit() {
-    super.onInit();
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-  }
+  final isLoading = false.obs;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/userinfo.profile',
+    ],
+  );
 
   void togglePasswordVisibility() {
-    safeUpdate(isPasswordVisible, !isPasswordVisible.value);
+    isPasswordVisible.value = !isPasswordVisible.value;
   }
 
-  void login() async {
-    if (isControllerDisposed) return;
-    
+  Future<void> login() async {
     if (formKey.currentState!.validate()) {
-      safeUpdate(isLoading, true);
+      isLoading.value = true;
 
       try {
-        // Implement actual Firebase login logic
-        print('🔐 Attempting login with email: ${emailController.text}');
-        
-        final user = await authRepository.signInWithEmailAndPassword(
-          emailController.text.trim(),
-          passwordController.text.trim(),
+        final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
         );
-        
-        print('✅ Login successful for user: ${user.fullName} (${user.email})');
-
-        // Mark onboarding as completed if not already done
-        final preferenceService = Get.find<PreferenceService>();
-        if (!preferenceService.hasCompletedOnboarding) {
-          await preferenceService.setOnboardingCompleted();
+        if (credential.user != null) {
+          Get.offAllNamed(Routes.HOME);
         }
-
-        // Update the auth controller's current user
-        authController.setCurrentUser(user);
-
-        // Navigate to home and clear the navigation stack
-        Get.offAllNamed(Routes.HOME);
-        
-        print('✅ Login successful, navigated to home');
-        
-        Get.snackbar(
-          'Success',
-          'Welcome back, ${user.fullName}!',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-        );
+      } on FirebaseAuthException catch (e) {
+        String message = 'Login failed';
+        if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+          message = 'Invalid email or password';
+        } else if (e.code == 'user-disabled') {
+          message = 'This account has been disabled';
+        }
+        Get.snackbar('Error', message,
+            backgroundColor: Colors.red, colorText: Colors.white);
       } catch (e) {
-        print('❌ Login error: $e');
-        
-        String errorMessage = 'Login failed. Please try again.';
-        
-        // Handle specific Firebase auth errors
-        if (e.toString().contains('user-not-found')) {
-          errorMessage = 'No account found with this email address.';
-        } else if (e.toString().contains('wrong-password')) {
-          errorMessage = 'Incorrect password. Please try again.';
-        } else if (e.toString().contains('invalid-email')) {
-          errorMessage = 'Please enter a valid email address.';
-        } else if (e.toString().contains('too-many-requests')) {
-          errorMessage = 'Too many failed attempts. Please try again later.';
-        } else if (e.toString().contains('network-request-failed')) {
-          errorMessage = 'Network error. Please check your connection.';
-        }
-        
-        Get.snackbar(
-          'Login Failed',
-          errorMessage,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 4),
-        );
+        Get.snackbar('Error', 'An error occurred. Please try again.',
+            backgroundColor: Colors.red, colorText: Colors.white);
       } finally {
-        safeUpdate(isLoading, false);
+        isLoading.value = false;
       }
     }
   }
 
+  Future<void> signInWithGoogle() async {
+    try {
+      isLoading.value = true;
+
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        // User cancelled the sign in
+        isLoading.value = false;
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+      if (userCredential.user != null) {
+        final isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
+
+        if (isNewUser) {
+          await UserService().createUserProfile(
+            user: userCredential.user!,
+            fullName: userCredential.user?.displayName ?? 'New User',
+            email: userCredential.user?.email ?? '',
+            profilePictureUrl: userCredential.user?.photoURL,
+          );
+        }
+
+        Get.offAllNamed(Routes.HOME);
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to sign in with Google: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void navigateToRegister() {
-    safeCall(() => Get.toNamed(Routes.REGISTER));
+    Get.toNamed(Routes.REGISTER);
   }
 
   @override
   void onClose() {
-    // Delay disposal to avoid issues with ongoing UI interactions
-    Future.delayed(const Duration(milliseconds: 100), () {
-      emailController.dispose();
-      passwordController.dispose();
-    });
+    emailController.dispose();
+    passwordController.dispose();
     super.onClose();
   }
 }
