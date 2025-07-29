@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jenga_app/screens/onboarding_screen.dart';
+import 'package:get/get.dart';
+import 'package:jenga_app/routes/routes.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -43,16 +44,14 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     const Spacer(),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: _CustomButton(
-                        text: 'Get Started',
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const OnboardingScreen(),
-                          ));
-                        },
+                        padding: const EdgeInsets.only(bottom: 20.0),
+                        child: _CustomButton(
+                          text: 'Get Started',
+                          onPressed: () {
+                            Get.toNamed(Routes.ONBOARDING);
+                          },
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),

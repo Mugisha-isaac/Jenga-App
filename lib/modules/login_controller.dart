@@ -33,7 +33,6 @@ class LoginController extends GetxController {
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
-        
         if (credential.user != null) {
           Get.offAllNamed(Routes.HOME);
         }

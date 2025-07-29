@@ -30,11 +30,9 @@ class PaymentScreen extends StatelessWidget {
           children: [
             _buildSolutionInfo(solution),
             const SizedBox(height: 32),
-            _buildPaymentMethods(controller),
+            _buildPayPalInfo(),
             const SizedBox(height: 32),
-            _buildPaymentForm(controller),
-            const SizedBox(height: 32),
-            _buildPayButton(controller, solution),
+            _buildPayButton(controller, solution, context),
           ],
         ),
       ),
@@ -141,9 +139,9 @@ class PaymentScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPaymentMethods(PaymentController controller) {
+  Widget _buildPayPalInfo() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -158,302 +156,213 @@ class PaymentScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Payment Method',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Obx(
-            () => Column(
-              children: [
-                _buildPaymentMethodOption(
-                  controller,
-                  'card',
-                  'Credit/Debit Card',
-                  Icons.credit_card,
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0070BA).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                const SizedBox(height: 12),
-                _buildPaymentMethodOption(
-                  controller,
-                  'paypal',
-                  'PayPal',
+                child: const Icon(
                   Icons.payment,
+                  color: Color(0xFF0070BA),
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Secure Payment with PayPal',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Text(
+                      'Safe, fast, and easy',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.security, color: Colors.green.shade700, size: 20),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Your payment information is protected with bank-level security',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
-                _buildPaymentMethodOption(
-                  controller,
-                  'mobile',
-                  'Mobile Money',
-                  Icons.phone_android,
+                Row(
+                  children: [
+                    Icon(Icons.flash_on, color: Colors.orange.shade700, size: 20),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Quick checkout - no need to enter card details',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Icon(Icons.verified_user, color: Colors.blue.shade700, size: 20),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Trusted by millions worldwide',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPaymentMethodOption(
-    PaymentController controller,
-    String value,
-    String title,
-    IconData icon,
-  ) {
-    return GestureDetector(
-      onTap: () => controller.selectPaymentMethod(value),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: controller.selectedPaymentMethod.value == value
-                ? Colors.green
-                : Colors.grey.shade300,
-          ),
-          borderRadius: BorderRadius.circular(8),
-          color: controller.selectedPaymentMethod.value == value
-              ? Colors.green.shade50
-              : Colors.white,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: controller.selectedPaymentMethod.value == value
-                  ? Colors.green
-                  : Colors.grey.shade600,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: controller.selectedPaymentMethod.value == value
-                    ? Colors.green
-                    : Colors.black87,
-              ),
-            ),
-            const Spacer(),
-            if (controller.selectedPaymentMethod.value == value)
-              const Icon(Icons.check_circle, color: Colors.green),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPaymentForm(PaymentController controller) {
-    return Obx(() {
-      if (controller.selectedPaymentMethod.value == 'card') {
-        return _buildCardForm(controller);
-      } else if (controller.selectedPaymentMethod.value == 'paypal') {
-        return _buildPayPalForm();
-      } else {
-        return _buildMobileMoneyForm();
-      }
-    });
-  }
-
-  Widget _buildCardForm(PaymentController controller) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha:(0.05)),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+          const SizedBox(height: 16),
           const Text(
-            'Card Details',
+            'You will be redirected to PayPal to complete your payment securely. After successful payment, you will get instant access to the premium solution.',
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              fontSize: 14,
+              color: Colors.grey,
+              height: 1.4,
             ),
           ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: controller.cardHolderNameController,
-            decoration: const InputDecoration(
-              labelText: 'Card Holder Name',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: controller.cardNumberController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Card Number',
-              border: OutlineInputBorder(),
-              hintText: '**** **** **** ****',
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPayButton(PaymentController controller, Solution solution, BuildContext context) {
+    return Obx(
+      () => Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: controller.isProcessingPayment.value
+                  ? null
+                  : () async {
+                      final success = await controller.processPremiumPayment(
+                        solution,
+                        context,
+                      );
+                      if (success) {
+                        Get.back(result: true);
+                      }
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0070BA),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: controller.isProcessingPayment.value
+                  ? const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          'Processing Payment...',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.payment, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Pay \$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'} with PayPal',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
           ),
           const SizedBox(height: 16),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: controller.expiryDateController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Expiry Date',
-                    border: OutlineInputBorder(),
-                    hintText: 'MM/YY',
-                  ),
-                ),
+              Image.asset(
+                'assets/images/paypal_logo.png',
+                height: 24,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Text(
+                    'PayPal',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0070BA),
+                    ),
+                  );
+                },
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: TextField(
-                  controller: controller.cvvController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'CVV',
-                    border: OutlineInputBorder(),
-                    hintText: '***',
-                  ),
+              const SizedBox(width: 8),
+              const Text(
+                'Secure Payment',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
                 ),
               ),
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPayPalForm() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha:(0.05)),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: const Column(
-        children: [
-          Icon(Icons.payment, size: 48, color: Colors.blue),
-          SizedBox(height: 16),
-          Text(
-            'You will be redirected to PayPal to complete your payment',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Colors.black87),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMobileMoneyForm() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha:(0.05)),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: const Column(
-        children: [
-          Icon(Icons.phone_android, size: 48, color: Colors.orange),
-          SizedBox(height: 16),
-          Text(
-            'You will receive a payment prompt on your mobile device',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Colors.black87),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPayButton(PaymentController controller, Solution solution) {
-    return Obx(
-      () => SizedBox(
-        width: double.infinity,
-        height: 56,
-        child: ElevatedButton(
-          onPressed: controller.isProcessingPayment.value
-              ? null
-              : () async {
-                  if (controller.validateForm()) {
-                    final success = await controller.processPremiumPayment(
-                      solution,
-                    );
-                    if (success) {
-                      Get.back(result: true);
-                    }
-                  } else {
-                    Get.snackbar(
-                      'Error',
-                      'Please fill in all required fields',
-                      snackPosition: SnackPosition.TOP,
-                      backgroundColor: Colors.red,
-                      colorText: Colors.white,
-                    );
-                  }
-                },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          child: controller.isProcessingPayment.value
-              ? const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      'Processing Payment...',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                )
-              : Text(
-                  'Pay \$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-        ),
       ),
     );
   }
