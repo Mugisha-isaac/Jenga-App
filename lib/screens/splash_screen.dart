@@ -7,6 +7,9 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Initialize the SplashController
+    Get.put(SplashController());
+
     return GetBuilder<SplashController>(
       builder: (controller) => Scaffold(
         body: Container(
@@ -35,7 +38,8 @@ class SplashScreen extends StatelessWidget {
                 'Building connections, one block at a time',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                  color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7)
+                    ?? Colors.black.withOpacity(0.7), // fallback color
                 ),
               ),
               const SizedBox(height: 50),

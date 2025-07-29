@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jenga_app/modules/login_controller.dart';
-import 'package:jenga_app/routes/routes.dart';
+import 'package:jenga_app/routes/pages.dart';
 import 'package:jenga_app/themes/app_theme.dart';
 
-class LoginScreen extends GetView<LoginController> {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Initialize the LoginController
+    Get.put(LoginController());
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Theme(
@@ -22,7 +25,7 @@ class LoginScreen extends GetView<LoginController> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
             child: Form(
-              key: controller.formKey,
+              key: Get.find<LoginController>().formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -58,7 +61,7 @@ class LoginScreen extends GetView<LoginController> {
                 
                   // Email Field
                   TextFormField(
-                    controller: controller.emailController,
+                    controller: Get.find<LoginController>().emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
                       prefixIcon: const Icon(Icons.email_outlined, color: Colors.black87),
@@ -84,19 +87,19 @@ class LoginScreen extends GetView<LoginController> {
                   // Password Field
                   Obx(
                     () => TextFormField(
-                      controller: controller.passwordController,
-                      obscureText: !controller.isPasswordVisible.value,
+                      controller: Get.find<LoginController>().passwordController,
+                      obscureText: !Get.find<LoginController>().isPasswordVisible.value,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         prefixIcon: const Icon(Icons.lock_outline, color: Colors.black87),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            controller.isPasswordVisible.value
+                            Get.find<LoginController>().isPasswordVisible.value
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                             color: Colors.black87,
                           ),
-                          onPressed: controller.togglePasswordVisibility,
+                          onPressed: Get.find<LoginController>().togglePasswordVisibility,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -123,7 +126,7 @@ class LoginScreen extends GetView<LoginController> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        // TODO: Implement forgot password
+                        
                       },
                       child: const Text('Forgot Password?', style: TextStyle(color: Colors.black87)),
                     ),
@@ -134,11 +137,11 @@ class LoginScreen extends GetView<LoginController> {
                   // Login Button
                   Obx(
                     () => FilledButton(
-                      onPressed: controller.isLoading.value
+                      onPressed: Get.find<LoginController>().isLoading.value
                           ? null
                           : () {
-                              if (controller.formKey.currentState!.validate()) {
-                                controller.login();
+                              if (Get.find<LoginController>().formKey.currentState!.validate()) {
+                                Get.find<LoginController>().login();
                               }
                             },
                       style: FilledButton.styleFrom(
@@ -147,7 +150,7 @@ class LoginScreen extends GetView<LoginController> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: controller.isLoading.value
+                      child: Get.find<LoginController>().isLoading.value
                           ? const SizedBox(
                               width: 20,
                               height: 20,
@@ -181,55 +184,39 @@ class LoginScreen extends GetView<LoginController> {
                 
                   const SizedBox(height: 24),
                 
-                  // Social Login Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Google
-                      IconButton(
-                        onPressed: () {
-                          // TODO: Implement Google Sign In
-                        },
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.grey[100],
-                          padding: const EdgeInsets.all(16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(color: Colors.grey[200]!),
-                          ),
+                  
+                  Center(
+                    child: OutlinedButton.icon(
+                      onPressed: Get.find<LoginController>().isLoading.value ? null : Get.find<LoginController>().signInWithGoogle,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                        side: BorderSide(color: Colors.grey[300]!),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        icon: Image.asset(
-                          'assets/images/google.png',
-                          width: 24,
-                          height: 24,
-                          errorBuilder: (context, error, stackTrace) => 
-                              const Icon(Icons.g_mobiledata, size: 24),
+                        backgroundColor: Colors.white,
+                      ),
+                      icon: Image.asset(
+                        'assets/images/google.png',
+                        width: 24,
+                        height: 24,
+                        errorBuilder: (context, error, stackTrace) => 
+                            const Icon(Icons.g_mobiledata, size: 24, color: Colors.black87),
+                      ),
+                      label: const Text(
+                        'Sign in with Google',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    
-                      const SizedBox(width: 16),
-                    
-                      // Apple
-                      IconButton(
-                        onPressed: () {
-                          // TODO: Implement Apple Sign In
-                        },
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.grey[100],
-                          padding: const EdgeInsets.all(16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(color: Colors.grey[200]!),
-                          ),
-                        ),
-                        icon: const Icon(Icons.apple, size: 24),
-                      ),
-                    ],
+                    ),
                   ),
                 
                   const SizedBox(height: 32),
                 
-                  // Sign Up Link
+                  
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -238,7 +225,7 @@ class LoginScreen extends GetView<LoginController> {
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       TextButton(
-                        onPressed: () {
+                        onPressed: Get.find<LoginController>().isLoading.value ? null : () {
                           Get.toNamed(Routes.REGISTER);
                         },
                         child: const Text('Sign Up', style: TextStyle(color: Colors.black87)),

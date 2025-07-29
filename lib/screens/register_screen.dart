@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jenga_app/modules/register_controller.dart';
-import 'package:jenga_app/routes/routes.dart';
+import 'package:jenga_app/routes/pages.dart';
 import 'package:jenga_app/themes/app_theme.dart';
 
-class RegisterScreen extends GetView<RegisterController> {
-  const RegisterScreen({super.key});
+class RegisterScreen extends StatelessWidget {
+  final RegisterController controller = Get.put(RegisterController());
+
+  RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class RegisterScreen extends GetView<RegisterController> {
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
           onPressed: () => Get.back(),
         ),
-        title: const Text('Create Account', style: TextStyle(color: Colors.black87)),
+        title: const Text('Create An Account', style: TextStyle(color: Colors.black87)),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
@@ -48,7 +50,7 @@ class RegisterScreen extends GetView<RegisterController> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Create Account',
+                        'Create an account',
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
@@ -64,8 +66,8 @@ class RegisterScreen extends GetView<RegisterController> {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  
-                  // Name Field
+
+                  // Full Name Field
                   TextFormField(
                     controller: controller.fullNameController,
                     decoration: InputDecoration(
@@ -79,13 +81,13 @@ class RegisterScreen extends GetView<RegisterController> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
+                        return 'Please enter your full name';
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Email Field
                   TextFormField(
                     controller: controller.emailController,
@@ -110,12 +112,12 @@ class RegisterScreen extends GetView<RegisterController> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  
-                  // Phone Number Field
+
+                  // Phone Field
                   TextFormField(
                     controller: controller.phoneController,
                     decoration: InputDecoration(
-                      labelText: 'Phone Number',
+                      labelText: 'Phone (Optional)',
                       prefixIcon: const Icon(Icons.phone_outlined, color: Colors.black87),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -124,15 +126,9 @@ class RegisterScreen extends GetView<RegisterController> {
                       fillColor: Colors.grey[50],
                     ),
                     keyboardType: TextInputType.phone,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your phone number';
-                      }
-                      return null;
-                    },
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Password Field
                   Obx(
                     () => TextFormField(
@@ -168,7 +164,7 @@ class RegisterScreen extends GetView<RegisterController> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Confirm Password Field
                   Obx(
                     () => TextFormField(
@@ -203,10 +199,9 @@ class RegisterScreen extends GetView<RegisterController> {
                       },
                     ),
                   ),
-                  
                   const SizedBox(height: 24),
-                  
-                  // Sign Up Button
+
+                  // Register Button
                   Obx(
                     () => FilledButton(
                       onPressed: controller.isLoading.value
@@ -234,10 +229,58 @@ class RegisterScreen extends GetView<RegisterController> {
                           : const Text('Create Account', style: TextStyle(color: Colors.white)),
                     ),
                   ),
-                  
                   const SizedBox(height: 24),
-                  
-                  // Already have an account
+
+                  // Divider with "or" text
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'or sign up with',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Colors.grey[600],
+                              ),
+                        ),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Google Sign In Button
+                  Center(
+                    child: OutlinedButton.icon(
+                      onPressed: controller.isLoading.value ? null : controller.signInWithGoogle,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                        side: BorderSide(color: Colors.grey[300]!),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: Colors.white,
+                      ),
+                      icon: Image.asset(
+                        'assets/images/google.png',
+                        width: 24,
+                        height: 24,
+                        errorBuilder: (context, error, stackTrace) => 
+                            const Icon(Icons.g_mobiledata, size: 24, color: Colors.black87),
+                      ),
+                      label: const Text(
+                        'Sign up with Google',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Login Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -246,8 +289,8 @@ class RegisterScreen extends GetView<RegisterController> {
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       TextButton(
-                        onPressed: () => Get.offAllNamed(Routes.LOGIN),
-                        child: const Text('Sign In', style: TextStyle(color: Colors.black87)),
+                        onPressed: controller.isLoading.value ? null : controller.navigateToLogin,
+                        child: const Text('Log In', style: TextStyle(color: Colors.black87)),
                       ),
                     ],
                   ),

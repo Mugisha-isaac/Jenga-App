@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../modules/solution_controller.dart';
 import '../models/solution.dart';
-import '../routes/routes.dart';
+import '../routes/pages.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:jenga_app/firebase_options.dart';
 import 'package:jenga_app/routes/pages.dart';
-import 'package:jenga_app/routes/routes.dart';
 import 'package:jenga_app/services/dependency_injection.dart';
 import 'package:jenga_app/themes/app_theme.dart';
 
@@ -123,7 +122,7 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light, // Force light theme
       initialRoute: Routes.SPLASH,
-      getPages: Pages.routes,
+      getPages: AppPages.routes, // or whatever is exported from pages.dart
       debugShowCheckedModeBanner: false,
     );
   }
