@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -67,8 +69,11 @@ class OnboardingScreen extends StatelessWidget {
               const Spacer(),
               _CustomButton(
                 text: 'Next',
-                onPressed: () {
-                  },
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('onboarding_complete', true);
+                  Get.offAllNamed('/login');
+                },
               ),
             ],
           ),

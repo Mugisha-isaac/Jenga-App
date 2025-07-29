@@ -3,12 +3,18 @@ import 'package:get/get.dart';
 import '../modules/solution_controller.dart';
 import '../models/solution.dart';
 import '../routes/pages.dart';
+import '../repositories/solution_repository.dart';
+import '../providers/firestore_solutions_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Provided the required dependency
+    Get.put(FirestoreSolutionsProvider());
+    Get.put(SolutionRepository(firestoreSolutionsProvider: Get.find<FirestoreSolutionsProvider>()));
+    Get.put(SolutionController());
     final controller = Get.find<SolutionController>();
 
     return Scaffold(

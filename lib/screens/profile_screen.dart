@@ -145,33 +145,25 @@ class ProfileScreen extends StatelessWidget {
                   context,
                   icon: Icons.help_outline,
                   title: 'Help Center',
-                  onTap: () {
-                    Get.snackbar('Coming Soon', 'Help Center will be available soon.');
-                  },
+                  onTap: () => Get.toNamed(Routes.HELP_CENTER),
                 ),
                 _buildListTile(
                   context,
                   icon: Icons.info_outline,
                   title: 'About Us',
-                  onTap: () {
-                    Get.snackbar('About Us', 'Jenga App v1.0.0');
-                  },
+                  onTap: () => Get.toNamed(Routes.ABOUT),
                 ),
                 _buildListTile(
                   context,
                   icon: Icons.privacy_tip_outlined,
                   title: 'Privacy Policy',
-                  onTap: () {
-                    Get.snackbar('Privacy Policy', 'Privacy Policy will be available soon.');
-                  },
+                  onTap: () => Get.toNamed(Routes.PRIVACY_POLICY),
                 ),
                 _buildListTile(
                   context,
                   icon: Icons.description_outlined,
                   title: 'Terms of Service',
-                  onTap: () {
-                    Get.snackbar('Terms of Service', 'Terms of Service will be available soon.');
-                  },
+                  onTap: () => Get.toNamed(Routes.TERMS_OF_SERVICE),
                 ),
 
                 const SizedBox(height: 40),

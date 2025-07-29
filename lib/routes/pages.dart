@@ -8,7 +8,17 @@ import 'package:jenga_app/screens/profile_screen.dart';
 import 'package:jenga_app/screens/register_screen.dart';
 import 'package:jenga_app/screens/settings_screen.dart';
 import 'package:jenga_app/screens/solution_detail_screen.dart';
+import 'package:jenga_app/screens/solutions_list_screen.dart';
+import 'package:jenga_app/screens/create_solution_screen.dart';
+import 'package:jenga_app/screens/explore_screen.dart';
+import 'package:jenga_app/screens/content_screen.dart';
 import 'package:jenga_app/screens/splash_screen.dart';
+import 'package:jenga_app/screens/welcome_screen.dart';
+import 'package:jenga_app/screens/terms_of_service_screen.dart';
+import 'package:jenga_app/screens/help_center_screen.dart';
+import 'package:jenga_app/screens/about_screen.dart';
+import 'package:jenga_app/screens/privacy_policy_screen.dart';
+
 
 
 class Routes {
@@ -22,14 +32,20 @@ class Routes {
   static const SETTINGS = '/settings';
   static const CONTENT = '/content';
   static const EXPLORE = '/explore';
+  static const PAYMENT = '/payment';
   static const SOLUTION_DETAIL = '/solution-detail';
   static const CREATE_SOLUTION = '/create-solution';
+  static const SOLUTIONS_LIST = '/solutions-list';
+  static const String WELCOME = '/welcome';
+  static const String HELP_CENTER = '/help-center';
+  static const String ABOUT = '/about';
+  static const String PRIVACY_POLICY = '/privacy-policy';
+  static const String TERMS_OF_SERVICE = '/terms-of-service';
 }
 
 class AppPages {
-  static const INITIAL = Routes.SPLASH;
-
-  static final routes = [
+  static final List<GetPage> routes = [
+    // Auth Routes
     GetPage(
       name: Routes.SPLASH,
       page: () => const SplashScreen(),
@@ -40,8 +56,14 @@ class AppPages {
     ),
     GetPage(
       name: Routes.REGISTER,
-      page: () => RegisterScreen(), 
+      page: () => const RegisterScreen(),
     ),
+    GetPage(
+      name: Routes.WELCOME,
+      page: () => const WelcomeScreen(),
+    ),
+
+    // Main App Routes
     GetPage(
       name: Routes.HOME,
       page: () => const HomeScreen(),
@@ -51,6 +73,10 @@ class AppPages {
       page: () => const ProfileScreen(),
     ),
     GetPage(
+      name: Routes.SETTINGS,
+      page: () => const SettingsScreen(),
+    ),
+    GetPage(
       name: Routes.EDIT_PROFILE,
       page: () => const EditProfileScreen(),
     ),
@@ -58,9 +84,45 @@ class AppPages {
       name: Routes.CHANGE_PASSWORD,
       page: () => const ChangePasswordScreen(),
     ),
+
+    // Solution Routes
     GetPage(
-      name: Routes.SETTINGS,
-      page: () => const SettingsScreen(),
+      name: Routes.SOLUTIONS_LIST,
+      page: () => const SolutionsListScreen(),
+    ),
+    GetPage(
+      name: Routes.CREATE_SOLUTION,
+      page: () => const CreateSolutionScreen(),
+    ),
+    GetPage(
+      name: Routes.EXPLORE,
+      page: () => const ExploreScreen(),
+    ),
+    GetPage(
+      name: Routes.SOLUTION_DETAIL,
+      page: () => const SolutionDetailScreen(),
+    ),
+    GetPage(
+      name: Routes.PAYMENT,
+      page: () => const PaymentScreen(),
+    ),
+
+    // Info & Support Routes
+    GetPage(
+      name: Routes.HELP_CENTER,
+      page: () => const HelpCenterScreen(),
+    ),
+    GetPage(
+      name: Routes.ABOUT,
+      page: () => const AboutScreen(),
+    ),
+    GetPage(
+      name: Routes.PRIVACY_POLICY,
+      page: () => const PrivacyPolicyScreen(),
+    ),
+    GetPage(
+      name: Routes.TERMS_OF_SERVICE,
+      page: () => const TermsOfServiceScreen(),
     ),
   ];
 }

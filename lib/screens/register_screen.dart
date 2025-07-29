@@ -4,10 +4,8 @@ import 'package:jenga_app/modules/register_controller.dart';
 import 'package:jenga_app/routes/pages.dart';
 import 'package:jenga_app/themes/app_theme.dart';
 
-class RegisterScreen extends StatelessWidget {
-  final RegisterController controller = Get.put(RegisterController());
-
-  RegisterScreen({super.key});
+class RegisterScreen extends GetView<RegisterController> {
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
