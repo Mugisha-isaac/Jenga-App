@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jenga_app/models/user.dart';
+import 'package:jenga_app/modules/auth_controller.dart';
 import 'package:jenga_app/modules/profile_controller.dart';
 import 'package:jenga_app/routes/routes.dart';
 import 'package:jenga_app/themes/app_theme.dart';
 
-class ProfileScreen extends GetView<ProfileController> {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Initialize the ProfileController
+    Get.put(ProfileController());
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Profile'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
-              Get.toNamed(Routes.SETTINGS);
-            },
-          ),
-        ],
       ),
       body: SafeArea(
         child: Obx(() {
+          final controller = Get.find<ProfileController>();
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -38,7 +34,7 @@ class ProfileScreen extends GetView<ProfileController> {
                   const Text('Failed to load profile'),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: controller.loadUserProfile,
+                    onPressed: () => controller.loadUser(),
                     child: const Text('Retry'),
                   ),
                 ],
@@ -51,7 +47,6 @@ class ProfileScreen extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Profile Header
                 Column(
                   children: [
                     Stack(
@@ -83,7 +78,8 @@ class ProfileScreen extends GetView<ProfileController> {
                           child: IconButton(
                             icon: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
                             onPressed: () {
-                              // TODO: Implement profile picture update
+                              // Navigate to Edit Profile for profile picture change
+                              Get.toNamed(Routes.EDIT_PROFILE);
                             },
                           ),
                         ),
@@ -109,14 +105,13 @@ class ProfileScreen extends GetView<ProfileController> {
                   ],
                 ),
 
-                // Account Section
                 _buildSectionHeader('Account'),
                 _buildListTile(
                   context,
                   icon: Icons.person_outline,
                   title: 'Edit Profile',
                   onTap: () {
-                    // TODO: Navigate to edit profile
+                    Get.toNamed(Routes.EDIT_PROFILE);
                   },
                 ),
                 _buildListTile(
@@ -124,7 +119,7 @@ class ProfileScreen extends GetView<ProfileController> {
                   icon: Icons.lock_outline,
                   title: 'Change Password',
                   onTap: () {
-                    // TODO: Navigate to change password
+                    Get.toNamed(Routes.CHANGE_PASSWORD);
                   },
                 ),
                 _buildListTile(
@@ -132,47 +127,37 @@ class ProfileScreen extends GetView<ProfileController> {
                   icon: Icons.notifications_outlined,
                   title: 'Notifications',
                   onTap: () {
-                    // TODO: Navigate to notifications
+                    Get.snackbar('Coming Soon', 'Notification settings will be available soon.');
                   },
                 ),
 
-                // Support Section
                 const SizedBox(height: 24),
                 _buildSectionHeader('Support'),
                 _buildListTile(
                   context,
                   icon: Icons.help_outline,
                   title: 'Help Center',
-                  onTap: () {
-                    // TODO: Navigate to help center
-                  },
+                  onTap: () => Get.toNamed(Routes.HELP_CENTER),
                 ),
                 _buildListTile(
                   context,
                   icon: Icons.info_outline,
                   title: 'About Us',
-                  onTap: () {
-                    // TODO: Navigate to about us
-                  },
+                  onTap: () => Get.toNamed(Routes.ABOUT),
                 ),
                 _buildListTile(
                   context,
                   icon: Icons.privacy_tip_outlined,
                   title: 'Privacy Policy',
-                  onTap: () {
-                    // TODO: Show privacy policy
-                  },
+                  onTap: () => Get.toNamed(Routes.PRIVACY_POLICY),
                 ),
                 _buildListTile(
                   context,
                   icon: Icons.description_outlined,
                   title: 'Terms of Service',
-                  onTap: () {
-                    // TODO: Show terms of service
-                  },
+                  onTap: () => Get.toNamed(Routes.TERMS_OF_SERVICE),
                 ),
 
-                // Logout Button
                 const SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -193,7 +178,6 @@ class ProfileScreen extends GetView<ProfileController> {
                   ),
                 ),
 
-                // App Version
                 const SizedBox(height: 24),
                 Center(
                   child: Text(
@@ -257,8 +241,7 @@ class ProfileScreen extends GetView<ProfileController> {
           ),
           TextButton(
             onPressed: () {
-              // TODO: Implement logout
-              Get.offAllNamed(Routes.LOGIN);
+              Get.find<AuthController>().signOut();
             },
             child: const Text('Logout'),
           ),
