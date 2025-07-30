@@ -8,13 +8,247 @@ import '../widgets/secure_image_picker_widget.dart';
 import '../models/solution.dart';
 import '../themes/app_theme.dart';
 
-class CreateSolutionScreen extends StatelessWidget {
+class CreateSolutionScreen extends StatefulWidget {
   const CreateSolutionScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<CreateSolutionScreen> createState() => _CreateSolutionScreenState();
+}
+
+class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
+  late SolutionController controller;
+  bool _isInitialized = false;
+
+  // Local text controllers for safer management
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _categoryController;
+  late TextEditingController _countryController;
+  late TextEditingController _cityController;
+  late TextEditingController _materialController;
+  late TextEditingController _tagController;
+  late TextEditingController _stepDescriptionController;
+  late TextEditingController _premiumPriceController;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeLocalControllers();
+    _initializeController();
+  }
+
+  void _initializeLocalControllers() {
+    _titleController = TextEditingController();
+    _descriptionController = TextEditingController();
+    _categoryController = TextEditingController();
+    _countryController = TextEditingController();
+    _cityController = TextEditingController();
+    _materialController = TextEditingController();
+    _tagController = TextEditingController();
+    _stepDescriptionController = TextEditingController();
+    _premiumPriceController = TextEditingController();
+  }
+
+  void _initializeController() {
     Get.put(AuthController());
-    final controller = Get.put(SolutionController());
+
+    // Use a more robust controller management approach
+    try {
+      controller = Get.find<SolutionController>();
+    } catch (e) {
+      controller = Get.put(SolutionController(), permanent: true);
+    }
+
+    // Sync local controllers with GetX controller
+    _syncControllersWithGetX();
+
+    // Handle edit mode setup after initialization
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _handleEditMode();
+    });
+  }
+
+  void _syncControllersWithGetX() {
+    // Initial sync from GetX controller to local controllers safely
+    try {
+      _titleController.text = controller.titleController.text;
+      _descriptionController.text = controller.descriptionController.text;
+      _categoryController.text = controller.categoryController.text;
+      _countryController.text = controller.countryController.text;
+      _cityController.text = controller.cityController.text;
+      _materialController.text = controller.materialController.text;
+      _tagController.text = controller.tagController.text;
+      _stepDescriptionController.text =
+          controller.stepDescriptionController.text;
+      _premiumPriceController.text = controller.premiumPriceController.text;
+    } catch (e) {
+      print('Error syncing controllers: $e');
+    }
+
+    // Listen to changes and sync back to GetX controller (with safety checks)
+    _titleController.addListener(() {
+      _safeSync(() => controller.titleController.text = _titleController.text);
+    });
+
+    _descriptionController.addListener(() {
+      _safeSync(() =>
+          controller.descriptionController.text = _descriptionController.text);
+    });
+
+    _countryController.addListener(() {
+      _safeSync(
+          () => controller.countryController.text = _countryController.text);
+    });
+
+    _cityController.addListener(() {
+      _safeSync(() => controller.cityController.text = _cityController.text);
+    });
+
+    _premiumPriceController.addListener(() {
+      _safeSync(() => controller.premiumPriceController.text =
+          _premiumPriceController.text);
+    });
+  }
+
+  void _safeSync(VoidCallback syncOperation) {
+    if (!mounted) return;
+
+    try {
+      syncOperation();
+    } catch (e) {
+      // Silently ignore disposal errors during sync
+      if (!e.toString().contains('disposed')) {
+        print('Sync error: $e');
+      }
+    }
+  }
+
+  void _handleEditMode() {
+    final arguments = Get.arguments;
+    if (arguments != null && arguments is Map) {
+      final solution = arguments['solution'] as Solution?;
+      final isEdit = arguments['isEdit'] as bool? ?? false;
+
+      if (isEdit && solution != null) {
+        // Immediately sync edit mode data to local controllers
+        _syncEditModeData(solution);
+
+        // Set the controller edit mode directly without validation
+        try {
+          controller.isEditMode.value = true;
+          controller.editingSolution.value = solution;
+
+          // Sync data to GetX controller as well
+          controller.titleController.text = solution.title;
+          controller.descriptionController.text = solution.description;
+          controller.countryController.text = solution.country;
+          controller.cityController.text = solution.city;
+          controller.selectedCategory.value = solution.category;
+
+          if (solution.isPremium && solution.premiumPrice != null) {
+            controller.isPremium.value = true;
+            controller.premiumPriceController.text =
+                solution.premiumPrice.toString();
+          } else {
+            controller.isPremium.value = false;
+          }
+
+          // Sync materials, tags, steps
+          controller.materials.clear();
+          controller.materials.addAll(solution.materials);
+
+          controller.tags.clear();
+          controller.tags.addAll(solution.tags);
+
+          controller.steps.clear();
+          controller.steps.addAll(solution.steps);
+
+          // Sync images
+          controller.imageUrls.clear();
+          controller.imageUrls
+              .addAll(solution.images.map((img) => img.url).toList());
+
+          setState(() {
+            _isInitialized = true;
+          });
+        } catch (e) {
+          print('Error setting edit mode: $e');
+          setState(() {
+            _isInitialized = true;
+          });
+        }
+      } else {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+    } else {
+      setState(() {
+        _isInitialized = true;
+      });
+    }
+  }
+
+  void _syncEditModeData(Solution solution) {
+    try {
+      // Sync basic info
+      _titleController.text = solution.title;
+      _descriptionController.text = solution.description;
+      _countryController.text = solution.country;
+      _cityController.text = solution.city;
+
+      // Sync premium info
+      if (solution.isPremium && solution.premiumPrice != null) {
+        _premiumPriceController.text = solution.premiumPrice.toString();
+      } else {
+        _premiumPriceController.clear();
+      }
+
+      // Clear other controllers for fresh data
+      _materialController.clear();
+      _tagController.clear();
+      _stepDescriptionController.clear();
+
+      print('Edit mode data synced successfully to local controllers');
+    } catch (e) {
+      print('Error syncing edit mode data: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    // Dispose local controllers safely
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _categoryController.dispose();
+    _countryController.dispose();
+    _cityController.dispose();
+    _materialController.dispose();
+    _tagController.dispose();
+    _stepDescriptionController.dispose();
+    _premiumPriceController.dispose();
+
+    // Clear any edit mode if we're leaving
+    try {
+      if (controller.isEditMode.value) {
+        controller.exitEditMode();
+      }
+    } catch (e) {
+      print('Error exiting edit mode: $e');
+    }
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -93,14 +327,14 @@ class CreateSolutionScreen extends StatelessWidget {
       child: Column(
         children: [
           _buildTextField(
-            controller: controller.titleController,
+            controller: _titleController,
             label: 'Title',
             hint: 'Enter solution title',
             required: true,
           ),
           const SizedBox(height: 16),
           _buildTextField(
-            controller: controller.descriptionController,
+            controller: _descriptionController,
             label: 'Description',
             hint: 'Describe your solution',
             maxLines: 4,
@@ -118,7 +352,7 @@ class CreateSolutionScreen extends StatelessWidget {
         children: [
           Expanded(
             child: _buildTextField(
-              controller: controller.countryController,
+              controller: _countryController,
               label: 'Country',
               hint: 'Country',
               required: true,
@@ -127,7 +361,7 @@ class CreateSolutionScreen extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             child: _buildTextField(
-              controller: controller.cityController,
+              controller: _cityController,
               label: 'City',
               hint: 'City',
               required: true,
@@ -223,10 +457,10 @@ class CreateSolutionScreen extends StatelessWidget {
                             if (loadingProgress == null) return child;
                             return Center(
                               child: CircularProgressIndicator(
-                                value:
-                                    loadingProgress.expectedTotalBytes != null
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
                                     ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
+                                        loadingProgress.expectedTotalBytes!
                                     : null,
                               ),
                             );
@@ -371,7 +605,7 @@ class CreateSolutionScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
-                  controller: controller.materialController,
+                  controller: _materialController,
                   decoration: InputDecoration(
                     labelText: 'Material',
                     hintText: 'Enter material name',
@@ -381,12 +615,12 @@ class CreateSolutionScreen extends StatelessWidget {
                     filled: true,
                     fillColor: Colors.grey[50],
                   ),
-                  onSubmitted: (_) => controller.addMaterial(),
+                  onSubmitted: (_) => _addMaterial(),
                 ),
               ),
               const SizedBox(width: 8),
               IconButton(
-                onPressed: controller.addMaterial,
+                onPressed: _addMaterial,
                 icon: const Icon(Icons.add),
                 style: IconButton.styleFrom(
                   backgroundColor: const Color(0xFF00BF63),
@@ -414,6 +648,13 @@ class CreateSolutionScreen extends StatelessWidget {
     );
   }
 
+  void _addMaterial() {
+    if (_materialController.text.trim().isNotEmpty) {
+      controller.materials.add(_materialController.text.trim());
+      _materialController.clear();
+    }
+  }
+
   Widget _buildStepsSection(SolutionController controller) {
     return _buildSection(
       title: 'Steps',
@@ -423,7 +664,7 @@ class CreateSolutionScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
-                  controller: controller.stepDescriptionController,
+                  controller: _stepDescriptionController,
                   decoration: InputDecoration(
                     labelText: 'Step Description',
                     hintText: 'Describe the step',
@@ -434,12 +675,12 @@ class CreateSolutionScreen extends StatelessWidget {
                     fillColor: Colors.grey[50],
                   ),
                   maxLines: 2,
-                  onSubmitted: (_) => controller.addStep(),
+                  onSubmitted: (_) => _addStep(),
                 ),
               ),
               const SizedBox(width: 8),
               IconButton(
-                onPressed: controller.addStep,
+                onPressed: _addStep,
                 icon: const Icon(Icons.add),
                 style: IconButton.styleFrom(
                   backgroundColor: const Color(0xFF00BF63),
@@ -465,6 +706,17 @@ class CreateSolutionScreen extends StatelessWidget {
     );
   }
 
+  void _addStep() {
+    if (_stepDescriptionController.text.trim().isNotEmpty) {
+      final step = SolutionStep(
+        stepNumber: controller.steps.length + 1,
+        description: _stepDescriptionController.text.trim(),
+      );
+      controller.steps.add(step);
+      _stepDescriptionController.clear();
+    }
+  }
+
   Widget _buildTagsSection(SolutionController controller) {
     return _buildSection(
       title: 'Tags',
@@ -474,7 +726,7 @@ class CreateSolutionScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
-                  controller: controller.tagController,
+                  controller: _tagController,
                   decoration: InputDecoration(
                     labelText: 'Tag',
                     hintText: 'Enter tag',
@@ -484,12 +736,12 @@ class CreateSolutionScreen extends StatelessWidget {
                     filled: true,
                     fillColor: Colors.grey[50],
                   ),
-                  onSubmitted: (_) => controller.addTag(),
+                  onSubmitted: (_) => _addTag(),
                 ),
               ),
               const SizedBox(width: 8),
               IconButton(
-                onPressed: controller.addTag,
+                onPressed: _addTag,
                 icon: const Icon(Icons.add),
                 style: IconButton.styleFrom(
                   backgroundColor: const Color(0xFF00BF63),
@@ -517,6 +769,13 @@ class CreateSolutionScreen extends StatelessWidget {
     );
   }
 
+  void _addTag() {
+    if (_tagController.text.trim().isNotEmpty) {
+      controller.tags.add(_tagController.text.trim());
+      _tagController.clear();
+    }
+  }
+
   Widget _buildPremiumSection(SolutionController controller) {
     return _buildSection(
       title: 'Premium Options',
@@ -536,7 +795,7 @@ class CreateSolutionScreen extends StatelessWidget {
                 ? Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: _buildTextField(
-                      controller: controller.premiumPriceController,
+                      controller: _premiumPriceController,
                       label: 'Premium Price',
                       hint: 'Enter price in USD',
                       keyboardType: TextInputType.number,
@@ -559,7 +818,7 @@ class CreateSolutionScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:(0.1)),
+            color: Colors.grey.withValues(alpha: (0.1)),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -611,7 +870,7 @@ class CreateSolutionScreen extends StatelessWidget {
       label: Text(text),
       deleteIcon: const Icon(Icons.close, size: 18),
       onDeleted: onDelete,
-      backgroundColor: const Color(0xFF00BF63).withValues(alpha:(0.1)),
+      backgroundColor: const Color(0xFF00BF63).withValues(alpha: (0.1)),
       labelStyle: const TextStyle(color: Color(0xFF00BF63)),
     );
   }

@@ -36,19 +36,19 @@ class SolutionsListScreen extends StatelessWidget {
         () => controller.isLoadingSolutions.value
             ? _buildLoadingState()
             : controller.solutions.isEmpty
-            ? _buildEmptyState()
-            : RefreshIndicator(
-                onRefresh: () => controller.loadSolutions(),
-                color: AppTheme.primaryColor,
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: controller.solutions.length,
-                  itemBuilder: (context, index) {
-                    final solution = controller.solutions[index];
-                    return _buildSolutionCard(solution, controller);
-                  },
-                ),
-              ),
+                ? _buildEmptyState()
+                : RefreshIndicator(
+                    onRefresh: () => controller.loadSolutions(),
+                    color: AppTheme.primaryColor,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: controller.solutions.length,
+                      itemBuilder: (context, index) {
+                        final solution = controller.solutions[index];
+                        return _buildSolutionCard(solution, controller);
+                      },
+                    ),
+                  ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -234,10 +234,10 @@ class SolutionsListScreen extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryColor.withValues(alpha:(0.1)),
+                        color: AppTheme.primaryColor.withValues(alpha: (0.1)),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: AppTheme.primaryColor.withValues(alpha:(0.3)),
+                          color: AppTheme.primaryColor.withValues(alpha: (0.3)),
                           width: 1,
                         ),
                       ),
@@ -280,7 +280,7 @@ class SolutionsListScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.amber.withValues(alpha:(0.3)),
+                              color: Colors.amber.withValues(alpha: (0.3)),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -512,11 +512,12 @@ class SolutionsListScreen extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.primaryColor.withValues(alpha:(0.1)),
+                                  color: AppTheme.primaryColor
+                                      .withValues(alpha: (0.1)),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: AppTheme.primaryColor.withValues(alpha:(
-                                      0.3),
+                                    color: AppTheme.primaryColor.withValues(
+                                      alpha: (0.3),
                                     ),
                                     width: 1,
                                   ),
@@ -594,8 +595,17 @@ class SolutionsListScreen extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: () {
-                          controller.setEditMode(solution);
-                          Get.toNamed(Routes.CREATE_SOLUTION);
+                          // Clear any existing edit mode first
+                          controller.exitEditMode();
+
+                          // Small delay to ensure state is cleared
+                          Future.delayed(const Duration(milliseconds: 100), () {
+                            // Pass solution data as arguments instead of setting edit mode first
+                            Get.toNamed(Routes.CREATE_SOLUTION, arguments: {
+                              'solution': solution,
+                              'isEdit': true
+                            });
+                          });
                         },
                         icon: const Icon(Icons.edit_rounded, size: 16),
                         label: const Text('Edit'),

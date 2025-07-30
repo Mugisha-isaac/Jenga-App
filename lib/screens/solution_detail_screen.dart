@@ -66,8 +66,14 @@ class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
                 ? IconButton(
                     icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () {
-                      _solutionController.setEditMode(currentSolution);
-                      Get.toNamed(Routes.CREATE_SOLUTION);
+                      // Exit edit mode first to clean up state
+                      _solutionController.exitEditMode();
+
+                      // Navigate with solution data as arguments
+                      Get.toNamed(Routes.CREATE_SOLUTION, arguments: {
+                        'isEdit': true,
+                        'solution': currentSolution,
+                      });
                     },
                   )
                 : const SizedBox.shrink();

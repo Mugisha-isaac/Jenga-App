@@ -39,6 +39,7 @@ class SolutionController extends GetxController {
   final Rx<Solution?> editingSolution = Rx<Solution?>(null);
   final RxList<Solution> solutions = <Solution>[].obs;
   final RxBool isLoadingSolutions = false.obs;
+  final RxBool isControllerReady = false.obs;
 
   // New variables for filtering and search
   final RxString selectedFilterCategory = ''.obs;
@@ -60,9 +61,16 @@ class SolutionController extends GetxController {
     super.onInit();
     _solutionRepository = Get.find<SolutionRepository>();
 
-    // Set default values
-    countryController.text = 'Rwanda';
-    cityController.text = 'Kigali';
+    // Set default values safely
+    try {
+      countryController.text = 'Rwanda';
+      cityController.text = 'Kigali';
+    } catch (e) {
+      print('Warning: Error setting default values in onInit: $e');
+    }
+
+    // Mark controller as ready
+    isControllerReady.value = true;
 
     // Load solutions if not already loaded
     if (solutions.isEmpty) {
@@ -80,6 +88,9 @@ class SolutionController extends GetxController {
 
   @override
   void onClose() {
+    // Mark controller as not ready
+    isControllerReady.value = false;
+
     // Dispose controllers safely
     try {
       titleController.dispose();
@@ -117,27 +128,6 @@ class SolutionController extends GetxController {
     }
   }
 
-  // Set edit mode with solution data
-  void setEditMode(Solution solution) {
-    isEditMode.value = true;
-    editingSolution.value = solution;
-
-    // Populate form fields
-    titleController.text = solution.title;
-    descriptionController.text = solution.description;
-    countryController.text = solution.country;
-    cityController.text = solution.city;
-    selectedCategory.value = solution.category;
-    isPremium.value = solution.isPremium;
-    premiumPriceController.text = solution.premiumPrice?.toString() ?? '';
-
-    // Populate lists
-    materials.assignAll(solution.materials);
-    tags.assignAll(solution.tags);
-    steps.assignAll(solution.steps);
-    imageUrls.assignAll(solution.images.map((img) => img.url));
-  }
-
   // Exit edit mode
   void exitEditMode() {
     isEditMode.value = false;
@@ -147,9 +137,13 @@ class SolutionController extends GetxController {
 
   // Add material to the list
   void addMaterial() {
-    if (materialController.text.trim().isNotEmpty) {
-      materials.add(materialController.text.trim());
-      materialController.clear();
+    try {
+      if (materialController.text.trim().isNotEmpty) {
+        materials.add(materialController.text.trim());
+        materialController.clear();
+      }
+    } catch (e) {
+      print('Warning: materialController disposed in addMaterial: $e');
     }
   }
 
@@ -160,9 +154,13 @@ class SolutionController extends GetxController {
 
   // Add tag to the list
   void addTag() {
-    if (tagController.text.trim().isNotEmpty) {
-      tags.add(tagController.text.trim());
-      tagController.clear();
+    try {
+      if (tagController.text.trim().isNotEmpty) {
+        tags.add(tagController.text.trim());
+        tagController.clear();
+      }
+    } catch (e) {
+      print('Warning: tagController disposed in addTag: $e');
     }
   }
 
@@ -173,14 +171,18 @@ class SolutionController extends GetxController {
 
   // Add step to the list
   void addStep() {
-    if (stepDescriptionController.text.trim().isNotEmpty) {
-      steps.add(
-        SolutionStep(
-          stepNumber: steps.length + 1,
-          description: stepDescriptionController.text.trim(),
-        ),
-      );
-      stepDescriptionController.clear();
+    try {
+      if (stepDescriptionController.text.trim().isNotEmpty) {
+        steps.add(
+          SolutionStep(
+            stepNumber: steps.length + 1,
+            description: stepDescriptionController.text.trim(),
+          ),
+        );
+        stepDescriptionController.clear();
+      }
+    } catch (e) {
+      print('Warning: stepDescriptionController disposed in addStep: $e');
     }
   }
 
@@ -449,22 +451,9 @@ class SolutionController extends GetxController {
 
   // Clear form
   void clearForm() {
-    // Check if controllers are still valid before clearing
-    try {
-      titleController.clear();
-      descriptionController.clear();
-      categoryController.clear();
-      countryController.text = 'Rwanda';
-      cityController.text = 'Kigali';
-      materialController.clear();
-      tagController.clear();
-      stepDescriptionController.clear();
-      premiumPriceController.clear();
-    } catch (e) {
-      // Controllers might be disposed, ignore the error
-      print('Warning: Controllers already disposed in clearForm: $e');
-    }
+    print('🧹 Clearing form state (controllers managed locally)...');
 
+    // Clear observable lists and values (these should be safe)
     materials.clear();
     tags.clear();
     steps.clear();
@@ -476,6 +465,8 @@ class SolutionController extends GetxController {
     // Reset edit mode
     isEditMode.value = false;
     editingSolution.value = null;
+
+    print('✅ Form state cleared successfully');
   }
 
   // Set category
@@ -486,14 +477,8 @@ class SolutionController extends GetxController {
   // Toggle premium status
   void togglePremium() {
     isPremium.value = !isPremium.value;
-    if (!isPremium.value) {
-      try {
-        premiumPriceController.clear();
-      } catch (e) {
-        // Controller might be disposed, ignore the error
-        print('Warning: premiumPriceController already disposed: $e');
-      }
-    }
+    // Don't try to clear local controllers - let the screen handle its own state
+    print('💰 Premium status toggled: ${isPremium.value}');
   }
 
   // Delete solution
