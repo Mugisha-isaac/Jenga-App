@@ -50,11 +50,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "73754095414-imlmrejc2ef2h8pg3r1ph2uft9hffsar.apps.googleusercontent.com",
+          "client_id": "73754095414-g4v66q6v4t6m57aps88chdjiiti7cp9v.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.jenga_app",
-            "certificate_hash": "9f39028d9dc61fd9e46a48b1bb1a42f9ddc54c81"
+            "certificate_hash": "5bee22f94aab18da120b9fb4c5d61f5e6edeb559"
           }
         },
         {
