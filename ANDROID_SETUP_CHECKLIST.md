@@ -46,6 +46,42 @@ flutter run
 - [ ] Google Sign-In button appears
 - [ ] Google Sign-In works (test on physical device)
 
+## 🚨 URGENT FIX for PlatformException(sign_in_failed, ApiException: 10)
+
+### ❌ Your Current Error
+**Error:** `PlatformException(sign_in_failed,com.google.android.gms.common.api.ApiException:10,null,null)`
+**Cause:** Missing or incorrect SHA-1 fingerprint in Firebase Console
+
+### 🔧 **IMMEDIATE FIX STEPS:**
+
+#### Step 1: Use Your SHA-1 Fingerprint
+Your SHA-1 fingerprint is: `9F:39:02:8D:9D:C6:1F:D9:E4:6A:48:B1:BB:1A:42:F9:DD:C5:4C:81`
+Your package name is: `com.example.jenga_app`
+
+#### Step 2: Add to Firebase Console
+1. Go to [Firebase Console](https://console.firebase.google.com)
+2. Select your project
+3. Click **Project Settings** (gear icon)
+4. Select your **Android app** (`com.alu.jenga`) ⚠️ **Updated package name**
+5. Scroll to **"SHA certificate fingerprints"**
+6. Click **"Add fingerprint"**
+7. Paste: `9F:39:02:8D:9D:C6:1F:D9:E4:6A:48:B1:BB:1A:42:F9:DD:C5:4C:81`
+8. Click **"Save"**
+
+#### Step 3: Download Fresh google-services.json
+1. After adding the fingerprint, click **"Download google-services.json"**
+2. Replace the file in `android/app/google-services.json`
+3. **This step is CRITICAL** - you must download a fresh file!
+
+#### Step 4: Clean and Rebuild
+```bash
+flutter clean
+flutter pub get
+flutter run
+```
+
+### ✅ After Fix - Google Sign-In Should Work!
+
 ## 🚨 Common Issues & Fixes
 
 ### Google Sign-In Not Working?
