@@ -29,8 +29,8 @@ class PaymentController extends GetxController {
     final userId = _authController.currentUser.value?.uid;
     if (userId != null) {
       try {
-        final paidSolutions = await _paidSolutionRepository
-            .getPaidSolutionsByUser(userId);
+        final paidSolutions =
+            await _paidSolutionRepository.getPaidSolutionsByUser(userId);
         userPaidSolutions.assignAll(paidSolutions);
       } catch (e) {
         Get.snackbar('Error', 'Failed to load paid solutions');
@@ -44,28 +44,49 @@ class PaymentController extends GetxController {
     );
   }
 
-  Future<bool> processPremiumPayment(Solution solution, BuildContext context) async {
+  Future<bool> processPremiumPayment(
+      Solution solution, BuildContext context) async {
     final userId = _authController.currentUser.value?.uid;
     if (userId == null) {
-      Get.snackbar('Error', 'Please login to purchase premium solutions');
+      Get.snackbar(
+        'Error',
+        'Please login to purchase premium solutions',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return false;
     }
 
     if (hasUserPaidForSolution(solution.solutionId)) {
-      Get.snackbar('Info', 'You have already purchased this solution');
+      Get.snackbar(
+        'Info',
+        'You have already purchased this solution',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.blue,
+        colorText: Colors.white,
+      );
       return true;
     }
 
     isProcessingPayment.value = true;
 
     try {
+      // Validate solution price
+      if (solution.premiumPrice == null || solution.premiumPrice! <= 0) {
+        throw Exception('Invalid solution price');
+      }
+
       // Create PayPal payment item
       final paymentItem = PaymentItem(
         name: solution.title,
-        price: solution.premiumPrice ?? 0.0,
+        price: solution.premiumPrice!,
         quantity: 1,
         currency: 'USD',
       );
+
+      print(
+          'Processing payment for: ${solution.title} - \$${solution.premiumPrice}');
 
       // Process PayPal payment
       final paymentTransaction = await PayPalService.makePayment(
@@ -88,6 +109,16 @@ class PaymentController extends GetxController {
         await _paidSolutionRepository.createPaidSolution(paidSolution);
         userPaidSolutions.add(paidSolution);
 
+        // Show success message
+        Get.snackbar(
+          'Success',
+          'Payment completed successfully!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+
         // Navigate to success screen
         await Get.to(
           () => const PaymentSuccessScreen(),
@@ -99,21 +130,35 @@ class PaymentController extends GetxController {
         return true;
       } else {
         Get.snackbar(
-          'Error',
-          'Payment was cancelled or failed. Please try again.',
+          'Cancelled',
+          'Payment was cancelled. Please try again if you want to purchase this solution.',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.orange,
           colorText: Colors.white,
+          duration: const Duration(seconds: 4),
         );
         return false;
       }
     } catch (e) {
+      String errorMessage = 'Payment failed. Please try again.';
+
+      if (e.toString().contains('cancelled')) {
+        errorMessage = 'Payment was cancelled.';
+      } else if (e.toString().contains('Client ID')) {
+        errorMessage = 'PayPal configuration error. Please contact support.';
+      } else if (e.toString().contains('network')) {
+        errorMessage = 'Network error. Please check your internet connection.';
+      }
+
+      print('Payment error: $e');
+
       Get.snackbar(
-        'Error',
-        'Payment failed. Please try again.',
+        'Payment Error',
+        errorMessage,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        duration: const Duration(seconds: 5),
       );
       return false;
     } finally {

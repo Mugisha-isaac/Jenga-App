@@ -47,7 +47,7 @@ class PaymentScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:(0.05)),
+            color: Colors.black.withValues(alpha: (0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -147,7 +147,7 @@ class PaymentScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:(0.05)),
+            color: Colors.black.withValues(alpha: (0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -207,7 +207,8 @@ class PaymentScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.security, color: Colors.green.shade700, size: 20),
+                    Icon(Icons.security,
+                        color: Colors.green.shade700, size: 20),
                     const SizedBox(width: 8),
                     const Expanded(
                       child: Text(
@@ -223,7 +224,8 @@ class PaymentScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    Icon(Icons.flash_on, color: Colors.orange.shade700, size: 20),
+                    Icon(Icons.flash_on,
+                        color: Colors.orange.shade700, size: 20),
                     const SizedBox(width: 8),
                     const Expanded(
                       child: Text(
@@ -239,7 +241,8 @@ class PaymentScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    Icon(Icons.verified_user, color: Colors.blue.shade700, size: 20),
+                    Icon(Icons.verified_user,
+                        color: Colors.blue.shade700, size: 20),
                     const SizedBox(width: 8),
                     const Expanded(
                       child: Text(
@@ -269,7 +272,8 @@ class PaymentScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPayButton(PaymentController controller, Solution solution, BuildContext context) {
+  Widget _buildPayButton(
+      PaymentController controller, Solution solution, BuildContext context) {
     return Obx(
       () => Column(
         children: [
@@ -280,12 +284,26 @@ class PaymentScreen extends StatelessWidget {
               onPressed: controller.isProcessingPayment.value
                   ? null
                   : () async {
-                      final success = await controller.processPremiumPayment(
-                        solution,
-                        context,
-                      );
-                      if (success) {
-                        Get.back(result: true);
+                      try {
+                        final success = await controller.processPremiumPayment(
+                          solution,
+                          context,
+                        );
+                        if (success) {
+                          // Small delay to ensure success screen is shown
+                          await Future.delayed(
+                              const Duration(milliseconds: 500));
+                          Get.back(result: true);
+                        }
+                      } catch (e) {
+                        // Additional error handling at UI level
+                        Get.snackbar(
+                          'Error',
+                          'An unexpected error occurred. Please try again.',
+                          snackPosition: SnackPosition.TOP,
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
                       }
                     },
               style: ElevatedButton.styleFrom(
@@ -305,7 +323,8 @@ class PaymentScreen extends StatelessWidget {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         ),
                         SizedBox(width: 12),
