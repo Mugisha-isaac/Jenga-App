@@ -20,8 +20,10 @@ class AuthRepository {
       final userCredential = await firebaseAuthProvider
           .signInWithEmailAndPassword(email, password);
 
-      print('🔥 Retrieving user document from Firestore for ${userCredential.user!.uid}');
-      final user = await firestoreUserProvider.getUser(userCredential.user!.uid);
+      print(
+          '🔥 Retrieving user document from Firestore for ${userCredential.user!.uid}');
+      final user =
+          await firestoreUserProvider.getUser(userCredential.user!.uid);
       if (user == null) {
         throw Exception('User data not found');
       }
@@ -66,10 +68,50 @@ class AuthRepository {
 
   Future<void> signOut() async {
     await firebaseAuthProvider.signOut();
+    await firebaseAuthProvider.signOutGoogle();
   }
 
   Future<void> sendPasswordResetEmail(String email) async {
     await firebaseAuthProvider.sendPasswordResetEmail(email);
+  }
+
+  Future<user_model.User> signInWithGoogle() async {
+    try {
+      final userCredential = await firebaseAuthProvider.signInWithGoogle();
+      final firebaseUser = userCredential.user!;
+
+      print(
+          '🔥 Checking if Google user exists in Firestore: ${firebaseUser.uid}');
+
+      // Check if user already exists in Firestore
+      user_model.User? existingUser =
+          await firestoreUserProvider.getUser(firebaseUser.uid);
+
+      if (existingUser != null) {
+        print('✅ Existing Google user found in Firestore');
+        return existingUser;
+      }
+
+      // Create new user document for first-time Google sign-in
+      print('🔥 Creating new user document for Google sign-in');
+      final now = DateTime.now();
+      final newUser = user_model.User(
+        id: firebaseUser.uid,
+        email: firebaseUser.email ?? '',
+        fullName: firebaseUser.displayName ?? 'Google User',
+        phoneNumber: firebaseUser.phoneNumber ?? '',
+        createdAt: now,
+        updatedAt: now,
+        isActive: true,
+      );
+
+      await firestoreUserProvider.createUser(newUser);
+      print('✅ New Google user document created successfully');
+      return newUser;
+    } catch (e) {
+      print('❌ Error in signInWithGoogle: $e');
+      rethrow;
+    }
   }
 
   User? get currentUser => firebaseAuthProvider.currentUser;

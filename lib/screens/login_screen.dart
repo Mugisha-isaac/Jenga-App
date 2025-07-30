@@ -34,13 +34,18 @@ class LoginScreen extends GetView<LoginController> {
                         'assets/images/logo.png',
                         width: 120,
                         height: 120,
-                        errorBuilder: (context, error, stackTrace) => 
-                            Icon(Icons.account_circle, size: 100, color: AppTheme.primaryColor),
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.account_circle,
+                            size: 100,
+                            color: AppTheme.primaryColor),
                       ),
                       const SizedBox(height: 16),
                       Text(
                         'Welcome Back',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
                             ),
@@ -55,13 +60,14 @@ class LoginScreen extends GetView<LoginController> {
                     ],
                   ),
                   const SizedBox(height: 40),
-                
+
                   // Email Field
                   TextFormField(
                     controller: controller.emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined, color: Colors.black87),
+                      prefixIcon: const Icon(Icons.email_outlined,
+                          color: Colors.black87),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -80,7 +86,7 @@ class LoginScreen extends GetView<LoginController> {
                     },
                   ),
                   const SizedBox(height: 16),
-                
+
                   // Password Field
                   Obx(
                     () => TextFormField(
@@ -88,7 +94,8 @@ class LoginScreen extends GetView<LoginController> {
                       obscureText: !controller.isPasswordVisible.value,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock_outline, color: Colors.black87),
+                        prefixIcon: const Icon(Icons.lock_outline,
+                            color: Colors.black87),
                         suffixIcon: IconButton(
                           icon: Icon(
                             controller.isPasswordVisible.value
@@ -115,22 +122,21 @@ class LoginScreen extends GetView<LoginController> {
                       },
                     ),
                   ),
-                
+
                   const SizedBox(height: 8),
-                
+
                   // Forgot Password
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {
-                        // TODO: Implement forgot password
-                      },
-                      child: const Text('Forgot Password?', style: TextStyle(color: Colors.black87)),
+                      onPressed: controller.forgotPassword,
+                      child: const Text('Forgot Password?',
+                          style: TextStyle(color: Colors.black87)),
                     ),
                   ),
-                
+
                   const SizedBox(height: 24),
-                
+
                   // Login Button
                   Obx(
                     () => FilledButton(
@@ -153,15 +159,17 @@ class LoginScreen extends GetView<LoginController> {
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
                             )
-                          : const Text('Login', style: TextStyle(color: Colors.white)),
+                          : const Text('Login',
+                              style: TextStyle(color: Colors.white)),
                     ),
                   ),
-                
+
                   const SizedBox(height: 24),
-                
+
                   // Divider with "or" text
                   Row(
                     children: [
@@ -170,49 +178,60 @@ class LoginScreen extends GetView<LoginController> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           'or continue with',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
                         ),
                       ),
                       const Expanded(child: Divider()),
                     ],
                   ),
-                
+
                   const SizedBox(height: 24),
-                
+
                   // Social Login Buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Google
-                      IconButton(
-                        onPressed: () {
-                          // TODO: Implement Google Sign In
-                        },
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.grey[100],
-                          padding: const EdgeInsets.all(16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(color: Colors.grey[200]!),
-                          ),
-                        ),
-                        icon: Image.asset(
-                          'assets/images/google.png',
-                          width: 24,
-                          height: 24,
-                          errorBuilder: (context, error, stackTrace) => 
-                              const Icon(Icons.g_mobiledata, size: 24),
-                        ),
-                      ),
-                                        
-                
+                      Obx(() => IconButton(
+                            onPressed: controller.isGoogleLoading.value
+                                ? null
+                                : controller.signInWithGoogle,
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.grey[100],
+                              padding: const EdgeInsets.all(16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(color: Colors.grey[200]!),
+                              ),
+                            ),
+                            icon: controller.isGoogleLoading.value
+                                ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.grey),
+                                    ),
+                                  )
+                                : Image.asset(
+                                    'assets/images/google.png',
+                                    width: 24,
+                                    height: 24,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(Icons.g_mobiledata,
+                                                size: 24),
+                                  ),
+                          )),
                     ],
                   ),
-                
+
                   const SizedBox(height: 32),
-                
+
                   // Sign Up Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -225,7 +244,8 @@ class LoginScreen extends GetView<LoginController> {
                         onPressed: () {
                           Get.toNamed(Routes.REGISTER);
                         },
-                        child: const Text('Sign Up', style: TextStyle(color: Colors.black87)),
+                        child: const Text('Sign Up',
+                            style: TextStyle(color: Colors.black87)),
                       ),
                     ],
                   ),

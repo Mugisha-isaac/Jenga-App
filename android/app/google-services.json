@@ -12,7 +12,12 @@
           "package_name": "com.alu.jenga"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "73754095414-6o5k02bf5ciqm5fttpebn1q4qm4emfod.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCSnlYnSUCZRDDhCZKnhDeQu1z8tNhR6KY"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "73754095414-6o5k02bf5ciqm5fttpebn1q4qm4emfod.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "73754095414-1rsjd1ugj43ed2pes21t344arv31b7hb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.jengaApp"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +48,20 @@
           "package_name": "com.example.jenga_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "73754095414-imlmrejc2ef2h8pg3r1ph2uft9hffsar.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jenga_app",
+            "certificate_hash": "9f39028d9dc61fd9e46a48b1bb1a42f9ddc54c81"
+          }
+        },
+        {
+          "client_id": "73754095414-6o5k02bf5ciqm5fttpebn1q4qm4emfod.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCSnlYnSUCZRDDhCZKnhDeQu1z8tNhR6KY"
@@ -39,7 +69,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "73754095414-6o5k02bf5ciqm5fttpebn1q4qm4emfod.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "73754095414-1rsjd1ugj43ed2pes21t344arv31b7hb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.jengaApp"
+              }
+            }
+          ]
         }
       }
     }

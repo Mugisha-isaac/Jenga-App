@@ -149,6 +149,8 @@ class AuthController extends GetxController {
       Get.offAllNamed(Routes.LOGIN);
     } catch (e) {
       print('❌ Sign out error: $e');
+      // Even if sign out fails, navigate to login screen
+      Get.offAllNamed(Routes.LOGIN);
     }
   }
 }
