@@ -11,6 +11,9 @@ class AuthController extends GetxController {
   final Rxn<User> currentUser = Rxn<User>();
   final Rxn<user_model.User> currentUserData = Rxn<user_model.User>();
   final RxBool isInitialized = false.obs;
+  
+  // Cache for user data to avoid repeated API calls
+  final Map<String, user_model.User> _userCache = {};
 
   @override
   void onInit() {
@@ -104,6 +107,37 @@ class AuthController extends GetxController {
 
   // Get current user ID
   String get userId => currentUser.value?.uid ?? 'user123';
+
+  // Get user data by ID
+  Future<user_model.User?> getUserById(String userId) async {
+    // Check cache first
+    if (_userCache.containsKey(userId)) {
+      print('📋 User data loaded from cache for ID $userId: ${_userCache[userId]?.fullName}');
+      return _userCache[userId];
+    }
+    
+    try {
+      final authRepository = Get.find<AuthRepository>();
+      final userData = await authRepository.firestoreUserProvider.getUser(userId);
+      
+      // Cache the result
+      if (userData != null) {
+        _userCache[userId] = userData;
+        print('📋 User data fetched and cached for ID $userId: ${userData.fullName}');
+      }
+      
+      return userData;
+    } catch (e) {
+      print('❌ Error fetching user data for ID $userId: $e');
+      return null;
+    }
+  }
+
+  // Clear user cache (useful when user data is updated)
+  void clearUserCache() {
+    _userCache.clear();
+    print('🗑️ User cache cleared');
+  }
 
   // Check if user is logged in
   bool get isLoggedIn {

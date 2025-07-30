@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/solution.dart';
+import '../models/user.dart' as user_model;
 import '../themes/app_theme.dart';
 import '../modules/solution_controller.dart';
 import '../modules/payment_controller.dart';
@@ -61,10 +62,7 @@ class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
                 _authController.currentUser.value?.uid ==
                     currentSolution.userId;
 
-            return (!currentSolution.isPremium ||
-                    isOwner || // Owner can always edit
-                    _paymentController
-                        .hasUserPaidForSolution(currentSolution.solutionId))
+            return isOwner
                 ? IconButton(
                     icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () {
@@ -491,13 +489,11 @@ class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
               ),
             )
           else
-            ...solution.comments
-                .map((comment) => _buildCommentItem(
-                      comment.userName,
-                      _formatCommentTime(comment.createdAt),
-                      comment.content,
-                    ))
-                ,
+            ...solution.comments.map((comment) => _buildCommentItem(
+                  comment.userName,
+                  _formatCommentTime(comment.createdAt),
+                  comment.content,
+                )),
         ],
       ),
     );
@@ -702,42 +698,50 @@ class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: AppTheme.lightGreen,
-                child: Text(
-                  solution.userId.isNotEmpty
-                      ? solution.userId[0].toUpperCase()
-                      : 'U',
-                  style: TextStyle(
-                    color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      solution.userId,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+          FutureBuilder<user_model.User?>(
+            future: _authController.getUserById(solution.userId),
+            builder: (context, snapshot) {
+              final creatorName = snapshot.data?.fullName ?? 'Unknown User';
+              final creatorInitial =
+                  creatorName.isNotEmpty ? creatorName[0].toUpperCase() : 'U';
+
+              return Row(
+                children: [
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: AppTheme.lightGreen,
+                    child: Text(
+                      creatorInitial,
+                      style: TextStyle(
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      '${solution.city}, ${solution.country}',
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          creatorName,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Text(
+                          '${solution.city}, ${solution.country}',
+                          style:
+                              const TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ],
+                  ),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 16),
           Row(
