@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ContentScreen extends StatefulWidget {
   final String title;
@@ -50,9 +51,9 @@ class _ContentScreenState extends State<ContentScreen> {
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
-              child: Text(
-                _content,
-                style: Theme.of(context).textTheme.bodyLarge,
+              child: MarkdownBody(
+                data: _content,
+                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
               ),
             ),
     );
