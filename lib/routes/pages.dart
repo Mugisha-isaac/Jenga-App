@@ -3,7 +3,6 @@ import 'package:jenga_app/screens/change_password_screen.dart';
 import 'package:jenga_app/screens/edit_profile_screen.dart';
 import 'package:jenga_app/screens/home_screen.dart';
 import 'package:jenga_app/screens/login_screen.dart';
-import 'package:jenga_app/screens/onboarding_screen.dart';
 import 'package:jenga_app/screens/payment_screen.dart';
 import 'package:jenga_app/screens/profile_screen.dart';
 import 'package:jenga_app/screens/register_screen.dart';

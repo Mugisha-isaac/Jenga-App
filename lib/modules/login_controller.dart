@@ -24,6 +24,7 @@ class LoginController extends GetxController {
 
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
+    isPasswordVisible.value = !isPasswordVisible.value;
   }
 
 Future<void> forgotPassword(String email) async {
@@ -71,11 +72,13 @@ Future<void> forgotPassword(String email) async {
       isLoading.value = true;
 
       try {
+      isLoading.value = true;
+
+      try {
         final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
-        
         if (credential.user != null) {
           Get.offAllNamed(Routes.HOME);
         }
@@ -92,6 +95,7 @@ Future<void> forgotPassword(String email) async {
         Get.snackbar('Error', 'An error occurred. Please try again.',
             backgroundColor: Colors.red, colorText: Colors.white);
       } finally {
+        isLoading.value = false;
         isLoading.value = false;
       }
     }
@@ -157,6 +161,8 @@ Future<void> forgotPassword(String email) async {
 
   @override
   void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.onClose();
