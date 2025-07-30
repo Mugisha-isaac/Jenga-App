@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jenga_app/modules/login_controller.dart';
-import 'package:jenga_app/routes/pages.dart';
+import 'package:jenga_app/routes/routes.dart';
 import 'package:jenga_app/themes/app_theme.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends GetView<LoginController> {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Initialize the LoginController
-    Get.put(LoginController());
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Theme(
@@ -25,11 +22,12 @@ class LoginScreen extends StatelessWidget {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
             child: Form(
-              key: Get.find<LoginController>().formKey,
+              key: controller.formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 40),
+                  
                   // Logo and Title
                   Column(
                     children: [
@@ -57,11 +55,12 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  
                   const SizedBox(height: 40),
-                
+                  
                   // Email Field
                   TextFormField(
-                    controller: Get.find<LoginController>().emailController,
+                    controller: controller.emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
                       prefixIcon: const Icon(Icons.email_outlined, color: Colors.black87),
@@ -82,24 +81,25 @@ class LoginScreen extends StatelessWidget {
                       return null;
                     },
                   ),
+                  
                   const SizedBox(height: 16),
-                
+                  
                   // Password Field
                   Obx(
                     () => TextFormField(
-                      controller: Get.find<LoginController>().passwordController,
-                      obscureText: !Get.find<LoginController>().isPasswordVisible.value,
+                      controller: controller.passwordController,
+                      obscureText: !controller.isPasswordVisible.value,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         prefixIcon: const Icon(Icons.lock_outline, color: Colors.black87),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            Get.find<LoginController>().isPasswordVisible.value
+                            controller.isPasswordVisible.value
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                             color: Colors.black87,
                           ),
-                          onPressed: Get.find<LoginController>().togglePasswordVisibility,
+                          onPressed: controller.togglePasswordVisibility,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -118,30 +118,78 @@ class LoginScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                
+                  
                   const SizedBox(height: 8),
-                
+                  
                   // Forgot Password
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        
+                        final email = controller.emailController.text.trim();
+                        Get.dialog(
+                          AlertDialog(
+                            title: const Text('Reset Password'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text('Enter your email address to receive a password reset link'),
+                                const SizedBox(height: 16),
+                                TextFormField(
+                                  controller: controller.emailController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Email',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  keyboardType: TextInputType.emailAddress,
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Get.back(),
+                                child: const Text('Cancel'),
+                              ),
+                              Obx(
+                                () => ElevatedButton(
+                                  onPressed: controller.isLoading.value
+                                      ? null
+                                      : () async {
+                                          await controller.forgotPassword(
+                                              controller.emailController.text.trim());
+                                        },
+                                  child: controller.isLoading.value
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor: AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                          ),
+                                        )
+                                      : const Text('Send Reset Link'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
                       },
-                      child: const Text('Forgot Password?', style: TextStyle(color: Colors.black87)),
+                      child: const Text('Forgot Password?', 
+                          style: TextStyle(color: Colors.black87)),
                     ),
                   ),
-                
+                  
                   const SizedBox(height: 24),
-                
+                  
                   // Login Button
                   Obx(
                     () => FilledButton(
-                      onPressed: Get.find<LoginController>().isLoading.value
+                      onPressed: controller.isLoading.value
                           ? null
                           : () {
-                              if (Get.find<LoginController>().formKey.currentState!.validate()) {
-                                Get.find<LoginController>().login();
+                              if (controller.formKey.currentState!.validate()) {
+                                controller.login();
                               }
                             },
                       style: FilledButton.styleFrom(
@@ -150,7 +198,7 @@ class LoginScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: Get.find<LoginController>().isLoading.value
+                      child: controller.isLoading.value
                           ? const SizedBox(
                               width: 20,
                               height: 20,
@@ -162,9 +210,9 @@ class LoginScreen extends StatelessWidget {
                           : const Text('Login', style: TextStyle(color: Colors.white)),
                     ),
                   ),
-                
+                  
                   const SizedBox(height: 24),
-                
+                  
                   // Divider with "or" text
                   Row(
                     children: [
@@ -181,13 +229,13 @@ class LoginScreen extends StatelessWidget {
                       const Expanded(child: Divider()),
                     ],
                   ),
-                
-                  const SizedBox(height: 24),
-                
                   
+                  const SizedBox(height: 24),
+                  
+                  // Google Sign In Button
                   Center(
                     child: OutlinedButton.icon(
-                      onPressed: Get.find<LoginController>().isLoading.value ? null : Get.find<LoginController>().signInWithGoogle,
+                      onPressed: controller.isLoading.value ? null : controller.signInWithGoogle,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
                         side: BorderSide(color: Colors.grey[300]!),
@@ -213,10 +261,10 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                
-                  const SizedBox(height: 32),
-                
                   
+                  const SizedBox(height: 32),
+                  
+                  // Sign Up Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -225,7 +273,7 @@ class LoginScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       TextButton(
-                        onPressed: Get.find<LoginController>().isLoading.value ? null : () {
+                        onPressed: controller.isLoading.value ? null : () {
                           Get.toNamed(Routes.REGISTER);
                         },
                         child: const Text('Sign Up', style: TextStyle(color: Colors.black87)),

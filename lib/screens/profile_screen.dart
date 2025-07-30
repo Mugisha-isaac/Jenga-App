@@ -17,14 +17,6 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Profile'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
-              Get.toNamed(Routes.SETTINGS);
-            },
-          ),
-        ],
       ),
       body: SafeArea(
         child: Obx(() {

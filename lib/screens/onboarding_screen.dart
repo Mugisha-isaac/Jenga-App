@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jenga_app/routes/routes.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -72,7 +73,7 @@ class OnboardingScreen extends StatelessWidget {
                 onPressed: () async {
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.setBool('onboarding_complete', true);
-                  Get.offAllNamed('/login');
+                  Get.offAllNamed(Routes.LOGIN);
                 },
               ),
             ],

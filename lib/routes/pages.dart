@@ -3,6 +3,7 @@ import 'package:jenga_app/screens/change_password_screen.dart';
 import 'package:jenga_app/screens/edit_profile_screen.dart';
 import 'package:jenga_app/screens/home_screen.dart';
 import 'package:jenga_app/screens/login_screen.dart';
+import 'package:jenga_app/screens/onboarding_screen.dart';
 import 'package:jenga_app/screens/payment_screen.dart';
 import 'package:jenga_app/screens/profile_screen.dart';
 import 'package:jenga_app/screens/register_screen.dart';
@@ -18,11 +19,12 @@ import 'package:jenga_app/screens/terms_of_service_screen.dart';
 import 'package:jenga_app/screens/help_center_screen.dart';
 import 'package:jenga_app/screens/about_screen.dart';
 import 'package:jenga_app/screens/privacy_policy_screen.dart';
-
+import 'package:jenga_app/screens/onboarding_screen.dart';
 
 
 class Routes {
   static const SPLASH = '/';
+  static const String ONBOARDING = '/onboarding';
   static const LOGIN = '/login';
   static const REGISTER = '/register';
   static const HOME = '/home';
@@ -62,7 +64,10 @@ class AppPages {
       name: Routes.WELCOME,
       page: () => const WelcomeScreen(),
     ),
-
+    GetPage(
+      name: Routes.ONBOARDING,
+      page: () => const OnboardingScreen(),
+    ),
     // Main App Routes
     GetPage(
       name: Routes.HOME,

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:jenga_app/models/user.dart';
-import 'package:jenga_app/routes/pages.dart';
+import 'package:jenga_app/models/user.dart' as user_model;
+import 'package:jenga_app/repositories/auth_repository.dart';
+import 'package:jenga_app/services/user_service.dart';
+import 'package:jenga_app/modules/auth_controller.dart';
+import 'package:jenga_app/routes/routes.dart';
 import 'package:jenga_app/services/user_service.dart';
 
 class RegisterController extends GetxController {

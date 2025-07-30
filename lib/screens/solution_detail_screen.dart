@@ -4,20 +4,40 @@ import '../models/solution.dart';
 import '../themes/app_theme.dart';
 import '../modules/solution_controller.dart';
 import '../modules/payment_controller.dart';
+import '../modules/auth_controller.dart';
 import '../routes/routes.dart';
 
-class SolutionDetailScreen extends StatelessWidget {
+class SolutionDetailScreen extends StatefulWidget {
   const SolutionDetailScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final Solution solution = Get.arguments as Solution;
-    final controller = Get.put(SolutionController());
-    final paymentController = Get.put(PaymentController());
+  State<SolutionDetailScreen> createState() => _SolutionDetailScreenState();
+}
 
-    final bool isPremiumAndNotPaid =
-        solution.isPremium &&
-        !paymentController.hasUserPaidForSolution(solution.solutionId);
+class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
+  late final TextEditingController _commentController;
+  late final SolutionController _solutionController;
+  late final PaymentController _paymentController;
+  late final AuthController _authController;
+
+  @override
+  void initState() {
+    super.initState();
+    _commentController = TextEditingController();
+    _solutionController = Get.find<SolutionController>();
+    _paymentController = Get.find<PaymentController>();
+    _authController = Get.find<AuthController>();
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Solution initialSolution = Get.arguments as Solution;
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -29,37 +49,71 @@ class SolutionDetailScreen extends StatelessWidget {
           onPressed: () => Get.back(),
         ),
         actions: [
-          if (!solution.isPremium ||
-              paymentController.hasUserPaidForSolution(solution.solutionId))
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.black),
-              onPressed: () {
-                controller.setEditMode(solution);
-                Get.toNamed(Routes.CREATE_SOLUTION);
-              },
-            ),
+          Obx(() {
+            final currentSolution = _solutionController.solutions
+                    .firstWhereOrNull(
+                        (s) => s.solutionId == initialSolution.solutionId) ??
+                initialSolution;
+
+            // Check if current user is the owner of the solution
+            final isOwner = _authController.currentUserData.value?.id ==
+                    currentSolution.userId ||
+                _authController.currentUser.value?.uid ==
+                    currentSolution.userId;
+
+            return (!currentSolution.isPremium ||
+                    isOwner || // Owner can always edit
+                    _paymentController
+                        .hasUserPaidForSolution(currentSolution.solutionId))
+                ? IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.black),
+                    onPressed: () {
+                      _solutionController.setEditMode(currentSolution);
+                      Get.toNamed(Routes.CREATE_SOLUTION);
+                    },
+                  )
+                : const SizedBox.shrink();
+          }),
         ],
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(solution),
-                _buildContent(solution, paymentController),
-                _buildMaterials(solution, paymentController),
-                _buildSteps(solution, paymentController),
-                _buildComments(),
-                _buildContact(solution),
-                const SizedBox(height: 100),
-              ],
+      body: Obx(() {
+        // Get the most updated solution from the controller
+        final currentSolution = _solutionController.solutions.firstWhereOrNull(
+                (s) => s.solutionId == initialSolution.solutionId) ??
+            initialSolution;
+
+        // Check if current user is the owner of the solution
+        final isOwner = _authController.currentUserData.value?.id ==
+                currentSolution.userId ||
+            _authController.currentUser.value?.uid == currentSolution.userId;
+
+        final bool isPremiumAndNotPaid = currentSolution.isPremium &&
+            !isOwner && // Owner should always have access
+            !_paymentController
+                .hasUserPaidForSolution(currentSolution.solutionId);
+
+        return Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(currentSolution),
+                  _buildContent(currentSolution, _paymentController),
+                  _buildMaterials(currentSolution, _paymentController),
+                  _buildSteps(currentSolution, _paymentController),
+                  _buildComments(currentSolution),
+                  _buildContact(currentSolution),
+                  const SizedBox(height: 100),
+                ],
+              ),
             ),
-          ),
-          // Full-screen premium overlay
-          if (isPremiumAndNotPaid) _buildFullScreenPremiumOverlay(solution),
-        ],
-      ),
+            // Full-screen premium overlay
+            if (isPremiumAndNotPaid)
+              _buildFullScreenPremiumOverlay(currentSolution),
+          ],
+        );
+      }),
     );
   }
 
@@ -81,7 +135,7 @@ class SolutionDetailScreen extends StatelessWidget {
                   color: AppTheme.lightGreen,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: AppTheme.primaryColor.withValues(alpha:(0.3)),
+                    color: AppTheme.primaryColor.withValues(alpha: (0.3)),
                   ),
                 ),
                 child: Text(
@@ -184,7 +238,7 @@ class SolutionDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:(0.05)),
+            color: Colors.black.withValues(alpha: (0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -246,7 +300,7 @@ class SolutionDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:(0.05)),
+            color: Colors.black.withValues(alpha: (0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -309,7 +363,7 @@ class SolutionDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:(0.05)),
+            color: Colors.black.withValues(alpha: (0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -372,7 +426,7 @@ class SolutionDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildComments() {
+  Widget _buildComments(Solution solution) {
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
@@ -381,7 +435,7 @@ class SolutionDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:(0.05)),
+            color: Colors.black.withValues(alpha: (0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -390,31 +444,179 @@ class SolutionDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Comments',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+          Row(
+            children: [
+              const Text(
+                'Comments',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '(${solution.comments.length})',
+                style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
-          _buildCommentItem(
-            'Amani Niyonzima',
-            '2d',
-            'This is exactly what our community needs! Thank you for sharing.',
+          // Add comment section
+          _buildAddCommentSection(solution),
+          const SizedBox(height: 16),
+          // Comments list
+          if (solution.comments.isEmpty)
+            Container(
+              padding: const EdgeInsets.all(20),
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(Icons.comment_outlined,
+                        size: 48, color: Colors.grey.shade400),
+                    const SizedBox(height: 8),
+                    Text(
+                      'No comments yet',
+                      style:
+                          TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Be the first to share your thoughts!',
+                      style:
+                          TextStyle(color: Colors.grey.shade500, fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            ...solution.comments
+                .map((comment) => _buildCommentItem(
+                      comment.userName,
+                      _formatCommentTime(comment.createdAt),
+                      comment.content,
+                    ))
+                .toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddCommentSection(Solution solution) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        children: [
+          TextField(
+            controller: _commentController,
+            maxLines: 3,
+            decoration: InputDecoration(
+              hintText: 'Share your thoughts...',
+              border: InputBorder.none,
+              hintStyle: TextStyle(color: Colors.grey.shade600),
+            ),
           ),
-          _buildCommentItem(
-            'Isimbi Uwase',
-            '1d',
-            'I\'ve tried some of these techniques and they\'ve significantly improved my harvest.',
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Obx(() => ElevatedButton(
+                    onPressed: _solutionController.isLoading.value
+                        ? null
+                        : () => _addComment(solution),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2ECC71),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: _solutionController.isLoading.value
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : const Text('Post Comment'),
+                  )),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCommentItem(String name, String time, String comment) {
+  String _formatCommentTime(DateTime createdAt) {
+    final now = DateTime.now();
+    final difference = now.difference(createdAt);
+
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inHours < 1) {
+      return '${difference.inMinutes}m';
+    } else if (difference.inDays < 1) {
+      return '${difference.inHours}h';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d';
+    } else {
+      return '${(difference.inDays / 7).floor()}w';
+    }
+  }
+
+  void _addComment(Solution solution) async {
+    if (_commentController.text.trim().isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please enter a comment',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    try {
+      final success = await _solutionController.addCommentToSolution(
+        solutionId: solution.solutionId,
+        content: _commentController.text.trim(),
+      );
+
+      if (success) {
+        _commentController.clear();
+        Get.snackbar(
+          'Success',
+          'Comment added successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to add comment. Please try again.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to add comment: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Widget _buildCommentItem(String userName, String time, String comment) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -424,7 +626,7 @@ class SolutionDetailScreen extends StatelessWidget {
             radius: 20,
             backgroundColor: AppTheme.lightGreen,
             child: Text(
-              name[0],
+              userName[0],
               style: TextStyle(
                 color: AppTheme.primaryColor,
                 fontWeight: FontWeight.bold,
@@ -439,7 +641,7 @@ class SolutionDetailScreen extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      name,
+                      userName,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -482,7 +684,7 @@ class SolutionDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:(0.05)),
+            color: Colors.black.withValues(alpha: (0.05)),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),

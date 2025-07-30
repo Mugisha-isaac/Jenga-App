@@ -1,9 +1,10 @@
 class Routes {
   // Auth Routes
   static const String SPLASH = '/splash';
+  static const String WELCOME = '/welcome';
+  static const String ONBOARDING = '/onboarding';
   static const String LOGIN = '/login';
   static const String REGISTER = '/register';
-  static const String WELCOME = '/welcome';
 
   // Main App Routes
   static const String HOME = '/home';

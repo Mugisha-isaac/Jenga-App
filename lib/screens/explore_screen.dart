@@ -44,9 +44,18 @@ class ExploreScreen extends StatelessWidget {
         children: [
           _buildSearchBar(controller),
           _buildCategoryTabs(controller),
-          const SizedBox(height: 16),
-          _buildTrendingSolutions(controller, authController),
-          Expanded(child: _buildSolutionsList(controller, authController)),
+          const SizedBox(height: 8),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildTrendingSolutions(controller, authController),
+                  const SizedBox(height: 16),
+                  _buildSolutionsList(controller, authController),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -85,7 +94,6 @@ class ExploreScreen extends StatelessWidget {
       'Business',
     ];
 
-
     return SizedBox(
       height: 50,
       child: ListView.builder(
@@ -98,8 +106,8 @@ class ExploreScreen extends StatelessWidget {
           return Obx(() {
             final isSelected =
                 controller.selectedFilterCategory.value == category ||
-                (controller.selectedFilterCategory.value.isEmpty &&
-                    category == 'All');
+                    (controller.selectedFilterCategory.value.isEmpty &&
+                        category == 'All');
 
             return GestureDetector(
               onTap: () {
@@ -122,9 +130,8 @@ class ExploreScreen extends StatelessWidget {
                   category,
                   style: TextStyle(
                     color: isSelected ? Colors.white : Colors.grey.shade700,
-                    fontWeight: isSelected
-                        ? FontWeight.w600
-                        : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
               ),
@@ -139,53 +146,46 @@ class ExploreScreen extends StatelessWidget {
     SolutionController controller,
     AuthController authController,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Trending Solutions',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+    return Obx(() {
+      if (controller.isLoadingSolutions.value) {
+        return const Padding(
+          padding: EdgeInsets.all(20),
+          child: Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-        Obx(() {
-          if (controller.isLoadingSolutions.value) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-                ),
+        );
+      }
+
+      final allSolutions = controller.filteredSolutions.isNotEmpty
+          ? controller.filteredSolutions
+          : controller.solutions;
+
+      final trendingSolutions =
+          allSolutions.where((solution) => !solution.featured).take(3).toList();
+
+      if (trendingSolutions.isEmpty) {
+        return const SizedBox
+            .shrink(); // Don't show anything if no trending solutions
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'Trending Solutions',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
-            );
-          }
-
-          final allSolutions = controller.filteredSolutions.isNotEmpty
-              ? controller.filteredSolutions
-              : controller.solutions;
-
-          final trendingSolutions = allSolutions
-              .where((solution) => !solution.featured)
-              .take(3)
-              .toList();
-
-          if (trendingSolutions.isEmpty) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'No trending solutions found',
-                style: TextStyle(color: Colors.grey),
-              ),
-            );
-          }
-
-          return ListView.builder(
+            ),
+          ),
+          const SizedBox(height: 16),
+          ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -194,10 +194,10 @@ class ExploreScreen extends StatelessWidget {
               final solution = trendingSolutions[index];
               return _buildTrendingSolutionCard(solution, authController);
             },
-          );
-        }),
-      ],
-    );
+          ),
+        ],
+      );
+    });
   }
 
   Widget _buildTrendingSolutionCard(
@@ -213,7 +213,7 @@ class ExploreScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha:(0.08)),
+              color: Colors.black.withValues(alpha: (0.08)),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -324,7 +324,7 @@ class ExploreScreen extends StatelessWidget {
                             color: Colors.amber.shade700,
                           ),
                           Text(
-                            '${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
+                            solution.premiumPrice?.toStringAsFixed(2) ?? '0.00',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -350,9 +350,12 @@ class ExploreScreen extends StatelessWidget {
   ) {
     return Obx(() {
       if (controller.isLoadingSolutions.value) {
-        return const Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+        return const Padding(
+          padding: EdgeInsets.all(50),
+          child: Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+            ),
           ),
         );
       }
@@ -362,7 +365,8 @@ class ExploreScreen extends StatelessWidget {
           : controller.solutions;
 
       if (solutions.isEmpty) {
-        return const Center(
+        return const Padding(
+          padding: EdgeInsets.all(50),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -386,13 +390,33 @@ class ExploreScreen extends StatelessWidget {
         );
       }
 
-      return ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: solutions.length,
-        itemBuilder: (context, index) {
-          final solution = solutions[index];
-          return _buildSolutionCard(solution, authController);
-        },
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'All Solutions',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: solutions.length,
+            itemBuilder: (context, index) {
+              final solution = solutions[index];
+              return _buildSolutionCard(solution, authController);
+            },
+          ),
+          const SizedBox(height: 20), // Bottom padding
+        ],
       );
     });
   }
@@ -407,7 +431,7 @@ class ExploreScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha:(0.08)),
+              color: Colors.black.withValues(alpha: (0.08)),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -549,7 +573,8 @@ class ExploreScreen extends StatelessWidget {
                               color: Colors.amber.shade700,
                             ),
                             Text(
-                              '${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
+                              solution.premiumPrice?.toStringAsFixed(2) ??
+                                  '0.00',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,

@@ -101,4 +101,12 @@ class AuthRepository {
     await _auth.signOut();
     await GoogleSignIn().signOut();
   }
+
+  Future<void> forgotPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
