@@ -11,7 +11,7 @@ class AuthController extends GetxController {
   final Rxn<User> currentUser = Rxn<User>();
   final Rxn<user_model.User> currentUserData = Rxn<user_model.User>();
   final RxBool isInitialized = false.obs;
-  
+
   // Cache for user data to avoid repeated API calls
   final Map<String, user_model.User> _userCache = {};
 
@@ -112,20 +112,23 @@ class AuthController extends GetxController {
   Future<user_model.User?> getUserById(String userId) async {
     // Check cache first
     if (_userCache.containsKey(userId)) {
-      print('📋 User data loaded from cache for ID $userId: ${_userCache[userId]?.fullName}');
+      print(
+          '📋 User data loaded from cache for ID $userId: ${_userCache[userId]?.fullName}');
       return _userCache[userId];
     }
-    
+
     try {
       final authRepository = Get.find<AuthRepository>();
-      final userData = await authRepository.firestoreUserProvider.getUser(userId);
-      
+      final userData =
+          await authRepository.firestoreUserProvider.getUser(userId);
+
       // Cache the result
       if (userData != null) {
         _userCache[userId] = userData;
-        print('📋 User data fetched and cached for ID $userId: ${userData.fullName}');
+        print(
+            '📋 User data fetched and cached for ID $userId: ${userData.fullName}');
       }
-      
+
       return userData;
     } catch (e) {
       print('❌ Error fetching user data for ID $userId: $e');
@@ -144,6 +147,9 @@ class AuthController extends GetxController {
     // Check Firebase auth first
     final firebaseLoggedIn = currentUser.value != null;
 
+    // Also check if we have user data
+    final hasUserData = currentUserData.value != null;
+
     // If not logged in via Firebase, check saved session
     if (!firebaseLoggedIn) {
       final preferenceService = Get.find<PreferenceService>();
@@ -151,11 +157,13 @@ class AuthController extends GetxController {
       print('🔍 Checking isLoggedIn:');
       print('   - Firebase: $firebaseLoggedIn');
       print('   - Session: $sessionValid');
-      return sessionValid;
+      print('   - User Data: $hasUserData');
+      return sessionValid && hasUserData;
     }
 
-    print('🔍 Checking isLoggedIn: $firebaseLoggedIn (Firebase)');
-    return firebaseLoggedIn;
+    print(
+        '🔍 Checking isLoggedIn: $firebaseLoggedIn (Firebase), User Data: $hasUserData');
+    return firebaseLoggedIn && hasUserData;
   }
 
   // Sign out

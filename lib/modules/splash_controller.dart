@@ -13,32 +13,49 @@ class SplashController extends GetxController {
   void _navigateToNextScreen() async {
     // Wait for splash duration
     await Future.delayed(const Duration(seconds: 3));
-    
+
     try {
       // Wait a bit more for Firebase auth to initialize
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       // Get services - use Get.find with proper error handling
       final preferenceService = Get.find<PreferenceService>();
       final authController = Get.find<AuthController>();
-      
+
+      // Wait for auth controller to be fully initialized
+      int maxWaitTime = 10; // seconds
+      int waitedTime = 0;
+      while (!authController.isInitialized.value && waitedTime < maxWaitTime) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        waitedTime++;
+      }
+
       // Debug prints to track the flow
       print('🔍 Auth state: ${authController.isLoggedIn}');
-      print('🔍 Onboarding completed: ${preferenceService.hasCompletedOnboarding}');
+      print(
+          '🔍 Onboarding completed: ${preferenceService.hasCompletedOnboarding}');
       print('🔍 Current user: ${authController.currentUser.value?.uid}');
-      
-      // Check authentication state and onboarding completion
-      if (authController.isLoggedIn && authController.currentUser.value != null) {
+      print('🔍 Is first launch: ${preferenceService.isFirstLaunch}');
+
+      // Check authentication state and flow
+      if (authController.isLoggedIn &&
+          authController.currentUser.value != null) {
         // User is logged in and verified, go directly to home
         print('✅ Navigating to HOME - User is logged in');
         Get.offAllNamed(Routes.HOME);
-      } else if (preferenceService.hasCompletedOnboarding) {
-        // User has seen onboarding before, go to login
-        print('✅ Navigating to LOGIN - Onboarding completed');
-        Get.offAllNamed(Routes.LOGIN);
-      } else {
+      } else if (preferenceService.isFirstLaunch) {
         // First time user, show welcome screen
         print('✅ Navigating to WELCOME - First time user');
+        await preferenceService.setNotFirstLaunch();
+        Get.offAllNamed(Routes.WELCOME);
+      } else if (preferenceService.hasCompletedOnboarding) {
+        // User has seen onboarding before, go to login
+        print(
+            '✅ Navigating to LOGIN - Onboarding completed, user not authenticated');
+        Get.offAllNamed(Routes.LOGIN);
+      } else {
+        // User has launched before but hasn't completed onboarding
+        print('✅ Navigating to WELCOME - User needs to complete onboarding');
         Get.offAllNamed(Routes.WELCOME);
       }
     } catch (e) {

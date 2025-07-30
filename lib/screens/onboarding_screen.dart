@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jenga_app/routes/routes.dart';
 import 'package:jenga_app/services/preference_service.dart';
+import 'package:jenga_app/modules/auth_controller.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -75,14 +76,25 @@ class OnboardingScreen extends StatelessWidget {
                     // Mark onboarding as completed
                     final preferenceService = Get.find<PreferenceService>();
                     await preferenceService.setOnboardingCompleted();
+
                     print('✅ Onboarding completed and saved');
-                    
-                    // Navigate to login screen
-                    Get.offNamed(Routes.LOGIN);
+
+                    // Check if user is already authenticated
+                    final authController = Get.find<AuthController>();
+                    if (authController.isLoggedIn &&
+                        authController.currentUser.value != null) {
+                      // User is authenticated, go to home
+                      print('✅ User is authenticated, navigating to HOME');
+                      Get.offAllNamed(Routes.HOME);
+                    } else {
+                      // User is not authenticated, go to login screen
+                      print('✅ User not authenticated, navigating to LOGIN');
+                      Get.offAllNamed(Routes.LOGIN);
+                    }
                   } catch (e) {
                     print('❌ Error completing onboarding: $e');
                     // Still navigate to login even if saving fails
-                    Get.offNamed(Routes.LOGIN);
+                    Get.offAllNamed(Routes.LOGIN);
                   }
                 },
               ),
