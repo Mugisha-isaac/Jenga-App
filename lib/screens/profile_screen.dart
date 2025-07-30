@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jenga_app/modules/auth_controller.dart';
 import 'package:jenga_app/modules/profile_controller.dart';
 import 'package:jenga_app/routes/routes.dart';
 import 'package:jenga_app/themes/app_theme.dart';
@@ -240,8 +241,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              // You can add controller.logout() here if you have such a method
-              Get.toNamed(Routes.LOGIN);
+              Get.find<AuthController>().signOut();
             },
             child: const Text('Logout'),
           ),
