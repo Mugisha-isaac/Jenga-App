@@ -346,7 +346,7 @@ class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -420,7 +420,7 @@ class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -497,7 +497,7 @@ class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
                       _formatCommentTime(comment.createdAt),
                       comment.content,
                     ))
-                .toList(),
+                ,
         ],
       ),
     );

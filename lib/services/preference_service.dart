@@ -115,11 +115,11 @@ class PreferenceService extends GetxService {
   // Debug method to check all stored values
   void debugPrintAll() {
     print('🔍 All preferences:');
-    print('  - Onboarding completed: ${hasCompletedOnboarding}');
-    print('  - Is first launch: ${isFirstLaunch}');
-    print('  - Has valid session: ${hasValidSession}');
-    print('  - Saved user ID: ${savedUserId}');
-    print('  - Saved user email: ${savedUserEmail}');
-    print('  - Saved user name: ${savedUserName}');
+    print('  - Onboarding completed: $hasCompletedOnboarding');
+    print('  - Is first launch: $isFirstLaunch');
+    print('  - Has valid session: $hasValidSession');
+    print('  - Saved user ID: $savedUserId');
+    print('  - Saved user email: $savedUserEmail');
+    print('  - Saved user name: $savedUserName');
   }
 }

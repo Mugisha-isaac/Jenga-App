@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jenga_app/models/user.dart';
 import 'package:jenga_app/modules/profile_controller.dart';
 import 'package:jenga_app/routes/routes.dart';
 import 'package:jenga_app/themes/app_theme.dart';
@@ -59,7 +58,7 @@ class ProfileScreen extends GetView<ProfileController> {
                       children: [
                         CircleAvatar(
                           radius: 60,
-                          backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                           backgroundImage: user.profilePictureUrl != null
                               ? NetworkImage(user.profilePictureUrl!)
                               : null,
