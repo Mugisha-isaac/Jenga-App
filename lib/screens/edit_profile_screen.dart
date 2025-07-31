@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jenga_app/modules/profile_controller.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+  const EditProfileScreen({super.key});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -55,6 +55,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       Get.back();
     } catch (e) {
+      // Ignore errors silently
       Get.snackbar('Error', 'Failed to update profile');
     }
   }
@@ -99,11 +100,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       backgroundColor: Colors.grey[200],
                       backgroundImage: _pickedImage != null
                           ? FileImage(_pickedImage!) as ImageProvider
-                          : (_profileController.user.value?.profilePictureUrl != null
-                              ? NetworkImage(_profileController.user.value!.profilePictureUrl!)
+                          : (_profileController.user.value?.profilePictureUrl !=
+                                  null
+                              ? NetworkImage(_profileController
+                                  .user.value!.profilePictureUrl!)
                               : null),
                       child: _pickedImage == null &&
-                              _profileController.user.value?.profilePictureUrl == null
+                              _profileController
+                                      .user.value?.profilePictureUrl ==
+                                  null
                           ? const Icon(Icons.person, size: 60)
                           : null,
                     ),
@@ -121,7 +126,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   labelText: 'Full Name',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Required' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(

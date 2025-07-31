@@ -9,14 +9,14 @@ class HomeController extends GetxController {
   }
 
   void navigateToProfile() {
-    Get.toNamed(Routes.PROFILE);
+    Get.toNamed(Routes.profile);
   }
 
   void navigateToSettings() {
-    Get.toNamed(Routes.SETTINGS);
+    Get.toNamed(Routes.settings);
   }
 
   void logout() {
-    Get.offAllNamed(Routes.LOGIN);
+    Get.offAllNamed(Routes.login);
   }
 }

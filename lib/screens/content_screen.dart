@@ -34,6 +34,7 @@ class _ContentScreenState extends State<ContentScreen> {
         _isLoading = false;
       });
     } catch (e) {
+        // Ignore errors silently
       setState(() {
         _content = 'Failed to load content. Please try again later.';
         _isLoading = false;

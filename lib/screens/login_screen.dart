@@ -234,7 +234,7 @@ class LoginScreen extends GetView<LoginController> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Get.toNamed(Routes.REGISTER);
+                          Get.toNamed(Routes.register);
                         },
             child: Text('Sign Up',
               style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary)),

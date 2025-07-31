@@ -42,7 +42,7 @@ class RegisterController extends GetxController with SafeControllerMixin {
 
   void register() async {
     if (isControllerDisposed) return;
-    
+
     if (formKey.currentState!.validate()) {
       safeUpdate(isLoading, true);
 
@@ -52,8 +52,6 @@ class RegisterController extends GetxController with SafeControllerMixin {
           throw Exception('Passwords do not match');
         }
 
-        print('📝 Attempting registration for: ${emailController.text}');
-        
         // Implement actual Firebase registration logic
         final user = await authRepository.createUserWithEmailAndPassword(
           emailController.text.trim(),
@@ -61,8 +59,6 @@ class RegisterController extends GetxController with SafeControllerMixin {
           fullNameController.text.trim(),
           phoneController.text.trim(),
         );
-        
-        print('✅ Registration successful for user: ${user.fullName} (${user.email})');
 
         // Mark onboarding as completed if not already done
         final preferenceService = Get.find<PreferenceService>();
@@ -74,10 +70,8 @@ class RegisterController extends GetxController with SafeControllerMixin {
         authController.setCurrentUser(user);
 
         // Navigate to home and clear the navigation stack
-        Get.offAllNamed(Routes.HOME);
-        
-        print('✅ Registration successful, navigated to home');
-        
+        Get.offAllNamed(Routes.home);
+
         Get.snackbar(
           'Success',
           'Welcome to Jenga, ${user.fullName}! Your account has been created successfully.',
@@ -86,15 +80,16 @@ class RegisterController extends GetxController with SafeControllerMixin {
           snackPosition: SnackPosition.BOTTOM,
         );
       } catch (e) {
-        print('❌ Registration error: $e');
-        
+        // Ignore errors silently
+
         String errorMessage = 'Registration failed. Please try again.';
-        
+
         // Handle specific Firebase auth errors
         if (e.toString().contains('email-already-in-use')) {
           errorMessage = 'An account with this email already exists.';
         } else if (e.toString().contains('weak-password')) {
-          errorMessage = 'Password is too weak. Please choose a stronger password.';
+          errorMessage =
+              'Password is too weak. Please choose a stronger password.';
         } else if (e.toString().contains('invalid-email')) {
           errorMessage = 'Please enter a valid email address.';
         } else if (e.toString().contains('network-request-failed')) {
@@ -102,7 +97,7 @@ class RegisterController extends GetxController with SafeControllerMixin {
         } else if (e.toString().contains('Passwords do not match')) {
           errorMessage = 'Passwords do not match. Please check and try again.';
         }
-        
+
         Get.snackbar(
           'Registration Failed',
           errorMessage,

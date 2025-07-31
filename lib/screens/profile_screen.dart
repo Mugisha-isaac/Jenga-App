@@ -54,7 +54,7 @@ class ProfileScreen extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 60,
-                          backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                           backgroundImage: user.profilePictureUrl != null
                               ? NetworkImage(user.profilePictureUrl!)
                               : null,
@@ -79,7 +79,7 @@ class ProfileScreen extends StatelessWidget {
                             icon: Icon(Icons.camera_alt, size: 20, color: Theme.of(context).colorScheme.onPrimary),
                             onPressed: () {
                               // Navigate to Edit Profile for profile picture change
-                              Get.toNamed(Routes.EDIT_PROFILE);
+                              Get.toNamed(Routes.editProfile);
                             },
                           ),
                         ),
@@ -131,7 +131,7 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.person_outline,
                   title: 'Edit Profile',
                   onTap: () {
-                    Get.toNamed(Routes.EDIT_PROFILE);
+                    Get.toNamed(Routes.editProfile);
                   },
                 ),
                 _buildListTile(
@@ -139,7 +139,7 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.lock_outline,
                   title: 'Change Password',
                   onTap: () {
-                    Get.toNamed(Routes.CHANGE_PASSWORD);
+                    Get.toNamed(Routes.changePassword);
                   },
                 ),
                 _buildListTile(
@@ -157,25 +157,25 @@ class ProfileScreen extends StatelessWidget {
                   context,
                   icon: Icons.help_outline,
                   title: 'Help Center',
-                  onTap: () => Get.toNamed(Routes.HELP_CENTER),
+                  onTap: () => Get.toNamed(Routes.helpCenter),
                 ),
                 _buildListTile(
                   context,
                   icon: Icons.info_outline,
                   title: 'About Us',
-                  onTap: () => Get.toNamed(Routes.ABOUT),
+                  onTap: () => Get.toNamed(Routes.about),
                 ),
                 _buildListTile(
                   context,
                   icon: Icons.privacy_tip_outlined,
                   title: 'Privacy Policy',
-                  onTap: () => Get.toNamed(Routes.PRIVACY_POLICY),
+                  onTap: () => Get.toNamed(Routes.privacyPolicy),
                 ),
                 _buildListTile(
                   context,
                   icon: Icons.description_outlined,
                   title: 'Terms of Service',
-                  onTap: () => Get.toNamed(Routes.TERMS_OF_SERVICE),
+                  onTap: () => Get.toNamed(Routes.termsOfService),
                 ),
 
                 const SizedBox(height: 40),

@@ -33,6 +33,7 @@ class PaymentController extends GetxController {
             await _paidSolutionRepository.getPaidSolutionsByUser(userId);
         userPaidSolutions.assignAll(paidSolutions);
       } catch (e) {
+        // Ignore errors silently
         Get.snackbar('Error', 'Failed to load paid solutions');
       }
     }
@@ -84,9 +85,6 @@ class PaymentController extends GetxController {
         quantity: 1,
         currency: 'USD',
       );
-
-      print(
-          'Processing payment for: ${solution.title} - \$${solution.premiumPrice}');
 
       // Process PayPal payment
       final paymentTransaction = await PayPalService.makePayment(
@@ -140,6 +138,7 @@ class PaymentController extends GetxController {
         return false;
       }
     } catch (e) {
+      // Ignore errors silently
       String errorMessage = 'Payment failed. Please try again.';
 
       if (e.toString().contains('cancelled')) {
@@ -149,8 +148,6 @@ class PaymentController extends GetxController {
       } else if (e.toString().contains('network')) {
         errorMessage = 'Network error. Please check your internet connection.';
       }
-
-      print('Payment error: $e');
 
       Get.snackbar(
         'Payment Error',

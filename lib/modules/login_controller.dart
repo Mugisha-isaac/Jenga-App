@@ -39,14 +39,12 @@ class LoginController extends GetxController with SafeControllerMixin {
 
       try {
         // Implement actual Firebase login logic
-        print('🔐 Attempting login with email: ${emailController.text}');
 
         final user = await authRepository.signInWithEmailAndPassword(
           emailController.text.trim(),
           passwordController.text.trim(),
         );
 
-        print('✅ Login successful for user: ${user.fullName} (${user.email})');
 
         // Mark onboarding as completed if not already done
         final preferenceService = Get.find<PreferenceService>();
@@ -58,9 +56,8 @@ class LoginController extends GetxController with SafeControllerMixin {
         authController.setCurrentUser(user);
 
         // Navigate to home and clear the navigation stack
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.home);
 
-        print('✅ Login successful, navigated to home');
 
         Get.snackbar(
           'Success',
@@ -70,7 +67,7 @@ class LoginController extends GetxController with SafeControllerMixin {
           snackPosition: SnackPosition.BOTTOM,
         );
       } catch (e) {
-        print('❌ Login error: $e');
+        // Ignore errors silently
 
         String errorMessage = 'Login failed. Please try again.';
 
@@ -102,7 +99,7 @@ class LoginController extends GetxController with SafeControllerMixin {
   }
 
   void navigateToRegister() {
-    safeCall(() => Get.toNamed(Routes.REGISTER));
+    safeCall(() => Get.toNamed(Routes.register));
   }
 
   void signInWithGoogle() async {
@@ -111,12 +108,9 @@ class LoginController extends GetxController with SafeControllerMixin {
     safeUpdate(isGoogleLoading, true);
 
     try {
-      print('🔐 Attempting Google Sign-In...');
 
       final user = await authRepository.signInWithGoogle();
 
-      print(
-          '✅ Google Sign-In successful for user: ${user.fullName} (${user.email})');
 
       // Mark onboarding as completed if not already done
       final preferenceService = Get.find<PreferenceService>();
@@ -128,9 +122,8 @@ class LoginController extends GetxController with SafeControllerMixin {
       authController.setCurrentUser(user);
 
       // Navigate to home and clear the navigation stack
-      Get.offAllNamed(Routes.HOME);
+      Get.offAllNamed(Routes.home);
 
-      print('✅ Google Sign-In successful, navigated to home');
 
       Get.snackbar(
         'Success',
@@ -140,7 +133,7 @@ class LoginController extends GetxController with SafeControllerMixin {
         snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
-      print('❌ Google Sign-In error: $e');
+        // Ignore errors silently
 
       String errorMessage = 'Google Sign-In failed. Please try again.';
 
@@ -238,7 +231,7 @@ class LoginController extends GetxController with SafeControllerMixin {
                             duration: const Duration(seconds: 5),
                           );
                         } catch (e) {
-                          print('❌ Forgot password error: $e');
+        // Ignore errors silently
 
                           String errorMessage =
                               'Failed to send reset email. Please try again.';

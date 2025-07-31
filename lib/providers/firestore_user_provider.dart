@@ -7,29 +7,23 @@ class FirestoreUserProvider {
 
   Future<void> createUser(user_model.User user) async {
     try {
-      print('🔥 Creating user document: ${user.toJson()}');
       await users.doc(user.id).set(user.toJson());
-      print('✅ User document created successfully in Firestore');
     } catch (e) {
-      print('❌ Error creating user document: $e');
+      // Ignore errors silently
       rethrow;
     }
   }
 
   Future<user_model.User?> getUser(String userId) async {
     try {
-      print('🔍 Searching for user with ID: $userId');
       final doc = await users.doc(userId).get();
       if (doc.exists) {
-        print('✅ User with ID $userId found: ${doc.data()}');
         return user_model.User.fromJson(doc.data() as Map<String, dynamic>);
       } else {
-        print('❌ No user found with ID: $userId');
-        print('🔍 Document exists: ${doc.exists}');
         return null;
       }
     } catch (e) {
-      print('❌ Error fetching user with ID $userId: $e');
+      // Ignore errors silently
       rethrow;
     }
   }
@@ -54,16 +48,13 @@ class FirestoreUserProvider {
   // Debug method to list all users (for debugging purposes)
   Future<void> debugListAllUsers() async {
     try {
-      print('🔍 Listing all users in Firestore:');
       final snapshot = await users.limit(10).get();
       for (final doc in snapshot.docs) {
-        print('   - User ID: ${doc.id}');
-        final data = doc.data() as Map<String, dynamic>;
-        print('     Name: ${data['fullName'] ?? 'No name'}');
-        print('     Email: ${data['email'] ?? 'No email'}');
+        // Process user data for debugging
+        doc.data();
       }
     } catch (e) {
-      print('❌ Error listing users: $e');
+      // Ignore errors silently
     }
   }
 }

@@ -17,7 +17,7 @@ class ProfileRepository {
       user.id = doc.id;
       return user;
     } catch (e) {
-      print('❌ Error loading user: $e');
+      // Ignore errors silently
       rethrow;
     }
   }
@@ -25,9 +25,8 @@ class ProfileRepository {
   Future<void> updateProfile(String userId, Map<String, dynamic> data) async {
     try {
       await _firestore.collection('users').doc(userId).update(data);
-      print('✅ Profile updated for $userId');
     } catch (e) {
-      print('❌ Error updating profile: $e');
+      // Ignore errors silently
       rethrow;
     }
   }
@@ -41,27 +40,26 @@ class ProfileRepository {
         'profilePictureUrl': downloadUrl,
         'updatedAt': FieldValue.serverTimestamp(),
       });
-      print('✅ Profile picture updated for $userId');
       return downloadUrl;
     } catch (e) {
-      print('❌ Error updating profile picture: $e');
+      // Ignore errors silently
       rethrow;
     }
   }
 
-  Future<void> changePassword(String email, String currentPassword, String newPassword) async {
+  Future<void> changePassword(
+      String email, String currentPassword, String newPassword) async {
     try {
       final user = _auth.currentUser;
       if (user == null) throw Exception('No user logged in');
-      final cred = EmailAuthProvider.credential(email: email, password: currentPassword);
+      final cred =
+          EmailAuthProvider.credential(email: email, password: currentPassword);
       await user.reauthenticateWithCredential(cred);
       await user.updatePassword(newPassword);
-      print('✅ Password updated for $email');
-    } on FirebaseAuthException catch (e) {
-      print('❌ Error updating password: ${e.message}');
+    } on FirebaseAuthException {
       rethrow;
     } catch (e) {
-      print('❌ Error updating password: $e');
+      // Ignore errors silently
       rethrow;
     }
   }

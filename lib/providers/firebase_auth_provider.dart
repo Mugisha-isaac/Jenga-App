@@ -63,7 +63,7 @@ class FirebaseAuthProvider {
       // Once signed in, return the UserCredential
       return await _firebaseAuth.signInWithCredential(credential);
     } catch (e) {
-      print('❌ Google Sign-In error: $e');
+        // Ignore errors silently
       rethrow;
     }
   }

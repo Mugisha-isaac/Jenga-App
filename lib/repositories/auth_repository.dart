@@ -20,17 +20,14 @@ class AuthRepository {
       final userCredential = await firebaseAuthProvider
           .signInWithEmailAndPassword(email, password);
 
-      print(
-          '🔥 Retrieving user document from Firestore for ${userCredential.user!.uid}');
       final user =
           await firestoreUserProvider.getUser(userCredential.user!.uid);
       if (user == null) {
         throw Exception('User data not found');
       }
-      print('✅ User document retrieved successfully');
       return user;
     } catch (e) {
-      print('❌ Error in signInWithEmailAndPassword: $e');
+        // Ignore errors silently
       rethrow;
     }
   }
@@ -56,12 +53,10 @@ class AuthRepository {
         isActive: true,
       );
 
-      print('🔥 Creating user document in Firestore for ${user.id}');
       await firestoreUserProvider.createUser(user);
-      print('✅ User document created successfully');
       return user;
     } catch (e) {
-      print('❌ Error in createUserWithEmailAndPassword: $e');
+        // Ignore errors silently
       rethrow;
     }
   }
@@ -80,20 +75,16 @@ class AuthRepository {
       final userCredential = await firebaseAuthProvider.signInWithGoogle();
       final firebaseUser = userCredential.user!;
 
-      print(
-          '🔥 Checking if Google user exists in Firestore: ${firebaseUser.uid}');
 
       // Check if user already exists in Firestore
       user_model.User? existingUser =
           await firestoreUserProvider.getUser(firebaseUser.uid);
 
       if (existingUser != null) {
-        print('✅ Existing Google user found in Firestore');
         return existingUser;
       }
 
       // Create new user document for first-time Google sign-in
-      print('🔥 Creating new user document for Google sign-in');
       final now = DateTime.now();
       final newUser = user_model.User(
         id: firebaseUser.uid,
@@ -106,10 +97,9 @@ class AuthRepository {
       );
 
       await firestoreUserProvider.createUser(newUser);
-      print('✅ New Google user document created successfully');
       return newUser;
     } catch (e) {
-      print('❌ Error in signInWithGoogle: $e');
+        // Ignore errors silently
       rethrow;
     }
   }

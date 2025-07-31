@@ -120,7 +120,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
                               borderRadius: BorderRadius.circular(32),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF2E7D32).withOpacity(0.3),
+                                  color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
                                   blurRadius: 20,
                                   offset: const Offset(0, 10),
                                 ),
@@ -153,7 +153,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
                                               shape: BoxShape.circle,
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: const Color(0xFF4CAF50).withOpacity(0.3),
+                                                  color: const Color(0xFF4CAF50).withValues(alpha: 0.3),
                                                   blurRadius: 10,
                                                   offset: const Offset(0, 5),
                                                 ),
@@ -198,7 +198,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
                                   child: Container(
                                     height: 4,
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.3),
+                                      color: Colors.white.withValues(alpha: 0.3),
                                       borderRadius: BorderRadius.circular(2),
                                     ),
                                   ),
@@ -210,7 +210,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
                                   child: Container(
                                     height: 4,
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.3),
+                                      color: Colors.white.withValues(alpha: 0.3),
                                       borderRadius: BorderRadius.circular(2),
                                     ),
                                   ),
@@ -247,7 +247,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
+                                    color: Colors.black.withValues(alpha: 0.05),
                                     blurRadius: 10,
                                     offset: const Offset(0, 5),
                                   ),

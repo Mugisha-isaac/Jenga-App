@@ -41,7 +41,7 @@ class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
     final Solution initialSolution = Get.arguments as Solution;
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -70,7 +70,7 @@ class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
                       _solutionController.exitEditMode();
 
                       // Navigate with solution data as arguments
-                      Get.toNamed(Routes.CREATE_SOLUTION, arguments: {
+                      Get.toNamed(Routes.createSolution, arguments: {
                         'isEdit': true,
                         'solution': currentSolution,
                       });
@@ -609,6 +609,7 @@ class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
         );
       }
     } catch (e) {
+        // Ignore errors silently
       Get.snackbar(
         'Error',
         'Failed to add comment: $e',
@@ -853,7 +854,7 @@ class _SolutionDetailScreenState extends State<SolutionDetailScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       final result = await Get.toNamed(
-                        Routes.PAYMENT,
+                        Routes.payment,
                         arguments: solution,
                       );
                       if (result == true) {

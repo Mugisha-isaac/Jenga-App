@@ -55,6 +55,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
     try {
       controller = Get.find<SolutionController>();
     } catch (e) {
+        // Ignore errors silently
       controller = Get.put(SolutionController(), permanent: true);
     }
 
@@ -81,7 +82,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
           controller.stepDescriptionController.text;
       _premiumPriceController.text = controller.premiumPriceController.text;
     } catch (e) {
-      print('Error syncing controllers: $e');
+        // Ignore errors silently
     }
 
     // Listen to changes and sync back to GetX controller (with safety checks)
@@ -115,9 +116,9 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
     try {
       syncOperation();
     } catch (e) {
+        // Ignore errors silently
       // Silently ignore disposal errors during sync
       if (!e.toString().contains('disposed')) {
-        print('Sync error: $e');
       }
     }
   }
@@ -171,7 +172,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
             _isInitialized = true;
           });
         } catch (e) {
-          print('Error setting edit mode: $e');
+        // Ignore errors silently
           setState(() {
             _isInitialized = true;
           });
@@ -208,9 +209,8 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
       _tagController.clear();
       _stepDescriptionController.clear();
 
-      print('Edit mode data synced successfully to local controllers');
     } catch (e) {
-      print('Error syncing edit mode data: $e');
+        // Ignore errors silently
     }
   }
 
@@ -233,7 +233,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
         controller.exitEditMode();
       }
     } catch (e) {
-      print('Error exiting edit mode: $e');
+        // Ignore errors silently
     }
 
     super.dispose();
@@ -419,7 +419,6 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
               SecureImagePickerWidget(
                 onImageUploaded: (url) {
                   if (kDebugMode) {
-                    print('Image uploaded successfully: $url');
                   }
                   controller.addImageUrlFromUpload(url);
                   controller.endImageUpload();
@@ -427,13 +426,11 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                 isUploading: controller.isUploadingImages.value,
                 onStartUpload: () {
                   if (kDebugMode) {
-                    print('Starting image upload...');
                   }
                   controller.startImageUpload();
                 },
                 onEndUpload: () {
                   if (kDebugMode) {
-                    print('Image upload completed');
                   }
                   controller.endImageUpload();
                 },
@@ -448,7 +445,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                       width: 120,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                        border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
@@ -825,7 +822,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withOpacity(0.1),
+            color: colorScheme.shadow.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -880,7 +877,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
       label: Text(text),
       deleteIcon: Icon(Icons.close, size: 18, color: colorScheme.onPrimary),
       onDeleted: onDelete,
-      backgroundColor: colorScheme.primary.withOpacity(0.1),
+      backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
       labelStyle: TextStyle(color: colorScheme.primary),
     );
   }
@@ -921,8 +918,8 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
       return allowedExtensions.any((ext) => path.endsWith('.$ext')) ||
           path.contains(RegExp(r'\.(jpg|jpeg|png|gif|webp)(\?|$)'));
     } catch (e) {
+        // Ignore errors silently
       if (kDebugMode) {
-        print('URL validation error: $e');
       }
       return false;
     }

@@ -19,20 +19,11 @@ class MockAuthController extends GetxController {
   final Rxn<dynamic> currentUser = Rxn<dynamic>();
   final RxBool isInitialized = false.obs;
   bool get isLoggedIn => false;
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
 }
 
 // Simple mock splash controller that doesn't navigate
 class MockSplashController extends GetxController {
-  @override
-  void onReady() {
-    super.onReady();
-    // Don't navigate anywhere for testing
-  }
+  // Don't navigate anywhere for testing
 }
 
 void main() {

@@ -11,6 +11,7 @@ class SolutionRepository {
     try {
       await firestoreSolutionsProvider.createSolution(solution);
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to create solution: $e');
     }
   }
@@ -28,6 +29,7 @@ class SolutionRepository {
         descending: descending,
       );
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch solutions: $e');
     }
   }
@@ -37,6 +39,7 @@ class SolutionRepository {
     try {
       return await firestoreSolutionsProvider.getSolutionById(solutionId);
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch solution: $e');
     }
   }
@@ -54,6 +57,7 @@ class SolutionRepository {
         lastSolutionId: lastSolutionId,
       );
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch solutions by category: $e');
     }
   }
@@ -71,6 +75,7 @@ class SolutionRepository {
         lastSolutionId: lastSolutionId,
       );
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch user solutions: $e');
     }
   }
@@ -80,6 +85,7 @@ class SolutionRepository {
     try {
       await firestoreSolutionsProvider.updateSolution(solution);
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to update solution: $e');
     }
   }
@@ -89,6 +95,7 @@ class SolutionRepository {
     try {
       await firestoreSolutionsProvider.deleteSolution(solutionId);
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to delete solution: $e');
     }
   }
@@ -104,6 +111,7 @@ class SolutionRepository {
         metrics,
       );
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to update solution metrics: $e');
     }
   }
@@ -113,6 +121,7 @@ class SolutionRepository {
     try {
       await firestoreSolutionsProvider.incrementMetric(solutionId, metricType);
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to increment metric: $e');
     }
   }
@@ -128,6 +137,7 @@ class SolutionRepository {
         lastSolutionId: lastSolutionId,
       );
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch featured solutions: $e');
     }
   }
@@ -145,6 +155,7 @@ class SolutionRepository {
         lastSolutionId: lastSolutionId,
       );
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to search solutions: $e');
     }
   }
@@ -162,6 +173,7 @@ class SolutionRepository {
         lastSolutionId: lastSolutionId,
       );
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch solutions by tags: $e');
     }
   }
@@ -181,6 +193,7 @@ class SolutionRepository {
         lastSolutionId: lastSolutionId,
       );
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch solutions by location: $e');
     }
   }
@@ -196,6 +209,7 @@ class SolutionRepository {
         lastSolutionId: lastSolutionId,
       );
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch premium solutions: $e');
     }
   }
@@ -217,6 +231,7 @@ class SolutionRepository {
         isPremium: isPremium,
       );
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to get solutions stream: $e');
     }
   }
@@ -226,6 +241,7 @@ class SolutionRepository {
     try {
       return firestoreSolutionsProvider.getSolutionStream(solutionId);
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to get solution stream: $e');
     }
   }

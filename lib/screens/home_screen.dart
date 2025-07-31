@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jenga_app/modules/auth_controller.dart';
@@ -25,15 +24,21 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Jenga',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface,
-        foregroundColor: Theme.of(context).appBarTheme.foregroundColor ?? Theme.of(context).colorScheme.onSurface,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor ??
+            Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor ??
+            Theme.of(context).colorScheme.onSurface,
         elevation: 0,
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications_outlined, color: Theme.of(context).iconTheme.color),
+            icon: Icon(Icons.notifications_outlined,
+                color: Theme.of(context).iconTheme.color),
             onPressed: () {},
           ),
         ],
@@ -60,7 +65,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildSearchBar(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(Routes.EXPLORE);
+        Get.toNamed(Routes.explore);
       },
       child: Container(
         margin: const EdgeInsets.all(16),
@@ -84,7 +89,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturedSolutions(BuildContext context, SolutionController controller) {
+  Widget _buildFeaturedSolutions(
+      BuildContext context, SolutionController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -92,7 +98,10 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'Featured Solutions',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: 16),
@@ -109,7 +118,10 @@ class HomeScreen extends StatelessWidget {
               return Center(
                 child: Text(
                   'No featured solutions yet',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: Theme.of(context).hintColor),
                 ),
               );
             }
@@ -132,7 +144,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildFeaturedCard(BuildContext context, Solution solution) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(Routes.SOLUTION_DETAIL, arguments: solution);
+        Get.toNamed(Routes.solutionDetail, arguments: solution);
       },
       child: Container(
         width: 280,
@@ -161,7 +173,9 @@ class HomeScreen extends StatelessWidget {
                           fit: BoxFit.cover,
                         )
                       : null,
-                  color: solution.images.isEmpty ? Theme.of(context).colorScheme.surfaceVariant : null,
+                  color: solution.images.isEmpty
+                      ? Theme.of(context).colorScheme.surfaceContainerHighest
+                      : null,
                 ),
                 child: solution.images.isEmpty
                     ? Center(
@@ -182,7 +196,10 @@ class HomeScreen extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7)
+                      Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.7)
                     ],
                   ),
                 ),
@@ -208,19 +225,19 @@ class HomeScreen extends StatelessWidget {
                       child: Text(
                         solution.category.toUpperCase(),
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       solution.title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -228,9 +245,12 @@ class HomeScreen extends StatelessWidget {
                     Text(
                       solution.description,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
-                        fontSize: 14,
-                      ),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimary
+                                .withValues(alpha: 0.7),
+                            fontSize: 14,
+                          ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -244,7 +264,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTrendingTopics(BuildContext context, SolutionController controller) {
+  Widget _buildTrendingTopics(
+      BuildContext context, SolutionController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -252,7 +273,10 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'Trending Topics',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: 16),
@@ -268,7 +292,10 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'No trending solutions yet',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: Theme.of(context).hintColor),
               ),
             );
           }
@@ -289,7 +316,7 @@ class HomeScreen extends StatelessWidget {
                   onTap: () {
                     // Navigate to explore with category filter
                     Get.toNamed(
-                      Routes.EXPLORE,
+                      Routes.explore,
                       arguments: {'category': category},
                     );
                   },
@@ -306,9 +333,9 @@ class HomeScreen extends StatelessWidget {
                     child: Text(
                       category,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                   ),
                 );
@@ -320,8 +347,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentSolutions(
-      BuildContext context, SolutionController controller, AuthController userController) {
+  Widget _buildRecentSolutions(BuildContext context,
+      SolutionController controller, AuthController userController) {
     // getting current user
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -330,7 +357,10 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'Recent Solutions',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: 16),
@@ -344,7 +374,10 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'No recent solutions yet',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: Theme.of(context).hintColor),
               ),
             );
           }
@@ -367,7 +400,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildRecentSolutionCard(BuildContext context, Solution solution) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(Routes.SOLUTION_DETAIL, arguments: solution);
+        Get.toNamed(Routes.solutionDetail, arguments: solution);
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
@@ -377,7 +410,7 @@ class HomeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).shadowColor.withOpacity(0.05),
+              color: Theme.of(context).shadowColor.withValues(alpha: 0.05),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -390,7 +423,7 @@ class HomeScreen extends StatelessWidget {
               height: 60,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 image: solution.images.isNotEmpty
                     ? DecorationImage(
                         image: NetworkImage(solution.images.first.url),
@@ -414,9 +447,9 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     solution.title,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -428,26 +461,37 @@ class HomeScreen extends StatelessWidget {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Text(
                           'By ...',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: Theme.of(context).hintColor),
                         );
                       } else if (snapshot.hasError) {
                         return Text(
                           'By Error',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.error),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                  color: Theme.of(context).colorScheme.error),
                         );
                       } else if (snapshot.hasData && snapshot.data != null) {
                         final user = snapshot.data!;
                         return Text(
                           'By ${user.fullName ?? 'No Name'}',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: Theme.of(context).hintColor),
                         );
                       } else {
                         return Text(
                           'By Anonymous',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).hintColor,
-                            fontStyle: FontStyle.italic,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context).hintColor,
+                                    fontStyle: FontStyle.italic,
+                                  ),
                         );
                       }
                     },
@@ -456,9 +500,9 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     solution.category,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ],
               ),
@@ -476,7 +520,7 @@ class HomeScreen extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -489,13 +533,13 @@ class HomeScreen extends StatelessWidget {
             // Already on home
           }),
           _buildNavItem(context, Icons.explore, 'Explore', false, () {
-            Get.toNamed(Routes.EXPLORE);
+            Get.toNamed(Routes.explore);
           }),
           _buildNavItem(context, Icons.add_circle, 'Create', false, () {
-            Get.toNamed(Routes.CREATE_SOLUTION);
+            Get.toNamed(Routes.createSolution);
           }),
           _buildNavItem(context, Icons.person, 'Profile', false, () {
-            Get.toNamed(Routes.PROFILE);
+            Get.toNamed(Routes.profile);
           }),
         ],
       ),
@@ -525,12 +569,12 @@ class HomeScreen extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: isActive
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).hintColor,
-              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-              fontSize: 12,
-            ),
+                  color: isActive
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).hintColor,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+                  fontSize: 12,
+                ),
           ),
         ],
       ),

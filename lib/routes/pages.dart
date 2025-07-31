@@ -25,99 +25,98 @@ import 'package:jenga_app/screens/change_password_screen.dart';
 import 'package:jenga_app/screens/help_center_screen.dart';
 import 'package:jenga_app/screens/about_screen.dart';
 
-
 class Pages {
-  static const INITIAL = Routes.SPLASH;
+  static const initial = Routes.splash;
 
   static final routes = [
     GetPage(
-      name: Routes.SPLASH,
+      name: Routes.splash,
       page: () => const SplashScreen(),
       binding: SplashBinding(),
     ),
 
     GetPage(
-      name: Routes.WELCOME,
+      name: Routes.welcome,
       page: () => const WelcomeScreen(),
     ),
 
     GetPage(
-      name: Routes.ONBOARDING,
+      name: Routes.onboarding,
       page: () => const OnboardingScreen(),
     ),
 
     GetPage(
-      name: Routes.LOGIN,
+      name: Routes.login,
       page: () => const LoginScreen(),
       binding: AuthBinding(),
     ),
     GetPage(
-      name: Routes.REGISTER,
+      name: Routes.register,
       page: () => const RegisterScreen(),
       binding: AuthBinding(),
     ),
     GetPage(
-      name: Routes.HOME,
+      name: Routes.home,
       page: () => const HomeScreen(),
       binding: HomeBinding(),
     ),
     GetPage(
-      name: Routes.PROFILE,
+      name: Routes.profile,
       page: () => const ProfileScreen(),
       binding: ProfileBinding(),
     ),
     GetPage(
-      name: Routes.SETTINGS,
+      name: Routes.settings,
       page: () => const SettingsScreen(),
       binding: SettingsBinding(),
     ),
     GetPage(
-      name: Routes.CREATE_SOLUTION,
+      name: Routes.createSolution,
       page: () => const CreateSolutionScreen(),
       binding: CreateSolutionBinding(),
     ),
     GetPage(
-      name: Routes.EXPLORE,
+      name: Routes.explore,
       page: () => const ExploreScreen(),
       binding: SolutionBinding(),
     ),
     GetPage(
-      name: Routes.SOLUTION_DETAIL,
+      name: Routes.solutionDetail,
       page: () => const SolutionDetailScreen(),
       binding: SolutionBinding(),
     ),
     GetPage(
-      name: Routes.PAYMENT,
+      name: Routes.payment,
       page: () => const PaymentScreen(),
       binding: SolutionBinding(),
     ),
     // MISSING ROUTES
     GetPage(
-      name: Routes.EDIT_PROFILE,
+      name: Routes.editProfile,
       page: () => const EditProfileScreen(),
       binding: ProfileBinding(),
     ),
     GetPage(
-      name: Routes.CHANGE_PASSWORD,
+      name: Routes.changePassword,
       page: () => const ChangePasswordScreen(),
       binding: ProfileBinding(),
     ),
     GetPage(
-      name: Routes.HELP_CENTER,
+      name: Routes.helpCenter,
       page: () => const HelpCenterScreen(),
     ),
     GetPage(
-      name: Routes.ABOUT,
+      name: Routes.about,
       page: () => const AboutScreen(),
     ),
     // Privacy Policy screen is missing, so skip binding
     // If you add the file, update this entry
     GetPage(
-      name: Routes.PRIVACY_POLICY,
+      name: Routes.privacyPolicy,
       page: () => ContentScreens.privacyPolicy(),
     ),
     GetPage(
-      name: Routes.TERMS_OF_SERVICE,
+      name: Routes.termsOfService,
       page: () => ContentScreens.termsOfService(),
     ),
   ];

@@ -1,28 +1,28 @@
 class Routes {
   // Auth Routes
-  static const String SPLASH = '/splash';
-  static const String WELCOME = '/welcome';
-  static const String ONBOARDING = '/onboarding';
-  static const String LOGIN = '/login';
-  static const String REGISTER = '/register';
+  static const String splash = '/splash';
+  static const String welcome = '/welcome';
+  static const String onboarding = '/onboarding';
+  static const String login = '/login';
+  static const String register = '/register';
 
   // Main App Routes
-  static const String HOME = '/home';
-  static const String PROFILE = '/profile';
-  static const String SETTINGS = '/settings';
-  static const String EDIT_PROFILE = '/edit-profile';
-  static const String CHANGE_PASSWORD = '/change-password';
-  
+  static const String home = '/home';
+  static const String profile = '/profile';
+  static const String settings = '/settings';
+  static const String editProfile = '/edit-profile';
+  static const String changePassword = '/change-password';
+
   // Solution Routes
-  static const String SOLUTIONS_LIST = '/solutions-list';
-  static const String CREATE_SOLUTION = '/create-solution';
-  static const String EXPLORE = '/explore';
-  static const String SOLUTION_DETAIL = '/solution-detail';
-  static const String PAYMENT = '/payment';
-  
+  static const String solutionsList = '/solutions-list';
+  static const String createSolution = '/create-solution';
+  static const String explore = '/explore';
+  static const String solutionDetail = '/solution-detail';
+  static const String payment = '/payment';
+
   // Info & Support Routes
-  static const String HELP_CENTER = '/help-center';
-  static const String ABOUT = '/about';
-  static const String PRIVACY_POLICY = '/privacy-policy';
-  static const String TERMS_OF_SERVICE = '/terms-of-service';
+  static const String helpCenter = '/help-center';
+  static const String about = '/about';
+  static const String privacyPolicy = '/privacy-policy';
+  static const String termsOfService = '/terms-of-service';
 }

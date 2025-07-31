@@ -27,7 +27,7 @@ class ExploreScreen extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'Explore',
@@ -70,9 +70,9 @@ class ExploreScreen extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: colorScheme.primaryContainer.withOpacity(0.2),
+        color: colorScheme.primaryContainer.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: colorScheme.primary.withOpacity(0.3)),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.3)),
       ),
       child: TextField(
         decoration: InputDecoration(
@@ -130,13 +130,13 @@ class ExploreScreen extends StatelessWidget {
                   color: isSelected ? colorScheme.primary : colorScheme.surface,
                   borderRadius: BorderRadius.circular(25),
                   border: Border.all(
-                    color: isSelected ? colorScheme.primary : colorScheme.outline.withOpacity(0.3),
+                    color: isSelected ? colorScheme.primary : colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
                   category,
                   style: textTheme.bodyMedium?.copyWith(
-                    color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface.withOpacity(0.7),
+                    color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.7),
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
@@ -221,7 +221,7 @@ class ExploreScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: colorScheme.shadow.withOpacity(0.08),
+              color: colorScheme.shadow.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -243,7 +243,7 @@ class ExploreScreen extends StatelessWidget {
                         fit: BoxFit.cover,
                       )
                     : null,
-                color: solution.images.isEmpty ? colorScheme.background : null,
+                color: solution.images.isEmpty ? colorScheme.surface : null,
               ),
               child: solution.images.isEmpty
                   ? Icon(
@@ -267,7 +267,7 @@ class ExploreScreen extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: colorScheme.primary.withOpacity(0.1),
+                            color: colorScheme.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -286,7 +286,7 @@ class ExploreScreen extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: colorScheme.secondary.withOpacity(0.2),
+                              color: colorScheme.secondary.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -313,7 +313,7 @@ class ExploreScreen extends StatelessWidget {
                     Text(
                       solution.description,
                       style: textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface.withOpacity(0.7),
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -436,7 +436,7 @@ class ExploreScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: colorScheme.shadow.withOpacity(0.08),
+              color: colorScheme.shadow.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -457,7 +457,7 @@ class ExploreScreen extends StatelessWidget {
                         fit: BoxFit.cover,
                       )
                     : null,
-                color: solution.images.isEmpty ? colorScheme.background : null,
+                color: solution.images.isEmpty ? colorScheme.surface : null,
               ),
               child: solution.images.isEmpty
                   ? Center(
@@ -482,7 +482,7 @@ class ExploreScreen extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: colorScheme.primary.withOpacity(0.1),
+                          color: colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -501,7 +501,7 @@ class ExploreScreen extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: colorScheme.tertiary.withOpacity(0.2),
+                            color: colorScheme.tertiary.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -520,7 +520,7 @@ class ExploreScreen extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: colorScheme.secondary.withOpacity(0.2),
+                            color: colorScheme.secondary.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -545,7 +545,7 @@ class ExploreScreen extends StatelessWidget {
                   Text(
                     solution.description,
                     style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurface.withOpacity(0.7),
+                      color: colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -595,6 +595,6 @@ class ExploreScreen extends StatelessWidget {
   }
 
   void _handleSolutionTap(Solution solution) {
-    Get.toNamed(Routes.SOLUTION_DETAIL, arguments: solution);
+    Get.toNamed(Routes.solutionDetail, arguments: solution);
   }
 }

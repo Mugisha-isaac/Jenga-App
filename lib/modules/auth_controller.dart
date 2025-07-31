@@ -26,7 +26,6 @@ class AuthController extends GetxController {
     final preferenceService = Get.find<PreferenceService>();
 
     if (preferenceService.hasValidSession) {
-      print('📱 Valid session found, attempting to restore user...');
       final savedUserId = preferenceService.savedUserId;
       if (savedUserId != null) {
         try {
@@ -36,10 +35,9 @@ class AuthController extends GetxController {
               await authRepository.firestoreUserProvider.getUser(savedUserId);
           if (userData != null) {
             currentUserData.value = userData;
-            print('✅ User session restored: ${userData.fullName}');
           }
         } catch (e) {
-          print('❌ Error restoring session: $e');
+        // Ignore errors silently
           // Clear invalid session
           await preferenceService.clearUserSession();
         }
@@ -54,18 +52,14 @@ class AuthController extends GetxController {
 
     // Listen to user changes and debug
     ever(currentUser, (User? user) {
-      print('🔐 Auth state changed: ${user?.uid ?? 'null'}');
       if (user != null) {
-        print('✅ User is logged in: ${user.email}');
         _loadUserData(user.uid);
       } else {
-        print('❌ User is logged out');
         currentUserData.value = null;
       }
     });
 
     isInitialized.value = true;
-    print('🔧 AuthController initialized');
   }
 
   // Load user data from Firestore
@@ -75,7 +69,6 @@ class AuthController extends GetxController {
       final userData =
           await authRepository.firestoreUserProvider.getUser(userId);
       currentUserData.value = userData;
-      print('📋 User data loaded: ${userData?.fullName}');
 
       // Save session when user data is loaded
       if (userData != null && currentUser.value != null) {
@@ -87,14 +80,13 @@ class AuthController extends GetxController {
         );
       }
     } catch (e) {
-      print('❌ Error loading user data: $e');
+        // Ignore errors silently
     }
   }
 
   // Set current user data (called after login/register)
   void setCurrentUser(user_model.User user) async {
     currentUserData.value = user;
-    print('👤 Current user data set: ${user.fullName}');
 
     // Save session when user is set
     final preferenceService = Get.find<PreferenceService>();
@@ -112,8 +104,6 @@ class AuthController extends GetxController {
   Future<user_model.User?> getUserById(String userId) async {
     // Check cache first
     if (_userCache.containsKey(userId)) {
-      print(
-          '📋 User data loaded from cache for ID $userId: ${_userCache[userId]?.fullName}');
       return _userCache[userId];
     }
 
@@ -125,13 +115,11 @@ class AuthController extends GetxController {
       // Cache the result
       if (userData != null) {
         _userCache[userId] = userData;
-        print(
-            '📋 User data fetched and cached for ID $userId: ${userData.fullName}');
       }
 
       return userData;
     } catch (e) {
-      print('❌ Error fetching user data for ID $userId: $e');
+        // Ignore errors silently
       return null;
     }
   }
@@ -139,7 +127,6 @@ class AuthController extends GetxController {
   // Clear user cache (useful when user data is updated)
   void clearUserCache() {
     _userCache.clear();
-    print('🗑️ User cache cleared');
   }
 
   // Check if user is logged in
@@ -154,15 +141,9 @@ class AuthController extends GetxController {
     if (!firebaseLoggedIn) {
       final preferenceService = Get.find<PreferenceService>();
       final sessionValid = preferenceService.hasValidSession;
-      print('🔍 Checking isLoggedIn:');
-      print('   - Firebase: $firebaseLoggedIn');
-      print('   - Session: $sessionValid');
-      print('   - User Data: $hasUserData');
       return sessionValid && hasUserData;
     }
 
-    print(
-        '🔍 Checking isLoggedIn: $firebaseLoggedIn (Firebase), User Data: $hasUserData');
     return firebaseLoggedIn && hasUserData;
   }
 
@@ -179,7 +160,6 @@ class AuthController extends GetxController {
       final preferenceService = Get.find<PreferenceService>();
       await preferenceService.clearUserSession();
 
-      print('✅ User signed out successfully');
 
       // Don't clear onboarding preference on logout
       // Users shouldn't see onboarding again
@@ -188,11 +168,11 @@ class AuthController extends GetxController {
       }
 
       // Navigate to login screen after logout
-      Get.offAllNamed(Routes.LOGIN);
+      Get.offAllNamed(Routes.login);
     } catch (e) {
-      print('❌ Sign out error: $e');
+        // Ignore errors silently
       // Even if sign out fails, navigate to login screen
-      Get.offAllNamed(Routes.LOGIN);
+      Get.offAllNamed(Routes.login);
     }
   }
 }

@@ -49,11 +49,8 @@ class _SecureImagePickerWidgetState extends State<SecureImagePickerWidget> {
       if (pickedFile != null) {
         await _uploadImage(pickedFile);
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       if (kDebugMode) {
-        print('Image picker error:');
-        print('Error: $e');
-        print('StackTrace: $stackTrace');
       }
       _showErrorMessage('Error selecting image: ${e.toString()}');
     }
@@ -85,16 +82,10 @@ class _SecureImagePickerWidgetState extends State<SecureImagePickerWidget> {
       _showSuccessMessage('Image uploaded successfully');
     } on CloudinaryException catch (e) {
       if (kDebugMode) {
-        print('CloudinaryException in single image upload:');
-        print('Message: ${e.message}');
-        print('Details: ${e.details}');
       }
       _showErrorMessage('Upload failed: ${e.message}');
-    } catch (e, stackTrace) {
+    } catch (e) {
       if (kDebugMode) {
-        print('Single image upload exception:');
-        print('Error: $e');
-        print('StackTrace: $stackTrace');
       }
       _showErrorMessage('Upload failed: ${e.toString()}');
     } finally {
@@ -118,11 +109,8 @@ class _SecureImagePickerWidgetState extends State<SecureImagePickerWidget> {
       if (pickedFiles.isNotEmpty) {
         await _uploadMultipleImages(pickedFiles);
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       if (kDebugMode) {
-        print('Multiple image picker error:');
-        print('Error: $e');
-        print('StackTrace: $stackTrace');
       }
       _showErrorMessage('Error selecting images: ${e.toString()}');
     }
@@ -159,16 +147,10 @@ class _SecureImagePickerWidgetState extends State<SecureImagePickerWidget> {
       );
     } on CloudinaryException catch (e) {
       if (kDebugMode) {
-        print('CloudinaryException in multiple image upload:');
-        print('Message: ${e.message}');
-        print('Details: ${e.details}');
       }
       _showErrorMessage('Multiple upload failed: ${e.message}');
-    } catch (e, stackTrace) {
+    } catch (e) {
       if (kDebugMode) {
-        print('Multiple image upload exception:');
-        print('Error: $e');
-        print('StackTrace: $stackTrace');
       }
       _showErrorMessage('Multiple upload failed: ${e.toString()}');
     } finally {

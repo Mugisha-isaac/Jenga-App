@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:jenga_app/modules/profile_controller.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
-  const ChangePasswordScreen({Key? key}) : super(key: key);
+  const ChangePasswordScreen({super.key});
 
   @override
   State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
@@ -27,24 +27,25 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     super.dispose();
   }
 
-Future<void> _changePassword() async {
-  if (!_formKey.currentState!.validate()) return;
+  Future<void> _changePassword() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  if (_newPasswordController.text != _confirmPasswordController.text) {
-    Get.snackbar('Error', 'Passwords do not match');
-    return;
-  }
+    if (_newPasswordController.text != _confirmPasswordController.text) {
+      Get.snackbar('Error', 'Passwords do not match');
+      return;
+    }
 
-  try {
-    await _profileController.changePassword(
-      email: _profileController.user.value?.email ?? '',
-      currentPassword: _currentPasswordController.text,
-      newPassword: _newPasswordController.text,
-    );
-  } catch (e) {
-    Get.snackbar('Error', e.toString());
+    try {
+      await _profileController.changePassword(
+        email: _profileController.user.value?.email ?? '',
+        currentPassword: _currentPasswordController.text,
+        newPassword: _newPasswordController.text,
+      );
+    } catch (e) {
+      // Ignore errors silently
+      Get.snackbar('Error', e.toString());
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +66,12 @@ Future<void> _changePassword() async {
                     icon: Icon(
                       _obscureCurrent ? Icons.visibility : Icons.visibility_off,
                     ),
-                    onPressed: () => setState(() => _obscureCurrent = !_obscureCurrent),
+                    onPressed: () =>
+                        setState(() => _obscureCurrent = !_obscureCurrent),
                   ),
                 ),
-                validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Required' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -77,13 +80,13 @@ Future<void> _changePassword() async {
                 decoration: InputDecoration(
                   labelText: 'New Password',
                   suffixIcon: IconButton(
-                    icon: Icon(_obscureNew ? Icons.visibility : Icons.visibility_off),
+                    icon: Icon(
+                        _obscureNew ? Icons.visibility : Icons.visibility_off),
                     onPressed: () => setState(() => _obscureNew = !_obscureNew),
                   ),
                 ),
-                validator: (value) => (value?.length ?? 0) < 6
-                    ? 'At least 6 characters'
-                    : null,
+                validator: (value) =>
+                    (value?.length ?? 0) < 6 ? 'At least 6 characters' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -95,7 +98,8 @@ Future<void> _changePassword() async {
                     icon: Icon(
                       _obscureConfirm ? Icons.visibility : Icons.visibility_off,
                     ),
-                    onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                    onPressed: () =>
+                        setState(() => _obscureConfirm = !_obscureConfirm),
                   ),
                 ),
                 validator: (value) => value != _newPasswordController.text
@@ -107,7 +111,9 @@ Future<void> _changePassword() async {
                 () => SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _profileController.isLoading.value ? null : _changePassword,
+                    onPressed: _profileController.isLoading.value
+                        ? null
+                        : _changePassword,
                     child: _profileController.isLoading.value
                         ? const CircularProgressIndicator()
                         : const Text('Update Password'),

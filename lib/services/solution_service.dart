@@ -14,6 +14,7 @@ class SolutionService {
           .doc(solution.solutionId)
           .set(solution.toJson());
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to create solution: $e');
     }
   }
@@ -30,6 +31,7 @@ class SolutionService {
           .map((doc) => Solution.fromJson(doc.data()))
           .toList();
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch solutions: $e');
     }
   }
@@ -47,6 +49,7 @@ class SolutionService {
       }
       return null;
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch solution: $e');
     }
   }
@@ -64,6 +67,7 @@ class SolutionService {
           .map((doc) => Solution.fromJson(doc.data()))
           .toList();
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch solutions by category: $e');
     }
   }
@@ -81,6 +85,7 @@ class SolutionService {
           .map((doc) => Solution.fromJson(doc.data()))
           .toList();
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch user solutions: $e');
     }
   }
@@ -93,6 +98,7 @@ class SolutionService {
           .doc(solution.solutionId)
           .update(solution.toJson());
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to update solution: $e');
     }
   }
@@ -105,6 +111,7 @@ class SolutionService {
           .doc(solutionId)
           .delete();
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to delete solution: $e');
     }
   }
@@ -117,6 +124,7 @@ class SolutionService {
           .doc(solutionId)
           .update({'metrics': metrics.toJson()});
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to update solution metrics: $e');
     }
   }
@@ -134,6 +142,7 @@ class SolutionService {
           .map((doc) => Solution.fromJson(doc.data()))
           .toList();
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to fetch featured solutions: $e');
     }
   }
@@ -150,6 +159,7 @@ class SolutionService {
           .map((doc) => Solution.fromJson(doc.data()))
           .toList();
     } catch (e) {
+        // Ignore errors silently
       throw Exception('Failed to search solutions: $e');
     }
   }

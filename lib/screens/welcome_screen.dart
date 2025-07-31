@@ -16,25 +16,22 @@ class WelcomeScreen extends StatelessWidget {
       if (authController.isLoggedIn &&
           authController.currentUser.value != null) {
         // User is authenticated, go directly to home
-        print('✅ User is authenticated, navigating to HOME');
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.home);
         return;
       }
 
       // Check if user has completed onboarding before
       if (preferenceService.hasCompletedOnboarding) {
         // User has completed onboarding before, go to login
-        print('✅ User has completed onboarding, navigating to LOGIN');
-        Get.offAllNamed(Routes.LOGIN);
+        Get.offAllNamed(Routes.login);
       } else {
         // First time user, show onboarding
-        print('✅ First time user, navigating to ONBOARDING');
-        Get.offAllNamed(Routes.ONBOARDING);
+        Get.offAllNamed(Routes.onboarding);
       }
     } catch (e) {
-      print('❌ Error in welcome navigation: $e');
+      // Ignore errors silently
       // Fallback to onboarding
-      Get.offAllNamed(Routes.ONBOARDING);
+      Get.offAllNamed(Routes.onboarding);
     }
   }
 
@@ -44,7 +41,7 @@ class WelcomeScreen extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -74,7 +71,7 @@ class WelcomeScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 15),
@@ -82,7 +79,7 @@ class WelcomeScreen extends StatelessWidget {
                       'Share your local solutions and learn from others to address everyday challenges in Rwanda.',
                       textAlign: TextAlign.center,
                       style: textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onBackground.withOpacity(0.7),
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                     const Spacer(),

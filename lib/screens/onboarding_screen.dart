@@ -13,7 +13,7 @@ class OnboardingScreen extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
@@ -28,7 +28,7 @@ class OnboardingScreen extends StatelessWidget {
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: colorScheme.outline.withOpacity(0.3),
+                      color: colorScheme.outline.withValues(alpha: 0.3),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -46,7 +46,7 @@ class OnboardingScreen extends StatelessWidget {
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: colorScheme.outline.withOpacity(0.3),
+                      color: colorScheme.outline.withValues(alpha: 0.3),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -57,7 +57,7 @@ class OnboardingScreen extends StatelessWidget {
                 'Welcome to Jenga',
                 style: textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: colorScheme.onBackground,
+                  color: colorScheme.onSurface,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -65,7 +65,7 @@ class OnboardingScreen extends StatelessWidget {
               Text(
                 'Jenga is a community-driven platform where you can share your local solutions and learn from others to address everyday challenges in Rwanda.',
                 style: textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onBackground.withOpacity(0.7),
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -78,24 +78,21 @@ class OnboardingScreen extends StatelessWidget {
                     final preferenceService = Get.find<PreferenceService>();
                     await preferenceService.setOnboardingCompleted();
 
-                    print('✅ Onboarding completed and saved');
 
                     // Check if user is already authenticated
                     final authController = Get.find<AuthController>();
                     if (authController.isLoggedIn &&
                         authController.currentUser.value != null) {
                       // User is authenticated, go to home
-                      print('✅ User is authenticated, navigating to HOME');
-                      Get.offAllNamed(Routes.HOME);
+                      Get.offAllNamed(Routes.home);
                     } else {
                       // User is not authenticated, go to login screen
-                      print('✅ User not authenticated, navigating to LOGIN');
-                      Get.offAllNamed(Routes.LOGIN);
+                      Get.offAllNamed(Routes.login);
                     }
                   } catch (e) {
-                    print('❌ Error completing onboarding: $e');
+        // Ignore errors silently
                     // Still navigate to login even if saving fails
-                    Get.offAllNamed(Routes.LOGIN);
+                    Get.offAllNamed(Routes.login);
                   }
                 },
               ),

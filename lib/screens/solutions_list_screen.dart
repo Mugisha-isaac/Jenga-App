@@ -53,7 +53,7 @@ class SolutionsListScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           controller.exitEditMode();
-          Get.toNamed(Routes.CREATE_SOLUTION);
+          Get.toNamed(Routes.createSolution);
         },
         backgroundColor: AppTheme.primaryColor,
         icon: const Icon(Icons.add_rounded, color: Colors.white),
@@ -119,7 +119,7 @@ class SolutionsListScreen extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           ElevatedButton.icon(
-            onPressed: () => Get.toNamed(Routes.CREATE_SOLUTION),
+            onPressed: () => Get.toNamed(Routes.createSolution),
             icon: const Icon(Icons.add_rounded),
             label: const Text('Create Your First Solution'),
             style: ElevatedButton.styleFrom(
@@ -601,7 +601,7 @@ class SolutionsListScreen extends StatelessWidget {
                           // Small delay to ensure state is cleared
                           Future.delayed(const Duration(milliseconds: 100), () {
                             // Pass solution data as arguments instead of setting edit mode first
-                            Get.toNamed(Routes.CREATE_SOLUTION, arguments: {
+                            Get.toNamed(Routes.createSolution, arguments: {
                               'solution': solution,
                               'isEdit': true
                             });

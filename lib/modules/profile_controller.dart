@@ -23,6 +23,7 @@ class ProfileController extends GetxController {
       if (userId.isEmpty) return;
       user.value = await _profileRepository.loadUser(userId);
     } catch (e) {
+        // Ignore errors silently
       Get.snackbar('Error', 'Failed to load user data');
     } finally {
       isLoading.value = false;
@@ -38,6 +39,7 @@ class ProfileController extends GetxController {
       await loadUser();
       Get.snackbar('Success', 'Profile updated successfully');
     } catch (e) {
+        // Ignore errors silently
       Get.snackbar('Error', 'Failed to update profile');
     } finally {
       isLoading.value = false;
@@ -56,6 +58,7 @@ class ProfileController extends GetxController {
       }
       Get.snackbar('Success', 'Profile picture updated');
     } catch (e) {
+        // Ignore errors silently
       Get.snackbar('Error', 'Failed to upload profile picture');
     }
   }
@@ -71,6 +74,7 @@ class ProfileController extends GetxController {
       Get.back();
       Get.snackbar('Success', 'Password updated successfully');
     } catch (e) {
+        // Ignore errors silently
       Get.snackbar('Error', 'Failed to update password');
     } finally {
       isLoading.value = false;

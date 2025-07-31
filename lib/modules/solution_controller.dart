@@ -66,7 +66,7 @@ class SolutionController extends GetxController {
       countryController.text = 'Rwanda';
       cityController.text = 'Kigali';
     } catch (e) {
-      print('Warning: Error setting default values in onInit: $e');
+        // Ignore errors silently
     }
 
     // Mark controller as ready
@@ -103,8 +103,8 @@ class SolutionController extends GetxController {
       stepDescriptionController.dispose();
       premiumPriceController.dispose();
     } catch (e) {
+        // Ignore errors silently
       // Controllers might already be disposed, ignore the error
-      print('Warning: Some controllers already disposed in onClose: $e');
     }
     super.onClose();
   }
@@ -121,6 +121,7 @@ class SolutionController extends GetxController {
       solutions.assignAll(loadedSolutions);
       _updateFilteredSolutions();
     } catch (e) {
+        // Ignore errors silently
       // Error loading solutions - log silently or handle as needed
       // Don't show error snackbar on initial load failure
     } finally {
@@ -143,7 +144,7 @@ class SolutionController extends GetxController {
         materialController.clear();
       }
     } catch (e) {
-      print('Warning: materialController disposed in addMaterial: $e');
+        // Ignore errors silently
     }
   }
 
@@ -160,7 +161,7 @@ class SolutionController extends GetxController {
         tagController.clear();
       }
     } catch (e) {
-      print('Warning: tagController disposed in addTag: $e');
+        // Ignore errors silently
     }
   }
 
@@ -182,7 +183,7 @@ class SolutionController extends GetxController {
         stepDescriptionController.clear();
       }
     } catch (e) {
-      print('Warning: stepDescriptionController disposed in addStep: $e');
+        // Ignore errors silently
     }
   }
 
@@ -374,8 +375,9 @@ class SolutionController extends GetxController {
       await loadSolutions();
 
       // Navigate to home screen
-      Get.offAllNamed(Routes.HOME);
+      Get.offAllNamed(Routes.home);
     } catch (e) {
+        // Ignore errors silently
       Get.snackbar(
         'Error',
         'Failed to ${isEditMode.value ? 'update' : 'create'} solution: ${e.toString()}',
@@ -430,8 +432,9 @@ class SolutionController extends GetxController {
       await loadSolutions();
 
       // Navigate to home screen
-      Get.offAllNamed(Routes.HOME);
+      Get.offAllNamed(Routes.home);
     } catch (e) {
+        // Ignore errors silently
       Get.snackbar(
         'Error',
         'Failed to update solution: ${e.toString()}',
@@ -451,7 +454,6 @@ class SolutionController extends GetxController {
 
   // Clear form
   void clearForm() {
-    print('🧹 Clearing form state (controllers managed locally)...');
 
     // Clear observable lists and values (these should be safe)
     materials.clear();
@@ -466,7 +468,6 @@ class SolutionController extends GetxController {
     isEditMode.value = false;
     editingSolution.value = null;
 
-    print('✅ Form state cleared successfully');
   }
 
   // Set category
@@ -478,7 +479,6 @@ class SolutionController extends GetxController {
   void togglePremium() {
     isPremium.value = !isPremium.value;
     // Don't try to clear local controllers - let the screen handle its own state
-    print('💰 Premium status toggled: ${isPremium.value}');
   }
 
   // Delete solution
@@ -494,6 +494,7 @@ class SolutionController extends GetxController {
         colorText: Colors.white,
       );
     } catch (e) {
+        // Ignore errors silently
       Get.snackbar(
         'Error',
         'Failed to delete solution: ${e.toString()}',
@@ -569,27 +570,18 @@ class SolutionController extends GetxController {
   // Get user by ID
   Future<user_model.User?> getUserById(String userId) async {
     try {
-      print('🔍 Attempting to fetch user with ID: $userId');
       final firestoreUserProvider = Get.find<FirestoreUserProvider>();
-      print(
-          '✅ FirestoreUserProvider found: ${firestoreUserProvider.runtimeType}');
 
       final user = await firestoreUserProvider.getUser(userId);
 
       if (user != null) {
-        print('✅ User fetched successfully: ${user.fullName} (${user.email})');
-        print('📋 Full user data: ${user.toJson()}');
       } else {
-        print('⚠️ No user found for ID: $userId');
-        print('🔍 Debug: Listing all users to check...');
         await firestoreUserProvider.debugListAllUsers();
       }
 
       return user;
     } catch (e) {
-      print('❌ Error fetching user by ID $userId: $e');
-      print('❌ Error type: ${e.runtimeType}');
-      print('❌ Stack trace: ${StackTrace.current}');
+        // Ignore errors silently
       return null;
     }
   }
@@ -604,7 +596,6 @@ class SolutionController extends GetxController {
       final currentUser = authController.currentUserData.value;
 
       if (currentUser == null) {
-        print('❌ No current user found for adding comment');
         return false;
       }
 
@@ -612,7 +603,6 @@ class SolutionController extends GetxController {
       final currentSolution =
           await _solutionRepository.getSolutionById(solutionId);
       if (currentSolution == null) {
-        print('❌ Solution not found: $solutionId');
         return false;
       }
 
@@ -664,13 +654,10 @@ class SolutionController extends GetxController {
         solutions.refresh();
       }
 
-      print('✅ Comment added and saved to Firestore: $solutionId');
-      print('💬 Comment content: $content');
-      print('👤 By: ${comment.userName}');
 
       return true;
     } catch (e) {
-      print('❌ Error adding comment: $e');
+        // Ignore errors silently
       return false;
     }
   }

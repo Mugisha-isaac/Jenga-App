@@ -31,37 +31,27 @@ class SplashController extends GetxController {
       }
 
       // Debug prints to track the flow
-      print('🔍 Auth state: ${authController.isLoggedIn}');
-      print(
-          '🔍 Onboarding completed: ${preferenceService.hasCompletedOnboarding}');
-      print('🔍 Current user: ${authController.currentUser.value?.uid}');
-      print('🔍 Is first launch: ${preferenceService.isFirstLaunch}');
 
       // Check authentication state and flow
       if (authController.isLoggedIn &&
           authController.currentUser.value != null) {
         // User is logged in and verified, go directly to home
-        print('✅ Navigating to HOME - User is logged in');
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.home);
       } else if (preferenceService.isFirstLaunch) {
         // First time user, show welcome screen
-        print('✅ Navigating to WELCOME - First time user');
         await preferenceService.setNotFirstLaunch();
-        Get.offAllNamed(Routes.WELCOME);
+        Get.offAllNamed(Routes.welcome);
       } else if (preferenceService.hasCompletedOnboarding) {
         // User has seen onboarding before, go to login
-        print(
-            '✅ Navigating to LOGIN - Onboarding completed, user not authenticated');
-        Get.offAllNamed(Routes.LOGIN);
+        Get.offAllNamed(Routes.login);
       } else {
         // User has launched before but hasn't completed onboarding
-        print('✅ Navigating to WELCOME - User needs to complete onboarding');
-        Get.offAllNamed(Routes.WELCOME);
+        Get.offAllNamed(Routes.welcome);
       }
     } catch (e) {
+      // Ignore errors silently
       // Fallback to welcome screen if there are any issues
-      print('❌ Error in splash navigation: $e');
-      Get.offAllNamed(Routes.WELCOME);
+      Get.offAllNamed(Routes.welcome);
     }
   }
 }

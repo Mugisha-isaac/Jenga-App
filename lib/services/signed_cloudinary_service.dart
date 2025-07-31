@@ -62,23 +62,13 @@ class SignedCloudinaryService {
     final sortedKeys = params.keys.toList()..sort();
 
     // Create parameter string
-    final paramString = sortedKeys
-        .map((key) => '$key=${params[key]}')
-        .join('&');
+    final paramString =
+        sortedKeys.map((key) => '$key=${params[key]}').join('&');
 
     // Add API secret to the end
     final stringToSign = '$paramString$apiSecret';
 
-    if (kDebugMode) {
-      print('=== Signature Debug ===');
-      print('Sorted Keys: $sortedKeys');
-      print('Param String: $paramString');
-      print('String to Sign: $stringToSign');
-      print('API Secret Length: ${apiSecret.length}');
-      print('Expected Format: folder=X&format=auto&timestamp=Y');
-      print('Actual Format: $paramString');
-      print('=====================');
-    }
+    if (kDebugMode) {}
 
     // Generate SHA-1 hash
     final bytes = utf8.encode(stringToSign);
@@ -87,39 +77,13 @@ class SignedCloudinaryService {
     return digest.toString();
   }
 
-  /// Get HTTP status text
-  String _getStatusText(int statusCode) {
-    switch (statusCode) {
-      case 200:
-        return 'OK';
-      case 400:
-        return 'Bad Request';
-      case 401:
-        return 'Unauthorized';
-      case 403:
-        return 'Forbidden';
-      case 404:
-        return 'Not Found';
-      case 413:
-        return 'Payload Too Large';
-      case 429:
-        return 'Too Many Requests';
-      case 500:
-        return 'Internal Server Error';
-      default:
-        return 'Unknown';
-    }
-  }
-
   /// Upload single image using signed uploads (no upload preset needed)
   Future<String> uploadImage(
     File imageFile, {
     String folder = 'uploads',
   }) async {
     try {
-      if (kDebugMode) {
-        print('Folder: $folder');
-      }
+      if (kDebugMode) {}
 
       // Validate environment variables
       if (_cloudName.isEmpty || _apiKey.isEmpty || _apiSecret.isEmpty) {
@@ -160,14 +124,7 @@ class SignedCloudinaryService {
       // Generate signature
       final signature = _generateSignature(signatureParams, _apiSecret);
 
-      if (kDebugMode) {
-        print('=== Signature Generation Debug ===');
-        print('Timestamp: $timestamp');
-        print('Signature Params: $signatureParams');
-        print('Generated Signature: $signature');
-        print('Note: format parameter excluded from signature');
-        print('================================');
-      }
+      if (kDebugMode) {}
 
       // Create multipart request
       final uri = Uri.parse(
@@ -196,45 +153,26 @@ class SignedCloudinaryService {
       });
 
       if (kDebugMode) {
-        print('================================');
-        print('=== Cloudinary Signed Upload Request ===');
-        print('URL: ${request.url}');
-        print('Method: ${request.method}');
-        print(
-          'Fields: ${Map.from(request.fields)..remove('signature')}',
-        ); // Don't log signature
-        print('File: ${imageFile.path}');
-        print('File Size: $fileSize bytes');
-        print('Timestamp: $timestamp');
-        print('================================');
+        // Fields debug info (signature removed for security)
       }
 
       // Send request with timeout
       final streamedResponse = await request.send().timeout(
-        const Duration(seconds: 30),
-        onTimeout: () =>
-            throw CloudinaryException('Upload timeout after 30 seconds', {}),
-      );
+            const Duration(seconds: 30),
+            onTimeout: () => throw CloudinaryException(
+                'Upload timeout after 30 seconds', {}),
+          );
 
       final response = await http.Response.fromStream(streamedResponse);
 
-      if (kDebugMode) {
-        print('================================');
-        print('=== Cloudinary Upload Response ===');
-        print('Status Code: ${response.statusCode}');
-        print('Headers: ${response.headers}');
-        print('Body: ${response.body}');
-        print('================================');
-      }
+      if (kDebugMode) {}
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final secureUrl = responseData['secure_url'] as String?;
 
         if (secureUrl != null) {
-          if (kDebugMode) {
-            print('✅ Upload successful: $secureUrl');
-          }
+          if (kDebugMode) {}
           return secureUrl;
         } else {
           throw CloudinaryException('No secure_url in response', responseData);
@@ -242,33 +180,10 @@ class SignedCloudinaryService {
       } else {
         // Enhanced error logging for debugging
         if (kDebugMode) {
-          print('================================');
-          print('=== Cloudinary Upload Failed ===');
-          print('Status Code: ${response.statusCode}');
-          print('Request URL: ${request.url}');
-          print('Cloud Name: $_cloudName');
-          print('API Key: ${_apiKey.substring(0, 6)}...');
-          print('File Path: ${imageFile.path}');
-          print('Response Headers: ${response.headers}');
-          print('Response Body: ${response.body}');
-          print(
-            '=== HTTP ${response.statusCode} ${_getStatusText(response.statusCode)} Analysis ===',
-          );
-          print('Common causes:');
+          // Debug info: HTTP ${response.statusCode} ${_getStatusText(response.statusCode)} Analysis
           if (response.statusCode == 400) {
-            print('- Invalid signature or parameters');
-            print('- File validation failed on Cloudinary side');
-            print('- Malformed request parameters');
-            print('- Timestamp too old (>1 hour)');
           } else if (response.statusCode == 401) {
-            print('- Invalid API credentials');
-            print('- Expired or revoked API key');
-            print('- Invalid signature');
-          } else if (response.statusCode == 403) {
-            print('- Insufficient permissions');
-            print('- Account limits exceeded');
-          }
-          print('===============================');
+          } else if (response.statusCode == 403) {}
         }
 
         final responseData = json.decode(response.body);
@@ -278,12 +193,9 @@ class SignedCloudinaryService {
         );
       }
     } catch (e) {
+      // Ignore errors silently
       if (kDebugMode) {
-        print('CloudinaryException in single image upload:');
-        print('Message: ${e.toString()}');
-        if (e is CloudinaryException) {
-          print('Details: ${e.details}');
-        }
+        if (e is CloudinaryException) {}
       }
       rethrow;
     }
@@ -309,9 +221,8 @@ class SignedCloudinaryService {
           onProgress?.call(completed, imageFiles.length);
           return url;
         } catch (e) {
-          if (kDebugMode) {
-            print('Failed to upload ${file.path}: $e');
-          }
+          // Ignore errors silently
+          if (kDebugMode) {}
           completed++;
           onProgress?.call(completed, imageFiles.length);
           return null;
@@ -326,6 +237,7 @@ class SignedCloudinaryService {
 
       return uploadedUrls;
     } catch (e) {
+      // Ignore errors silently
       throw CloudinaryException('Multiple upload failed', {
         'error': e.toString(),
       });
@@ -344,6 +256,7 @@ class SignedCloudinaryService {
       return allowedExtensions.any((ext) => path.endsWith('.$ext')) ||
           path.contains(RegExp(r'\.(jpg|jpeg|png|gif|webp)(\?|$)'));
     } catch (e) {
+      // Ignore errors silently
       return false;
     }
   }
