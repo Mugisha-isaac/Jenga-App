@@ -561,11 +561,6 @@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 ```
 
-## 📞 Support & Contact
-
-- **Issues**: [GitHub Issues](https://github.com/Mugisha-isaac/Jenga-App/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/Mugisha-isaac/Jenga-App/discussions)
-- **Email**: mugishaisaac508@gmail.com
 
 ## 🙏 Acknowledgments
 
@@ -578,10 +573,5 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 ---
 
 <div align="center">
-
 **Made with ❤️ by the Jenga App Team**
-
-[![GitHub stars](https://img.shields.io/github/stars/Mugisha-isaac/Jenga-App?style=social)](https://github.com/Mugisha-isaac/Jenga-App/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/Mugisha-isaac/Jenga-App?style=social)](https://github.com/Mugisha-isaac/Jenga-App/network/members)
-
 </div>
