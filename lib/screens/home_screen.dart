@@ -21,19 +21,19 @@ class HomeScreen extends StatelessWidget {
         .toList();
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Jenga',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor ?? Theme.of(context).colorScheme.onSurface,
         elevation: 0,
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_outlined),
+            icon: Icon(Icons.notifications_outlined, color: Theme.of(context).iconTheme.color),
             onPressed: () {},
           ),
         ],
@@ -42,22 +42,22 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSearchBar(),
+            _buildSearchBar(context),
             const SizedBox(height: 24),
             if (featuredSolutions.isNotEmpty)
-              _buildFeaturedSolutions(controller),
-            _buildTrendingTopics(controller),
+              _buildFeaturedSolutions(context, controller),
+            _buildTrendingTopics(context, controller),
             const SizedBox(height: 32),
-            _buildRecentSolutions(controller, userController),
+            _buildRecentSolutions(context, controller, userController),
             const SizedBox(height: 100),
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Get.toNamed(Routes.EXPLORE);
@@ -66,17 +66,17 @@ class HomeScreen extends StatelessWidget {
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.green.shade50,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.green.shade200),
+          border: Border.all(color: Theme.of(context).dividerColor),
         ),
         child: Row(
           children: [
-            Icon(Icons.search, color: Colors.green.shade700),
+            Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 12),
             Text(
               'Search solutions',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
         ),
@@ -84,19 +84,15 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturedSolutions(SolutionController controller) {
+  Widget _buildFeaturedSolutions(BuildContext context, SolutionController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'Featured Solutions',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: 16),
@@ -110,10 +106,10 @@ class HomeScreen extends StatelessWidget {
                 .toList();
 
             if (featuredSolutions.isEmpty) {
-              return const Center(
+              return Center(
                 child: Text(
                   'No featured solutions yet',
-                  style: TextStyle(color: Colors.grey),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
                 ),
               );
             }
@@ -122,9 +118,9 @@ class HomeScreen extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: featuredSolutions.length,
-              itemBuilder: (context, index) {
+              itemBuilder: (contextList, index) {
                 final solution = featuredSolutions[index];
-                return _buildFeaturedCard(solution);
+                return _buildFeaturedCard(context, solution);
               },
             );
           }),
@@ -133,7 +129,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturedCard(Solution solution) {
+  Widget _buildFeaturedCard(BuildContext context, Solution solution) {
     return GestureDetector(
       onTap: () {
         Get.toNamed(Routes.SOLUTION_DETAIL, arguments: solution);
@@ -165,14 +161,14 @@ class HomeScreen extends StatelessWidget {
                           fit: BoxFit.cover,
                         )
                       : null,
-                  color: solution.images.isEmpty ? Colors.grey.shade300 : null,
+                  color: solution.images.isEmpty ? Theme.of(context).colorScheme.surfaceVariant : null,
                 ),
                 child: solution.images.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Icon(
                           Icons.lightbulb_outline,
                           size: 60,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       )
                     : null,
@@ -186,7 +182,7 @@ class HomeScreen extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withValues(alpha: (0.7))
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7)
                     ],
                   ),
                 ),
@@ -206,14 +202,13 @@ class HomeScreen extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.green.shade600,
+                        color: Theme.of(context).colorScheme.primary,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         solution.category.toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -221,10 +216,10 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       solution.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -232,8 +227,8 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       solution.description,
-                      style: const TextStyle(
-                        color: Colors.white70,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
                         fontSize: 14,
                       ),
                       maxLines: 2,
@@ -249,19 +244,15 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTrendingTopics(SolutionController controller) {
+  Widget _buildTrendingTopics(BuildContext context, SolutionController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'Trending Topics',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: 16),
@@ -273,11 +264,11 @@ class HomeScreen extends StatelessWidget {
               .toList();
 
           if (trendingSolutions.isEmpty) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'No trending solutions yet',
-                style: TextStyle(color: Colors.grey),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
               ),
             );
           }
@@ -308,14 +299,14 @@ class HomeScreen extends StatelessWidget {
                       vertical: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.green.shade50,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.green.shade200),
+                      border: Border.all(color: Theme.of(context).dividerColor),
                     ),
                     child: Text(
                       category,
-                      style: TextStyle(
-                        color: Colors.green.shade700,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -330,20 +321,16 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildRecentSolutions(
-      SolutionController controller, AuthController userController) {
+      BuildContext context, SolutionController controller, AuthController userController) {
     // getting current user
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'Recent Solutions',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: 16),
@@ -353,11 +340,11 @@ class HomeScreen extends StatelessWidget {
             ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
           if (recentSolutions.isEmpty) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'No recent solutions yet',
-                style: TextStyle(color: Colors.grey),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
               ),
             );
           }
@@ -367,9 +354,9 @@ class HomeScreen extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: recentSolutions.take(10).length,
-            itemBuilder: (context, index) {
+            itemBuilder: (contextList, index) {
               final solution = recentSolutions[index];
-              return _buildRecentSolutionCard(solution);
+              return _buildRecentSolutionCard(context, solution);
             },
           );
         }),
@@ -377,7 +364,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentSolutionCard(Solution solution) {
+  Widget _buildRecentSolutionCard(BuildContext context, Solution solution) {
     return GestureDetector(
       onTap: () {
         Get.toNamed(Routes.SOLUTION_DETAIL, arguments: solution);
@@ -386,11 +373,11 @@ class HomeScreen extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: (0.05)),
+              color: Theme.of(context).shadowColor.withOpacity(0.05),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -403,7 +390,7 @@ class HomeScreen extends StatelessWidget {
               height: 60,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: Colors.green.shade100,
+                color: Theme.of(context).colorScheme.surfaceVariant,
                 image: solution.images.isNotEmpty
                     ? DecorationImage(
                         image: NetworkImage(solution.images.first.url),
@@ -412,9 +399,9 @@ class HomeScreen extends StatelessWidget {
                     : null,
               ),
               child: solution.images.isEmpty
-                  ? const Icon(
+                  ? Icon(
                       Icons.lightbulb_outlined,
-                      color: Colors.green,
+                      color: Theme.of(context).colorScheme.primary,
                       size: 30,
                     )
                   : null,
@@ -426,10 +413,9 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Text(
                     solution.title,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -442,29 +428,26 @@ class HomeScreen extends StatelessWidget {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Text(
                           'By ...',
-                          style: TextStyle(
-                              fontSize: 14, color: Colors.grey.shade600),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
                         );
                       } else if (snapshot.hasError) {
                         return Text(
                           'By Error',
-                          style: TextStyle(
-                              fontSize: 14, color: Colors.red.shade600),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.error),
                         );
                       } else if (snapshot.hasData && snapshot.data != null) {
                         final user = snapshot.data!;
                         return Text(
                           'By ${user.fullName ?? 'No Name'}',
-                          style: TextStyle(
-                              fontSize: 14, color: Colors.grey.shade600),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
                         );
                       } else {
                         return Text(
                           'By Anonymous',
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade500,
-                              fontStyle: FontStyle.italic),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).hintColor,
+                            fontStyle: FontStyle.italic,
+                          ),
                         );
                       }
                     },
@@ -472,9 +455,8 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     solution.category,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.green.shade700,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -487,14 +469,14 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNavigationBar() {
+  Widget _buildBottomNavigationBar(BuildContext context) {
     return Container(
       height: 80,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: (0.1)),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -503,16 +485,16 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildNavItem(Icons.home, 'Home', true, () {
+          _buildNavItem(context, Icons.home, 'Home', true, () {
             // Already on home
           }),
-          _buildNavItem(Icons.explore, 'Explore', false, () {
+          _buildNavItem(context, Icons.explore, 'Explore', false, () {
             Get.toNamed(Routes.EXPLORE);
           }),
-          _buildNavItem(Icons.add_circle, 'Create', false, () {
+          _buildNavItem(context, Icons.add_circle, 'Create', false, () {
             Get.toNamed(Routes.CREATE_SOLUTION);
           }),
-          _buildNavItem(Icons.person, 'Profile', false, () {
+          _buildNavItem(context, Icons.person, 'Profile', false, () {
             Get.toNamed(Routes.PROFILE);
           }),
         ],
@@ -521,6 +503,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildNavItem(
+    BuildContext context,
     IconData icon,
     String label,
     bool isActive,
@@ -531,14 +514,22 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: isActive ? Colors.green : Colors.grey, size: 28),
+          Icon(
+            icon,
+            color: isActive
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).hintColor,
+            size: 28,
+          ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(
-              color: isActive ? Colors.green : Colors.grey,
-              fontSize: 12,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: isActive
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).hintColor,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+              fontSize: 12,
             ),
           ),
         ],

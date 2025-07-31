@@ -6,7 +6,6 @@ import '../modules/solution_controller.dart';
 import '../modules/auth_controller.dart';
 import '../widgets/secure_image_picker_widget.dart';
 import '../models/solution.dart';
-import '../themes/app_theme.dart';
 
 class CreateSolutionScreen extends StatefulWidget {
   const CreateSolutionScreen({super.key});
@@ -250,20 +249,20 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
       );
     }
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Scaffold(
       appBar: AppBar(
         title: Obx(
           () => Text(
             controller.isEditMode.value ? 'Edit Solution' : 'Create Solution',
+            style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         centerTitle: true,
-        titleTextStyle: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
         elevation: 0,
       ),
       body: Obx(
@@ -299,14 +298,17 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
   }
 
   Widget _buildSubmitButton(SolutionController controller) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return SizedBox(
       width: double.infinity,
       child: Obx(
         () => ElevatedButton(
           onPressed: controller.createSolution,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF00BF63),
-            foregroundColor: Colors.white,
+            backgroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onPrimary,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -314,7 +316,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
           ),
           child: Text(
             controller.isEditMode.value ? 'Update Solution' : 'Create Solution',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onPrimary),
           ),
         ),
       ),
@@ -373,6 +375,8 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
   }
 
   Widget _buildCategorySection(SolutionController controller) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return _buildSection(
       title: 'Category',
       child: Obx(
@@ -384,7 +388,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
             labelText: 'Select Category',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             filled: true,
-            fillColor: Colors.grey[50],
+            fillColor: colorScheme.surface,
           ),
           items: controller.categories.map((category) {
             return DropdownMenuItem(value: category, child: Text(category));
@@ -444,7 +448,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                       width: 120,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade300),
+                        border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
@@ -467,10 +471,10 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                           },
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
-                              color: Colors.grey.shade200,
-                              child: const Icon(
+                              color: Theme.of(context).colorScheme.surface,
+                              child: Icon(
                                 Icons.error,
-                                color: Colors.red,
+                                color: Theme.of(context).colorScheme.error,
                                 size: 40,
                               ),
                             );
@@ -485,13 +489,13 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                         onTap: () => controller.removeImageUrl(entry.key),
                         child: Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.error,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.close,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onError,
                             size: 16,
                           ),
                         ),
@@ -515,7 +519,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: Colors.grey[50],
+                    fillColor: Theme.of(context).colorScheme.surface,
                   ),
                   onSubmitted: (value) {
                     if (value.trim().isNotEmpty &&
@@ -541,8 +545,8 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                 },
                 icon: const Icon(Icons.add_link),
                 style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFF00BF63),
-                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ],
@@ -613,7 +617,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: Colors.grey[50],
+                    fillColor: Theme.of(context).colorScheme.surface,
                   ),
                   onSubmitted: (_) => _addMaterial(),
                 ),
@@ -623,8 +627,8 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                 onPressed: _addMaterial,
                 icon: const Icon(Icons.add),
                 style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFF00BF63),
-                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ],
@@ -672,7 +676,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: Colors.grey[50],
+                    fillColor: Theme.of(context).colorScheme.surface,
                   ),
                   maxLines: 2,
                   onSubmitted: (_) => _addStep(),
@@ -683,8 +687,8 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                 onPressed: _addStep,
                 icon: const Icon(Icons.add),
                 style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFF00BF63),
-                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ],
@@ -734,7 +738,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: Colors.grey[50],
+                    fillColor: Theme.of(context).colorScheme.surface,
                   ),
                   onSubmitted: (_) => _addTag(),
                 ),
@@ -744,8 +748,8 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
                 onPressed: _addTag,
                 icon: const Icon(Icons.add),
                 style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFF00BF63),
-                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ],
@@ -783,11 +787,11 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
         children: [
           Obx(
             () => SwitchListTile(
-              title: const Text('Premium Solution'),
-              subtitle: const Text('Charge users to access this solution'),
+              title: Text('Premium Solution', style: Theme.of(context).textTheme.bodyLarge),
+              subtitle: Text('Charge users to access this solution', style: Theme.of(context).textTheme.bodySmall),
               value: controller.isPremium.value,
               onChanged: (_) => controller.togglePremium(),
-              activeColor: const Color(0xFF00BF63),
+              activeColor: Theme.of(context).colorScheme.primary,
             ),
           ),
           Obx(
@@ -810,15 +814,18 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
   }
 
   Widget _buildSection({required String title, required Widget child}) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: (0.1)),
+            color: colorScheme.shadow.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -830,10 +837,9 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 18,
+            style: textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Color(0xFF333333),
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
@@ -851,6 +857,8 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -858,7 +866,7 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
         hintText: hint,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
-        fillColor: Colors.grey[50],
+        fillColor: colorScheme.surface,
       ),
       maxLines: maxLines,
       keyboardType: keyboardType,
@@ -866,29 +874,34 @@ class _CreateSolutionScreenState extends State<CreateSolutionScreen> {
   }
 
   Widget _buildChip(String text, VoidCallback onDelete) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Chip(
       label: Text(text),
-      deleteIcon: const Icon(Icons.close, size: 18),
+      deleteIcon: Icon(Icons.close, size: 18, color: colorScheme.onPrimary),
       onDeleted: onDelete,
-      backgroundColor: const Color(0xFF00BF63).withValues(alpha: (0.1)),
-      labelStyle: const TextStyle(color: Color(0xFF00BF63)),
+      backgroundColor: colorScheme.primary.withOpacity(0.1),
+      labelStyle: TextStyle(color: colorScheme.primary),
     );
   }
 
   Widget _buildStepCard(SolutionStep step, VoidCallback onDelete) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
+      color: colorScheme.surface,
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: const Color(0xFF00BF63),
+          backgroundColor: colorScheme.primary,
           child: Text(
             step.stepNumber.toString(),
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: colorScheme.onPrimary),
           ),
         ),
-        title: Text(step.description),
+        title: Text(step.description, style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface)),
         trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.red),
+          icon: Icon(Icons.delete, color: colorScheme.error),
           onPressed: onDelete,
         ),
       ),

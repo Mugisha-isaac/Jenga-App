@@ -12,15 +12,18 @@ class PaymentScreen extends StatelessWidget {
     final PaymentController controller = Get.put(PaymentController());
     final Solution solution = Get.arguments as Solution;
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Payment',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -40,14 +43,17 @@ class PaymentScreen extends StatelessWidget {
   }
 
   Widget _buildSolutionInfo(Solution solution) {
+    final theme = Theme.of(Get.context!);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: (0.05)),
+            color: colorScheme.shadow.withOpacity(0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -56,12 +62,11 @@ class PaymentScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Premium Solution',
-            style: TextStyle(
-              fontSize: 18,
+            style: textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 12),
@@ -72,7 +77,7 @@ class PaymentScreen extends StatelessWidget {
                 height: 60,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: Colors.green.shade100,
+                  color: colorScheme.primaryContainer,
                   image: solution.images.isNotEmpty
                       ? DecorationImage(
                           image: NetworkImage(solution.images.first.url),
@@ -81,9 +86,9 @@ class PaymentScreen extends StatelessWidget {
                       : null,
                 ),
                 child: solution.images.isEmpty
-                    ? const Icon(
+                    ? Icon(
                         Icons.lightbulb_outlined,
-                        color: Colors.green,
+                        color: colorScheme.primary,
                         size: 30,
                       )
                     : null,
@@ -95,18 +100,16 @@ class PaymentScreen extends StatelessWidget {
                   children: [
                     Text(
                       solution.title,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       solution.category,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade600,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.secondary,
                       ),
                     ),
                   ],
@@ -120,16 +123,15 @@ class PaymentScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Price:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
                 '\$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'}',
-                style: TextStyle(
-                  fontSize: 20,
+                style: textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.green.shade700,
+                  color: colorScheme.primary,
                 ),
               ),
             ],
@@ -140,14 +142,17 @@ class PaymentScreen extends StatelessWidget {
   }
 
   Widget _buildPayPalInfo() {
+    final theme = Theme.of(Get.context!);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: (0.05)),
+            color: colorScheme.shadow.withOpacity(0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -161,33 +166,31 @@ class PaymentScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0070BA).withOpacity(0.1),
+                  color: colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.payment,
-                  color: Color(0xFF0070BA),
+                  color: colorScheme.primary,
                   size: 24,
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Secure Payment with PayPal',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     Text(
                       'Safe, fast, and easy',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.secondary,
                       ),
                     ),
                   ],
@@ -199,23 +202,22 @@ class PaymentScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
+              color: colorScheme.background,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
             ),
             child: Column(
               children: [
                 Row(
                   children: [
                     Icon(Icons.security,
-                        color: Colors.green.shade700, size: 20),
+                        color: colorScheme.primary, size: 20),
                     const SizedBox(width: 8),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'Your payment information is protected with bank-level security',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black87,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -225,14 +227,13 @@ class PaymentScreen extends StatelessWidget {
                 Row(
                   children: [
                     Icon(Icons.flash_on,
-                        color: Colors.orange.shade700, size: 20),
+                        color: colorScheme.secondary, size: 20),
                     const SizedBox(width: 8),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'Quick checkout - no need to enter card details',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black87,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -242,14 +243,13 @@ class PaymentScreen extends StatelessWidget {
                 Row(
                   children: [
                     Icon(Icons.verified_user,
-                        color: Colors.blue.shade700, size: 20),
+                        color: colorScheme.tertiary, size: 20),
                     const SizedBox(width: 8),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'Trusted by millions worldwide',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black87,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -259,11 +259,10 @@ class PaymentScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'You will be redirected to PayPal to complete your payment securely. After successful payment, you will get instant access to the premium solution.',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
+            style: textTheme.bodySmall?.copyWith(
+              color: colorScheme.secondary,
               height: 1.4,
             ),
           ),
@@ -274,6 +273,9 @@ class PaymentScreen extends StatelessWidget {
 
   Widget _buildPayButton(
       PaymentController controller, Solution solution, BuildContext context) {
+    final theme = Theme.of(Get.context!);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Obx(
       () => Column(
         children: [
@@ -290,32 +292,29 @@ class PaymentScreen extends StatelessWidget {
                           context,
                         );
                         if (success) {
-                          // Small delay to ensure success screen is shown
-                          await Future.delayed(
-                              const Duration(milliseconds: 500));
+                          await Future.delayed(const Duration(milliseconds: 500));
                           Get.back(result: true);
                         }
                       } catch (e) {
-                        // Additional error handling at UI level
                         Get.snackbar(
                           'Error',
                           'An unexpected error occurred. Please try again.',
                           snackPosition: SnackPosition.TOP,
-                          backgroundColor: Colors.red,
-                          colorText: Colors.white,
+                          backgroundColor: colorScheme.error,
+                          colorText: colorScheme.onError,
                         );
                       }
                     },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0070BA),
-                foregroundColor: Colors.white,
+                backgroundColor: colorScheme.primary,
+                foregroundColor: colorScheme.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 elevation: 0,
               ),
               child: controller.isProcessingPayment.value
-                  ? const Row(
+                  ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
@@ -324,15 +323,15 @@ class PaymentScreen extends StatelessWidget {
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                                AlwaysStoppedAnimation<Color>(colorScheme.onPrimary),
                           ),
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         Text(
                           'Processing Payment...',
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w600,
+                            color: colorScheme.onPrimary,
                           ),
                         ),
                       ],
@@ -340,13 +339,13 @@ class PaymentScreen extends StatelessWidget {
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.payment, size: 20),
+                        Icon(Icons.payment, size: 20, color: colorScheme.onPrimary),
                         const SizedBox(width: 8),
                         Text(
                           'Pay \$${solution.premiumPrice?.toStringAsFixed(2) ?? '0.00'} with PayPal',
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w600,
+                            color: colorScheme.onPrimary,
                           ),
                         ),
                       ],
@@ -361,22 +360,20 @@ class PaymentScreen extends StatelessWidget {
                 'assets/images/paypal_logo.png',
                 height: 24,
                 errorBuilder: (context, error, stackTrace) {
-                  return const Text(
+                  return Text(
                     'PayPal',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF0070BA),
+                      color: colorScheme.primary,
                     ),
                   );
                 },
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'Secure Payment',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.secondary,
                 ),
               ),
             ],

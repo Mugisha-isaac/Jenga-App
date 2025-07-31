@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:jenga_app/modules/auth_controller.dart';
 import 'package:jenga_app/modules/profile_controller.dart';
 import 'package:jenga_app/routes/routes.dart';
-import 'package:jenga_app/themes/app_theme.dart';
+import 'package:jenga_app/modules/theme_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -14,7 +14,7 @@ class ProfileScreen extends StatelessWidget {
     Get.put(ProfileController());
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Profile'),
       ),
@@ -59,10 +59,10 @@ class ProfileScreen extends StatelessWidget {
                               ? NetworkImage(user.profilePictureUrl!)
                               : null,
                           child: user.profilePictureUrl == null
-                              ? const Icon(
+                              ? Icon(
                                   Icons.person,
                                   size: 60,
-                                  color: AppTheme.primaryColor,
+                                  color: Theme.of(context).colorScheme.primary,
                                 )
                               : null,
                         ),
@@ -76,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                           child: IconButton(
-                            icon: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                            icon: Icon(Icons.camera_alt, size: 20, color: Theme.of(context).colorScheme.onPrimary),
                             onPressed: () {
                               // Navigate to Edit Profile for profile picture change
                               Get.toNamed(Routes.EDIT_PROFILE);
@@ -90,6 +90,7 @@ class ProfileScreen extends StatelessWidget {
                       user.fullName ?? 'No Name',
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                     ),
                     if (user.email != null) ...[
@@ -106,6 +107,25 @@ class ProfileScreen extends StatelessWidget {
                 ),
 
                 _buildSectionHeader('Account'),
+                Obx(() {
+                  final themeController = Get.find<ThemeController>();
+                  return Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: ListTile(
+                      leading: Icon(
+                        themeController.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      title: Text('Theme'),
+                      trailing: Switch(
+                        value: themeController.isDarkMode,
+                        onChanged: (value) {
+                          themeController.switchTheme(value);
+                        },
+                      ),
+                    ),
+                  );
+                }),
                 _buildListTile(
                   context,
                   icon: Icons.person_outline,
@@ -198,12 +218,14 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      child: Text(
-        title,
-        style: Get.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Get.theme.colorScheme.primary,
-            ),
+      child: Builder(
+        builder: (context) => Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+        ),
       ),
     );
   }
@@ -216,10 +238,11 @@ class ProfileScreen extends StatelessWidget {
   }) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      color: Theme.of(context).colorScheme.surface,
       child: ListTile(
         leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
-        title: Text(title),
-        trailing: const Icon(Icons.chevron_right),
+        title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
+        trailing: Icon(Icons.chevron_right, color: Theme.of(context).hintColor),
         onTap: onTap,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),

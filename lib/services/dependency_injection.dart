@@ -9,6 +9,7 @@ import 'package:jenga_app/repositories/paid_solution_repository.dart';
 import 'package:jenga_app/modules/auth_controller.dart';
 import 'package:jenga_app/services/preference_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jenga_app/modules/theme_controller.dart';
 
 class DependencyInjection {
   static Future<void> init() async {
@@ -50,5 +51,6 @@ class DependencyInjection {
 
     // Register controllers
     Get.put(AuthController());
+  Get.put(ThemeController(), permanent: true);
   }
 }

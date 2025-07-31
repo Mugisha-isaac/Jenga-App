@@ -4,7 +4,6 @@ import '../modules/solution_controller.dart';
 import '../modules/auth_controller.dart';
 import '../models/solution.dart';
 import '../routes/routes.dart';
-import '../themes/app_theme.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
@@ -24,19 +23,22 @@ class ExploreScreen extends StatelessWidget {
       });
     }
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Explore',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
           onPressed: () => Get.back(),
         ),
       ),
@@ -62,20 +64,22 @@ class ExploreScreen extends StatelessWidget {
   }
 
   Widget _buildSearchBar(SolutionController controller) {
+    final theme = Theme.of(Get.context!);
+    final colorScheme = theme.colorScheme;
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.green.shade50,
+        color: colorScheme.primaryContainer.withOpacity(0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.green.shade200),
+        border: Border.all(color: colorScheme.primary.withOpacity(0.3)),
       ),
       child: TextField(
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           hintText: 'Search for solutions',
-          prefixIcon: Icon(Icons.search, color: Colors.green),
+          prefixIcon: Icon(Icons.search, color: colorScheme.primary),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),
         onChanged: (query) {
           controller.searchSolutions(query);
@@ -102,6 +106,9 @@ class ExploreScreen extends StatelessWidget {
         itemCount: categories.length,
         itemBuilder: (context, index) {
           final category = categories[index];
+          final theme = Theme.of(context);
+          final colorScheme = theme.colorScheme;
+          final textTheme = theme.textTheme;
 
           return Obx(() {
             final isSelected =
@@ -120,18 +127,17 @@ class ExploreScreen extends StatelessWidget {
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.green : Colors.white,
+                  color: isSelected ? colorScheme.primary : colorScheme.surface,
                   borderRadius: BorderRadius.circular(25),
                   border: Border.all(
-                    color: isSelected ? Colors.green : Colors.grey.shade300,
+                    color: isSelected ? colorScheme.primary : colorScheme.outline.withOpacity(0.3),
                   ),
                 ),
                 child: Text(
                   category,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.grey.shade700,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface.withOpacity(0.7),
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
               ),
@@ -173,14 +179,13 @@ class ExploreScreen extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               'Trending Solutions',
-              style: TextStyle(
-                fontSize: 20,
+              style: Theme.of(Get.context!).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Theme.of(Get.context!).colorScheme.onSurface,
               ),
             ),
           ),
@@ -204,16 +209,19 @@ class ExploreScreen extends StatelessWidget {
     Solution solution,
     AuthController authController,
   ) {
+    final theme = Theme.of(Get.context!);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return GestureDetector(
       onTap: () => _handleSolutionTap(solution),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: (0.08)),
+              color: colorScheme.shadow.withOpacity(0.08),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -235,13 +243,13 @@ class ExploreScreen extends StatelessWidget {
                         fit: BoxFit.cover,
                       )
                     : null,
-                color: solution.images.isEmpty ? Colors.grey.shade300 : null,
+                color: solution.images.isEmpty ? colorScheme.background : null,
               ),
               child: solution.images.isEmpty
-                  ? const Icon(
+                  ? Icon(
                       Icons.lightbulb_outlined,
                       size: 40,
-                      color: Colors.grey,
+                      color: colorScheme.secondary,
                     )
                   : null,
             ),
@@ -259,14 +267,13 @@ class ExploreScreen extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.lightGreen,
+                            color: colorScheme.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             solution.category.toUpperCase(),
-                            style: TextStyle(
-                              color: AppTheme.primaryColor,
-                              fontSize: 10,
+                            style: textTheme.labelSmall?.copyWith(
+                              color: colorScheme.primary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -279,14 +286,13 @@ class ExploreScreen extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.amber.shade100,
+                              color: colorScheme.secondary.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               'PREMIUM',
-                              style: TextStyle(
-                                color: Colors.amber.shade800,
-                                fontSize: 8,
+                              style: textTheme.labelSmall?.copyWith(
+                                color: colorScheme.secondary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -296,10 +302,9 @@ class ExploreScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       solution.title,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: colorScheme.onSurface,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -307,9 +312,8 @@ class ExploreScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       solution.description,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade600,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface.withOpacity(0.7),
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -321,14 +325,13 @@ class ExploreScreen extends StatelessWidget {
                           Icon(
                             Icons.attach_money,
                             size: 16,
-                            color: Colors.amber.shade700,
+                            color: colorScheme.secondary,
                           ),
                           Text(
                             solution.premiumPrice?.toStringAsFixed(2) ?? '0.00',
-                            style: TextStyle(
-                              fontSize: 14,
+                            style: textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: Colors.amber.shade700,
+                              color: colorScheme.secondary,
                             ),
                           ),
                         ],
@@ -393,14 +396,13 @@ class ExploreScreen extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               'All Solutions',
-              style: TextStyle(
-                fontSize: 20,
+              style: Theme.of(Get.context!).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Theme.of(Get.context!).colorScheme.onSurface,
               ),
             ),
           ),
@@ -422,16 +424,19 @@ class ExploreScreen extends StatelessWidget {
   }
 
   Widget _buildSolutionCard(Solution solution, AuthController authController) {
+    final theme = Theme.of(Get.context!);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return GestureDetector(
       onTap: () => _handleSolutionTap(solution),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: (0.08)),
+              color: colorScheme.shadow.withOpacity(0.08),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -452,14 +457,14 @@ class ExploreScreen extends StatelessWidget {
                         fit: BoxFit.cover,
                       )
                     : null,
-                color: solution.images.isEmpty ? Colors.grey.shade300 : null,
+                color: solution.images.isEmpty ? colorScheme.background : null,
               ),
               child: solution.images.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Icon(
                         Icons.lightbulb_outlined,
                         size: 60,
-                        color: Colors.grey,
+                        color: colorScheme.secondary,
                       ),
                     )
                   : null,
@@ -477,14 +482,13 @@ class ExploreScreen extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: AppTheme.lightGreen,
+                          color: colorScheme.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           solution.category.toUpperCase(),
-                          style: TextStyle(
-                            color: AppTheme.primaryColor,
-                            fontSize: 10,
+                          style: textTheme.labelSmall?.copyWith(
+                            color: colorScheme.primary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -497,14 +501,13 @@ class ExploreScreen extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.orange.shade100,
+                            color: colorScheme.tertiary.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             'FEATURED',
-                            style: TextStyle(
-                              color: Colors.orange.shade800,
-                              fontSize: 10,
+                            style: textTheme.labelSmall?.copyWith(
+                              color: colorScheme.tertiary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -517,14 +520,13 @@ class ExploreScreen extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.amber.shade100,
+                            color: colorScheme.secondary.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             'PREMIUM',
-                            style: TextStyle(
-                              color: Colors.amber.shade800,
-                              fontSize: 10,
+                            style: textTheme.labelSmall?.copyWith(
+                              color: colorScheme.secondary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -534,16 +536,17 @@ class ExploreScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     solution.title,
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     solution.description,
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.7),
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -553,14 +556,13 @@ class ExploreScreen extends StatelessWidget {
                       Icon(
                         Icons.location_on,
                         size: 16,
-                        color: Colors.grey.shade600,
+                        color: colorScheme.secondary,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '${solution.city}, ${solution.country}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
+                        style: textTheme.labelSmall?.copyWith(
+                          color: colorScheme.secondary,
                         ),
                       ),
                       const Spacer(),
@@ -570,15 +572,13 @@ class ExploreScreen extends StatelessWidget {
                             Icon(
                               Icons.attach_money,
                               size: 16,
-                              color: Colors.amber.shade700,
+                              color: colorScheme.secondary,
                             ),
                             Text(
-                              solution.premiumPrice?.toStringAsFixed(2) ??
-                                  '0.00',
-                              style: TextStyle(
-                                fontSize: 14,
+                              solution.premiumPrice?.toStringAsFixed(2) ?? '0.00',
+                              style: textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: Colors.amber.shade700,
+                                color: colorScheme.secondary,
                               ),
                             ),
                           ],

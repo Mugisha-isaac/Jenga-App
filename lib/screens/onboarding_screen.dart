@@ -9,8 +9,11 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
@@ -25,16 +28,7 @@ class OnboardingScreen extends StatelessWidget {
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: Colors.green,
+                      color: colorScheme.outline.withOpacity(0.3),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -43,28 +37,35 @@ class OnboardingScreen extends StatelessWidget {
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: colorScheme.outline.withOpacity(0.3),
                       shape: BoxShape.circle,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 30),
-              const Text(
+              Text(
                 'Welcome to Jenga',
-                style: TextStyle(
-                  fontSize: 28,
+                style: textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: colorScheme.onBackground,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 15),
-              const Text(
+              Text(
                 'Jenga is a community-driven platform where you can share your local solutions and learn from others to address everyday challenges in Rwanda.',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
+                style: textTheme.bodyLarge?.copyWith(
+                  color: colorScheme.onBackground.withOpacity(0.7),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -118,13 +119,17 @@ class _CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return SizedBox(
       width: double.infinity,
       height: 60,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF4CAF50),
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
@@ -132,9 +137,8 @@ class _CustomButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: const TextStyle(
-            fontSize: 18,
-            color: Colors.black,
+          style: textTheme.titleMedium?.copyWith(
+            color: colorScheme.onPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),

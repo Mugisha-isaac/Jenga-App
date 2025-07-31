@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jenga_app/modules/login_controller.dart';
 import 'package:jenga_app/routes/routes.dart';
-import 'package:jenga_app/themes/app_theme.dart';
 
 class LoginScreen extends GetView<LoginController> {
   const LoginScreen({super.key});
@@ -10,22 +9,15 @@ class LoginScreen extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: AppTheme.primaryColor,
-                onSurface: Colors.black87,
-              ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: controller.formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: controller.formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
                   const SizedBox(height: 40),
                   // Logo and Title
                   Column(
@@ -37,7 +29,7 @@ class LoginScreen extends GetView<LoginController> {
                         errorBuilder: (context, error, stackTrace) => Icon(
                             Icons.account_circle,
                             size: 100,
-                            color: AppTheme.primaryColor),
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -47,14 +39,14 @@ class LoginScreen extends GetView<LoginController> {
                             .headlineMedium
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Sign in to continue',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.grey[600],
+                              color: Theme.of(context).hintColor,
                             ),
                       ),
                     ],
@@ -66,13 +58,13 @@ class LoginScreen extends GetView<LoginController> {
                     controller: controller.emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined,
-                          color: Colors.black87),
+            prefixIcon: Icon(Icons.email_outlined,
+              color: Theme.of(context).colorScheme.onSurface),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
-                      fillColor: Colors.grey[50],
+                      fillColor: Theme.of(context).colorScheme.surface,
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
@@ -94,14 +86,14 @@ class LoginScreen extends GetView<LoginController> {
                       obscureText: !controller.isPasswordVisible.value,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock_outline,
-                            color: Colors.black87),
+            prefixIcon: Icon(Icons.lock_outline,
+              color: Theme.of(context).colorScheme.onSurface),
                         suffixIcon: IconButton(
                           icon: Icon(
                             controller.isPasswordVisible.value
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            color: Colors.black87,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           onPressed: controller.togglePasswordVisibility,
                         ),
@@ -109,7 +101,7 @@ class LoginScreen extends GetView<LoginController> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
-                        fillColor: Colors.grey[50],
+                        fillColor: Theme.of(context).colorScheme.surface,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -130,8 +122,8 @@ class LoginScreen extends GetView<LoginController> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: controller.forgotPassword,
-                      child: const Text('Forgot Password?',
-                          style: TextStyle(color: Colors.black87)),
+            child: Text('Forgot Password?',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary)),
                     ),
                   ),
 
@@ -154,17 +146,17 @@ class LoginScreen extends GetView<LoginController> {
                         ),
                       ),
                       child: controller.isLoading.value
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                                    AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary),
                               ),
                             )
-                          : const Text('Login',
-                              style: TextStyle(color: Colors.white)),
+                          : Text('Login',
+                              style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
                     ),
                   ),
 
@@ -180,7 +172,7 @@ class LoginScreen extends GetView<LoginController> {
                           'or continue with',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey[600],
+                                    color: Theme.of(context).hintColor,
                                   ),
                         ),
                       ),
@@ -200,21 +192,21 @@ class LoginScreen extends GetView<LoginController> {
                                 ? null
                                 : controller.signInWithGoogle,
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.grey[100],
+                              backgroundColor: Theme.of(context).colorScheme.surface,
                               padding: const EdgeInsets.all(16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                side: BorderSide(color: Colors.grey[200]!),
+                                side: BorderSide(color: Theme.of(context).dividerColor),
                               ),
                             ),
                             icon: controller.isGoogleLoading.value
-                                ? const SizedBox(
+                                ? SizedBox(
                                     width: 24,
                                     height: 24,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.grey),
+                                          Theme.of(context).hintColor),
                                     ),
                                   )
                                 : Image.asset(
@@ -244,8 +236,8 @@ class LoginScreen extends GetView<LoginController> {
                         onPressed: () {
                           Get.toNamed(Routes.REGISTER);
                         },
-                        child: const Text('Sign Up',
-                            style: TextStyle(color: Colors.black87)),
+            child: Text('Sign Up',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary)),
                       ),
                     ],
                   ),
@@ -254,7 +246,6 @@ class LoginScreen extends GetView<LoginController> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

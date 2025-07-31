@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jenga_app/modules/register_controller.dart';
 import 'package:jenga_app/routes/routes.dart';
-import 'package:jenga_app/themes/app_theme.dart';
 
 class RegisterScreen extends GetView<RegisterController> {
   const RegisterScreen({super.key});
@@ -10,31 +9,24 @@ class RegisterScreen extends GetView<RegisterController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Get.back(),
         ),
-        title: const Text('Create Account', style: TextStyle(color: Colors.black87)),
-        backgroundColor: Colors.white,
+        title: Text('Create Account', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface,
         elevation: 0,
       ),
-      body: Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: AppTheme.primaryColor,
-                onSurface: Colors.black87,
-              ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: controller.formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: controller.formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
                   const SizedBox(height: 20),
                   // Logo and Title
                   Column(
@@ -44,21 +36,21 @@ class RegisterScreen extends GetView<RegisterController> {
                         width: 100,
                         height: 100,
                         errorBuilder: (context, error, stackTrace) => 
-                            Icon(Icons.account_circle, size: 80, color: AppTheme.primaryColor),
+                            Icon(Icons.account_circle, size: 80, color: Theme.of(context).colorScheme.primary),
                       ),
                       const SizedBox(height: 16),
                       Text(
                         'Create Account',
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Fill in your details to get started',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
+                              color: Theme.of(context).hintColor,
                             ),
                       ),
                     ],
@@ -70,12 +62,12 @@ class RegisterScreen extends GetView<RegisterController> {
                     controller: controller.fullNameController,
                     decoration: InputDecoration(
                       labelText: 'Full Name',
-                      prefixIcon: const Icon(Icons.person_outline, color: Colors.black87),
+                      prefixIcon: Icon(Icons.person_outline, color: Theme.of(context).colorScheme.onSurface),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
-                      fillColor: Colors.grey[50],
+                      fillColor: Theme.of(context).colorScheme.surface,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -91,12 +83,12 @@ class RegisterScreen extends GetView<RegisterController> {
                     controller: controller.emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined, color: Colors.black87),
+                      prefixIcon: Icon(Icons.email_outlined, color: Theme.of(context).colorScheme.onSurface),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
-                      fillColor: Colors.grey[50],
+                      fillColor: Theme.of(context).colorScheme.surface,
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
@@ -116,12 +108,12 @@ class RegisterScreen extends GetView<RegisterController> {
                     controller: controller.phoneController,
                     decoration: InputDecoration(
                       labelText: 'Phone Number',
-                      prefixIcon: const Icon(Icons.phone_outlined, color: Colors.black87),
+                      prefixIcon: Icon(Icons.phone_outlined, color: Theme.of(context).colorScheme.onSurface),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
-                      fillColor: Colors.grey[50],
+                      fillColor: Theme.of(context).colorScheme.surface,
                     ),
                     keyboardType: TextInputType.phone,
                     validator: (value) {
@@ -140,13 +132,13 @@ class RegisterScreen extends GetView<RegisterController> {
                       obscureText: !controller.isPasswordVisible.value,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock_outline, color: Colors.black87),
+                        prefixIcon: Icon(Icons.lock_outline, color: Theme.of(context).colorScheme.onSurface),
                         suffixIcon: IconButton(
                           icon: Icon(
                             controller.isPasswordVisible.value
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            color: Colors.black87,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           onPressed: controller.togglePasswordVisibility,
                         ),
@@ -154,7 +146,7 @@ class RegisterScreen extends GetView<RegisterController> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
-                        fillColor: Colors.grey[50],
+                        fillColor: Theme.of(context).colorScheme.surface,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -176,13 +168,13 @@ class RegisterScreen extends GetView<RegisterController> {
                       obscureText: !controller.isConfirmPasswordVisible.value,
                       decoration: InputDecoration(
                         labelText: 'Confirm Password',
-                        prefixIcon: const Icon(Icons.lock_outline, color: Colors.black87),
+                        prefixIcon: Icon(Icons.lock_outline, color: Theme.of(context).colorScheme.onSurface),
                         suffixIcon: IconButton(
                           icon: Icon(
                             controller.isConfirmPasswordVisible.value
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            color: Colors.black87,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           onPressed: controller.toggleConfirmPasswordVisibility,
                         ),
@@ -190,7 +182,7 @@ class RegisterScreen extends GetView<RegisterController> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
-                        fillColor: Colors.grey[50],
+                        fillColor: Theme.of(context).colorScheme.surface,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -223,15 +215,15 @@ class RegisterScreen extends GetView<RegisterController> {
                         ),
                       ),
                       child: controller.isLoading.value
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary),
                               ),
                             )
-                          : const Text('Create Account', style: TextStyle(color: Colors.white)),
+                          : Text('Create Account', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
                     ),
                   ),
                   
@@ -247,7 +239,7 @@ class RegisterScreen extends GetView<RegisterController> {
                       ),
                       TextButton(
                         onPressed: () => Get.offAllNamed(Routes.LOGIN),
-                        child: const Text('Sign In', style: TextStyle(color: Colors.black87)),
+                        child: Text('Sign In', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary)),
                       ),
                     ],
                   ),
@@ -256,7 +248,7 @@ class RegisterScreen extends GetView<RegisterController> {
             ),
           ),
         ),
-      ),
-    );
+      );
+  
   }
 }

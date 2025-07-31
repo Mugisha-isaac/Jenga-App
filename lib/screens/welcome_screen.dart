@@ -40,8 +40,11 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -52,11 +55,11 @@ class WelcomeScreen extends StatelessWidget {
               width: double.infinity,
               errorBuilder: (context, error, stackTrace) => Container(
                 height: MediaQuery.of(context).size.height * 0.5,
-                color: Colors.grey[200],
-                child: const Icon(
+                color: colorScheme.surface,
+                child: Icon(
                   Icons.image,
                   size: 100,
-                  color: Colors.grey,
+                  color: colorScheme.secondary,
                 ),
               ),
             ),
@@ -66,22 +69,20 @@ class WelcomeScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       'Welcome to Jenga',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 28,
+                      style: textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: colorScheme.onBackground,
                       ),
                     ),
                     const SizedBox(height: 15),
-                    const Text(
+                    Text(
                       'Share your local solutions and learn from others to address everyday challenges in Rwanda.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black54,
+                      style: textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.onBackground.withOpacity(0.7),
                       ),
                     ),
                     const Spacer(),
@@ -114,13 +115,17 @@ class _CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return SizedBox(
       width: double.infinity,
       height: 60,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF4CAF50),
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
@@ -128,9 +133,8 @@ class _CustomButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: const TextStyle(
-            fontSize: 18,
-            color: Colors.white,
+          style: textTheme.titleMedium?.copyWith(
+            color: colorScheme.onPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
