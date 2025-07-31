@@ -8,7 +8,6 @@ class PreferenceService extends GetxService {
 
   Future<PreferenceService> init() async {
     _prefs = await SharedPreferences.getInstance();
-    print('🔧 PreferenceService initialized');
     return this;
   }
 
@@ -24,25 +23,21 @@ class PreferenceService extends GetxService {
   // Onboarding completion status
   bool get hasCompletedOnboarding {
     final completed = _prefs.getBool(_onboardingKey) ?? false;
-    print('📱 Onboarding completed: $completed');
     return completed;
   }
 
   Future<void> setOnboardingCompleted() async {
     await _prefs.setBool(_onboardingKey, true);
-    print('✅ Onboarding marked as completed');
   }
 
   // First launch detection
   bool get isFirstLaunch {
     final firstLaunch = _prefs.getBool(_firstLaunchKey) ?? true;
-    print('📱 Is first launch: $firstLaunch');
     return firstLaunch;
   }
 
   Future<void> setNotFirstLaunch() async {
     await _prefs.setBool(_firstLaunchKey, false);
-    print('✅ First launch flag set to false');
   }
 
   // Session Management
@@ -62,33 +57,21 @@ class PreferenceService extends GetxService {
     }
     await _prefs.setString(_sessionExpiryKey, expiryDate.toIso8601String());
 
-    print('✅ User session saved:');
-    print('   - User ID: $userId');
-    print('   - Email: $email');
-    print('   - Full Name: $fullName');
-    print('   - Expires: $expiryDate');
   }
 
   bool get hasValidSession {
     final hasSession = _prefs.getBool(_userSessionKey) ?? false;
     if (!hasSession) {
-      print('❌ No user session found');
       return false;
     }
 
     final expiryString = _prefs.getString(_sessionExpiryKey);
     if (expiryString == null) {
-      print('❌ No session expiry date found');
       return false;
     }
 
     final expiryDate = DateTime.parse(expiryString);
     final isValid = DateTime.now().isBefore(expiryDate);
-
-    print('🔍 Session validation:');
-    print('   - Has session: $hasSession');
-    print('   - Expires: $expiryDate');
-    print('   - Is valid: $isValid');
 
     return isValid;
   }
@@ -103,23 +86,15 @@ class PreferenceService extends GetxService {
     await _prefs.remove(_userEmailKey);
     await _prefs.remove(_userNameKey);
     await _prefs.remove(_sessionExpiryKey);
-    print('🗑️ User session cleared');
   }
 
   // Clear all preferences (for logout)
   Future<void> clearAll() async {
     await _prefs.clear();
-    print('🗑️ All preferences cleared');
   }
 
   // Debug method to check all stored values
   void debugPrintAll() {
-    print('🔍 All preferences:');
-    print('  - Onboarding completed: $hasCompletedOnboarding');
-    print('  - Is first launch: $isFirstLaunch');
-    print('  - Has valid session: $hasValidSession');
-    print('  - Saved user ID: $savedUserId');
-    print('  - Saved user email: $savedUserEmail');
-    print('  - Saved user name: $savedUserName');
+
   }
 }
