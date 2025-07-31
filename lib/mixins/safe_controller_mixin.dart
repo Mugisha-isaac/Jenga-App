@@ -14,19 +14,16 @@ mixin SafeControllerMixin on GetxController {
     try {
       return fn();
     } catch (e) {
-      // Ignore errors silently
       return null;
     }
   }
 
-  /// Safely update an observable value
   void safeUpdate<T>(Rx<T> observable, T value) {
     if (!_isControllerDisposed) {
       observable.value = value;
     }
   }
 
-  /// Safely call a void function
   void safeCall(VoidCallback fn) {
     if (!_isControllerDisposed) {
       try {
