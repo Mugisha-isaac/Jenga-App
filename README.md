@@ -573,5 +573,5 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 ---
 
 <div align="center">
-**Made with ❤️ by the Jenga App Team**
+Made with ❤️ by the Jenga App Team
 </div>
